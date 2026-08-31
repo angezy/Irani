@@ -1,0 +1,255 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  Alert,
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import {
+  requestPasswordReset,
+  resetPassword,
+  verifyPasswordResetCode,
+} from "../lib/apiClient";
+import { toast } from "../lib/notifications";
+
+const inputSx = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 1.5,
+  },
+};
+
+export default function ForgotPasswordPage() {
+  const [step, setStep] = useState("request");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const verifyInFlightRef = useRef(false);
+
+  useEffect(() => {
+    try {
+      const savedEmail = localStorage.getItem("signinEmail");
+      if (savedEmail) queueMicrotask(() => setEmail(savedEmail));
+    } catch (_error) {
+      // Remembered email is optional.
+    }
+  }, []);
+
+  const clearError = () => setError("");
+
+  async function handleRequest(event) {
+    event?.preventDefault();
+    clearError();
+    setLoading(true);
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      await requestPasswordReset(normalizedEmail);
+      setEmail(normalizedEmail);
+      setCode("");
+      setStep("verify");
+      toast.success("ایمیل خود را بررسی کنید", { description: "کد تأیید برای شما ارسال شد." });
+    } catch (requestError) {
+      setError(requestError.message || "ارسال کد بازیابی ممکن نیست");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerify(event) {
+    event.preventDefault();
+    if (verifyInFlightRef.current) return;
+    verifyInFlightRef.current = true;
+    clearError();
+    setLoading(true);
+    try {
+      const result = await verifyPasswordResetCode(email, code.trim());
+      setResetToken(result.resetToken || "");
+      setStep("reset");
+      toast.success("کد تأیید شد", { description: "یک رمز عبور جدید انتخاب کنید." });
+    } catch (verifyError) {
+      setError(verifyError.message || "این کد نامعتبر یا منقضی شده است");
+    } finally {
+      verifyInFlightRef.current = false;
+      setLoading(false);
+    }
+  }
+
+  async function handleReset(event) {
+    event.preventDefault();
+    clearError();
+    if (password !== confirmPassword) {
+      setError("رمزهای عبور یکسان نیستند.");
+      return;
+    }
+    if (password.length < 8 || password.length > 128) {
+      setError("رمز عبور باید بین ۸ تا ۱۲۸ نویسه باشد.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await resetPassword(email, resetToken, password);
+      setStep("success");
+      toast.success("رمز عبور به‌روزرسانی شد", { description: "اکنون می‌توانید با رمز جدید وارد شوید." });
+    } catch (resetError) {
+      setError(resetError.message || "بازنشانی رمز عبور ممکن نیست");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function startOver() {
+    setStep("request");
+    setCode("");
+    setResetToken("");
+    setPassword("");
+    setConfirmPassword("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    clearError();
+  }
+
+  return (
+    <Box sx={{ p: { xs: 3, sm: 4 } }}>
+      <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 800, letterSpacing: "0.12em" }}>
+        حساب مشتری
+      </Typography>
+      <Typography component="h1" variant="h4" sx={{ mt: 0.5, fontWeight: 800 }}>
+        {step === "success" ? "رمز عبور به‌روزرسانی شد" : "بازنشانی رمز عبور"}
+      </Typography>
+      <Typography sx={{ mt: 1, mb: 3, color: "#52606d", lineHeight: 1.6 }}>
+        {step === "request" && "ایمیل حساب کاربری خود را وارد کنید تا کد تأیید یک‌بارمصرف برایتان ارسال شود."}
+        {step === "verify" && <>کد شش‌رقمی به <strong>{email}</strong> ارسال شد.</>}
+        {step === "reset" && "کد شما تأیید شد. برای حساب خود رمز عبور جدید انتخاب کنید."}
+        {step === "success" && "رمز عبور جدید آماده است. برای ادامه خرید وارد شوید."}
+      </Typography>
+
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+      {step === "request" && (
+        <Stack spacing={2} component="form" onSubmit={handleRequest}>
+          <TextField
+            label="نشانی ایمیل"
+            type="email"
+            value={email}
+            onChange={(event) => { setEmail(event.target.value); clearError(); }}
+            required
+            fullWidth
+            autoComplete="email"
+            sx={inputSx}
+          />
+          <Button type="submit" variant="contained" size="large" disabled={loading} sx={{ borderRadius: 999, py: 1.25, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>
+            {loading ? "در حال ارسال کد…" : "ارسال کد تأیید"}
+          </Button>
+        </Stack>
+      )}
+
+      {step === "verify" && (
+        <Stack spacing={2} component="form" onSubmit={handleVerify}>
+          <TextField
+            label="کد تأیید شش‌رقمی"
+            value={code}
+            onChange={(event) => { setCode(event.target.value.replace(/\D/g, "").slice(0, 6)); clearError(); }}
+            required
+            fullWidth
+            autoComplete="one-time-code"
+            inputProps={{ inputMode: "numeric", maxLength: 6 }}
+            sx={inputSx}
+          />
+          <Button type="submit" variant="contained" size="large" disabled={loading || code.length !== 6} sx={{ borderRadius: 999, py: 1.25, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>
+            {loading ? "در حال بررسی کد…" : "تأیید کد"}
+          </Button>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Button type="button" onClick={startOver} disabled={loading} sx={{ color: "#52606d", textTransform: "none" }}>استفاده از ایمیل دیگر</Button>
+            <Button type="button" onClick={handleRequest} disabled={loading} sx={{ color: "var(--color-primary)", textTransform: "none", fontWeight: 700 }}>ارسال دوباره کد</Button>
+          </Stack>
+        </Stack>
+      )}
+
+      {step === "reset" && (
+        <Stack spacing={2} component="form" onSubmit={handleReset}>
+          <TextField
+            label="رمز عبور جدید"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(event) => { setPassword(event.target.value); clearError(); }}
+            required
+            fullWidth
+            inputProps={{ minLength: 6, maxLength: 64 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={showPassword ? "پنهان کردن رمز جدید" : "نمایش رمز جدید"}
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    onMouseDown={(event) => event.preventDefault()}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            autoComplete="new-password"
+            helperText="بین ۶ تا ۶۴ نویسه وارد کنید."
+            sx={inputSx}
+          />
+          <TextField
+            label="تکرار رمز عبور جدید"
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(event) => { setConfirmPassword(event.target.value); clearError(); }}
+            required
+            fullWidth
+            inputProps={{ minLength: 6, maxLength: 64 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={showConfirmPassword ? "پنهان کردن رمز تکرارشده" : "نمایش رمز تکرارشده"}
+                    onClick={() => setShowConfirmPassword((visible) => !visible)}
+                    onMouseDown={(event) => event.preventDefault()}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            autoComplete="new-password"
+            sx={inputSx}
+          />
+          <Button type="submit" variant="contained" size="large" disabled={loading} sx={{ borderRadius: 999, py: 1.25, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>
+            {loading ? "در حال به‌روزرسانی رمز…" : "ثبت رمز عبور جدید"}
+          </Button>
+        </Stack>
+      )}
+
+      {step === "success" && (
+        <Button component={Link} href="/signin" variant="contained" size="large" fullWidth sx={{ borderRadius: 999, py: 1.25, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>
+          بازگشت به ورود
+        </Button>
+      )}
+
+      {step !== "success" && (
+        <Button component={Link} href="/signin" sx={{ mt: 2, color: "#52606d", textTransform: "none" }}>
+          بازگشت به ورود
+        </Button>
+      )}
+    </Box>
+  );
+}

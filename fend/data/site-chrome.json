@@ -1,0 +1,115 @@
+{
+  "header": {
+    "announcementShipping": "ارسال عادی رایگان برای سفارش‌های واجد شرایط",
+    "announcementSupport": "پشتیبانی دقیق و پاسخ‌گو در کمتر از ۲۴ تا ۴۸ ساعت",
+    "announcementSeparator": "\u2022",
+    "searchPlaceholder": "جست‌وجوی محصول، دسته‌بندی و مطالب",
+    "searchButtonLabel": "جست‌وجو",
+    "trackOrderLabel": "پیگیری سفارش",
+    "signInLabel": "ورود",
+    "accountLabel": "حساب کاربری",
+    "accountTooltip": "حساب کاربری",
+    "signInTooltip": "ورود",
+    "cartTooltip": "سبد خرید",
+    "shopAllLabel": "همه محصولات",
+    "trendingLabel": "پرفروش‌ها",
+    "categoriesLabel": "دسته‌بندی‌ها",
+    "categoryHeading": "دسته‌بندی‌ها",
+    "blogLabel": "مجله",
+    "aboutLabel": "درباره ما",
+    "helpLabel": "راهنما",
+    "helpTooltip": "پاسخ پرسش‌های سفارش، ارسال، مرجوعی و حساب کاربری را پیدا کنید.",
+    "categoryLinks": [
+      { "label": "تمرین", "href": "/category/training" },
+      { "label": "قدرتی", "href": "/category/strength" },
+      { "label": "ریکاوری", "href": "/category/recovery" }
+    ],
+    "aboutLinks": [
+      { "label": "درباره فروشگاه ایرانی", "href": "/aboutus" },
+      { "label": "چطور کار می‌کند؟", "href": "/how-it-works" },
+      { "label": "چرا فروشگاه ایرانی؟", "href": "/why-weluxo" },
+      { "label": "پرسش‌های متداول", "href": "/faq" }
+    ],
+    "allProductsLabel": "همه محصولات",
+    "myAccountLabel": "حساب کاربری من",
+    "ordersLabel": "سفارش‌ها",
+    "supportLabel": "پشتیبانی",
+    "signOutLabel": "خروج",
+    "helpCenterLabel": "مرکز راهنما",
+    "mobileTrackOrderLabel": "پیگیری سفارش",
+    "cartLabel": "سبد خرید",
+    "mobileSearchPlaceholder": "جست‌وجو در فروشگاه",
+    "yourCartLabel": "سبد خرید شما",
+    "cartReadyLabel": "آماده ثبت سفارش شماست",
+    "cartItemLabel": "قلم",
+    "cartItemsLabel": "قلم",
+    "closeCartLabel": "بستن پیش‌نمایش سبد خرید",
+    "emptyCartLabel": "سبد خرید شما خالی است.",
+    "startShoppingLabel": "شروع خرید",
+    "quantityLabel": "تعداد",
+    "quantitySeparator": "\u00b7",
+    "subtotalLabel": "جمع جزء",
+    "viewCartLabel": "مشاهده سبد خرید",
+    "checkoutLabel": "تسویه‌حساب"
+  },
+  "footer": {
+    "logoText": "فروشگاه ایرانی",
+    "brandDescription": "محصولات کاربردی و راهنمایی مطمئن برای سبک زندگی شما.",
+    "trustItems": [
+      { "icon": "shipping", "title": "ارسال مطمئن", "copy": "ارسال عادی رایگان برای سفارش‌های واجد شرایط." },
+      { "icon": "support", "title": "پشتیبانی پاسخ‌گو", "copy": "کمک واقعی از تیم ما در کمتر از ۲۴ تا ۴۸ ساعت." },
+      { "icon": "secure", "title": "تسویه‌حساب امن", "copy": "پرداخت محافظت‌شده و تجربه سفارش شفاف." }
+    ],
+    "columns": {
+      "shopTitle": "فروشگاه",
+      "supportTitle": "پشتیبانی",
+      "companyTitle": "درباره ما",
+      "legalTitle": "قوانین"
+    },
+    "shopLinks": [
+      { "label": "فروشگاه", "href": "/shop" },
+      { "label": "پرفروش‌ها", "href": "/shop#trending-collection" },
+      { "label": "تمرین", "href": "/category/training" },
+      { "label": "قدرتی", "href": "/category/strength" },
+      { "label": "ریکاوری", "href": "/category/recovery" }
+    ],
+    "supportLinks": [
+      { "label": "مرکز راهنما", "href": "/help-center" },
+      { "label": "تماس با ما", "href": "/contact" },
+      { "label": "پیگیری سفارش", "href": "/tracking" },
+      { "label": "اطلاعات ارسال", "href": "/shipping-information" },
+      { "label": "مرجوعی و بازپرداخت", "href": "/return-refund-policy" }
+    ],
+    "companyLinks": [
+      { "label": "درباره ما", "href": "/aboutus" },
+      { "label": "چطور کار می‌کند؟", "href": "/how-it-works" },
+      { "label": "چرا فروشگاه ایرانی؟", "href": "/why-weluxo" },
+      { "label": "مجله", "href": "/blog" },
+      { "label": "پرسش‌های متداول", "href": "/faq" }
+    ],
+    "contact": {
+      "eyebrow": "کمکی لازم دارید؟",
+      "title": "برای همراهی شما آماده‌ایم.",
+      "copy": "درباره سفارش، محصول یا مرجوعی پرسشی دارید؟ تیم پشتیبانی آماده پاسخ‌گویی است.",
+      "buttonLabel": "تماس با پشتیبانی",
+      "buttonHref": "/contact"
+    },
+    "socials": [
+      { "platform": "facebook", "label": "فیس‌بوک", "href": "" },
+      { "platform": "instagram", "label": "اینستاگرام", "href": "" },
+      { "platform": "twitter", "label": "توییتر", "href": "" },
+      { "platform": "linkedin", "label": "لینکدین", "href": "" }
+    ],
+    "legalLinks": [
+      { "label": "حریم خصوصی", "href": "/privacy-policy" },
+      { "label": "شرایط و قوانین", "href": "/terms-conditions" },
+      { "label": "امنیت پرداخت", "href": "/payment-security" }
+    ],
+    "copyrightSuffix": "تمامی حقوق محفوظ است.",
+    "securityLabel": "تسویه‌حساب محافظت‌شده",
+    "supportStatusLabel": "پشتیبانی پاسخ‌گو",
+    "createdByLabel": "ساخته‌شده با",
+    "createdByName": "پروژه وب نیک",
+    "createdByHref": "https://nickwebproject.com"
+  }
+}

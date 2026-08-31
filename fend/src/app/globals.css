@@ -1,0 +1,100 @@
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  font-family: var(--site-font-family, Arial, Helvetica, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* Keep cards and their form controls from resizing around dynamic content. */
+.MuiCard-root,
+.MuiCardContent-root,
+.MuiGrid-root,
+.MuiGrid-item,
+.MuiFormControl-root,
+.MuiInputBase-root {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.MuiCard-root {
+  width: 100%;
+  max-width: 100%;
+}
+
+.MuiFormControl-root,
+.MuiInputBase-root,
+.MuiTextField-root {
+  max-width: 100%;
+}
+
+.MuiInputBase-root {
+  width: 100%;
+}
+
+.MuiSelect-select,
+.MuiInputBase-input {
+  min-width: 0 !important;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+html { color-scheme: light; }
+
+html,
+body {
+  direction: rtl;
+}
+
+/* Give every action button immediate feedback and prevent duplicate clicks. */
+[data-button-action-loading="true"] {
+  position: relative !important;
+  cursor: wait !important;
+  pointer-events: none !important;
+  opacity: 0.78;
+}
+
+[data-button-action-loading="true"] > * {
+  visibility: hidden;
+}
+
+[data-button-action-loading="true"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: button-action-spin 700ms linear infinite;
+}
+
+@keyframes button-action-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-button-action-loading="true"]::after { animation-duration: 1400ms; }
+}

@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "install:all": "node scripts/install-all.js",
+    "dev": "node scripts/start-dev.js",
+    "dev:backend": "npx nodemon bend/server.js",
+    "dev:frontend": "npm run dev --prefix fend",
+    "start": "node bend/server.js",
+    "start:frontend": "npm run start --prefix fend",
+    "db:bootstrap": "node scripts/bootstrap_store.js",
+    "owner:bootstrap": "node scripts/bootstrap_owner.js",
+    "owner:promote": "node scripts/promote_owner.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4"
+  }
+}

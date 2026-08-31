@@ -1,0 +1,493 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { Country } from "country-state-city";
+import {
+  Add,
+  CheckCircleOutline,
+  CreditCard,
+  DeleteOutline,
+  FavoriteBorder,
+  LocalShippingOutlined,
+  LockOutlined,
+  Remove,
+  ReplayOutlined,
+  ShoppingCartOutlined,
+  SupportAgentOutlined,
+} from "@mui/icons-material";
+import { hideSupplierBranding } from "../lib/customerFacingText";
+import { useSiteSettings } from "../components/SiteThemeProvider";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import {
+  addToCart,
+  applyCartCoupon,
+  estimateCartShipping,
+  fetchCart,
+  fetchSession,
+  removeCartItem,
+  saveCartItem,
+  updateCartItem,
+} from "../lib/apiClient";
+import { readCheckoutState, updateCheckoutState } from "../checkout/components/checkoutState";
+import PageSkeleton from "../components/LoadingSkeletons";
+import { formatMoney } from "../lib/locale";
+
+const FALLBACK_IMAGE = "https://placehold.co/240x240?text=Product";
+
+const initialEstimates = [];
+
+function money(value) {
+  return formatMoney(value);
+}
+
+function itemPrice(item) {
+  return Number(item?.price) || 0;
+}
+
+function slugify(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function subtotalFor(items) {
+  return items.reduce((sum, item) => sum + itemPrice(item) * (Number(item.quantity) || 0), 0);
+}
+
+function productDetails(product = {}) {
+  const title = product.name || product.Name || product.title || "محصول فروشگاه";
+  const rawPrice = Number(product.price ?? product.Price ?? 0);
+  const explicitSlug = product.slug || product.Slug || product.handle || product.Handle;
+  return {
+    id: product.id ?? product.PID ?? product.ProductId ?? product.productId,
+    slug: String(explicitSlug || slugify(title)).replace(/^\/product\//, "").replace(/^\//, "").replace(/\/$/, ""),
+    title,
+    price: Number.isFinite(rawPrice) ? rawPrice : 0,
+    image: product.img || product.Img || product.IMG || product.image || product.imageUrl || FALLBACK_IMAGE,
+  };
+}
+
+function RecommendedProductCard({ product, details, onAdd, adding = false }) {
+  return (
+    <Card sx={{ bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", borderRadius: 3, overflow: "hidden", transition: "transform 180ms ease, box-shadow 180ms ease", "&:hover": { transform: "translateY(-3px)", boxShadow: "0 14px 30px rgba(43,43,43,0.1)" } }}>
+      <Box component={Link} href={`/product/${encodeURIComponent(details.slug)}`} sx={{ display: "block", color: "inherit", textDecoration: "none", "&:focus-visible": { outline: "3px solid var(--color-primary-light)", outlineOffset: -3 } }} aria-label={`مشاهده ${details.title}`}>
+        <CardMedia component="img" image={details.image} alt={details.title} sx={{ height: 180, objectFit: "cover" }} />
+        <CardContent sx={{ pb: 1.25 }}>
+          <Typography sx={{ fontWeight: 800 }} noWrap>{details.title}</Typography>
+          <Typography color="primary.main" sx={{ mt: 0.75, fontWeight: 800 }}>{money(details.price)}</Typography>
+        </CardContent>
+      </Box>
+      <Box sx={{ px: 2, pb: 2 }}>
+        <Button fullWidth size="small" variant="contained" onClick={() => onAdd(product)} disabled={adding} data-button-loading-managed="true" startIcon={adding ? <CircularProgress size={16} color="inherit" /> : undefined} sx={{ borderRadius: 999 }}>
+          {adding ? "در حال افزودن..." : "افزودن به سبد خرید"}
+        </Button>
+      </Box>
+    </Card>
+  );
+}
+
+function CartItem({ item, pending, onQuantity, onRemove, onSave }) {
+  const price = itemPrice(item);
+  const originalPrice = Number(item.originalPrice) || 0;
+  const quantity = Number(item.quantity) || 1;
+  const stock = Number(item.stock);
+  const maxQuantity = stock > 0 ? stock : 99;
+  const inStock = stock <= 0 || Number.isNaN(stock) ? true : stock >= quantity;
+
+  return (
+    <Card
+      sx={{
+        width: "100%",
+        minWidth: 0,
+        bgcolor: "#ffffff",
+        color: "var(--color-text-primary)",
+        border: "1px solid var(--color-border)",
+        borderRadius: 3,
+      }}
+    >
+      <CardContent sx={{ p: { xs: 2, sm: 2.5 }, "&:last-child": { pb: { xs: 2, sm: 2.5 } } }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "90px minmax(0, 1fr)", sm: "120px minmax(0, 1fr)" }, gap: { xs: 1.5, sm: 2.5 }, alignItems: "start" }}>
+          <CardMedia
+            component="img"
+            image={item.image || FALLBACK_IMAGE}
+            alt={item.title || "محصول"}
+            sx={{ width: { xs: 90, sm: 120 }, height: { xs: 90, sm: 120 }, borderRadius: 2, objectFit: "cover", bgcolor: "var(--color-surface-muted)" }}
+          />
+
+          <Box sx={{ minWidth: 0 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="start" gap={1}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="h6" sx={{ fontWeight: 800, fontSize: { xs: "1rem", sm: "1.15rem" }, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {item.title || "محصول"}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "var(--color-primary)", mt: 0.25 }}>
+                  {hideSupplierBranding(item.brand, "فروشگاه ایرانی")} · {item.category || "مجموعه"}
+                </Typography>
+              </Box>
+              <IconButton aria-label={`حذف ${item.title || "محصول"}`} onClick={() => onRemove(item.productId)} disabled={pending} sx={{ color: "var(--color-text-secondary)", p: 0.5 }}>
+                <DeleteOutline fontSize="small" />
+              </IconButton>
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 0.25, sm: 2 }} sx={{ mt: 0.75, color: "#7a7d82" }}>
+              <Typography variant="caption">شناسه: {item.sku || `WLX-${item.productId}`}</Typography>
+              <Typography variant="caption">نوع: استاندارد</Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mt: 1 }}>
+              <CheckCircleOutline sx={{ fontSize: 16, color: inStock ? "#34d399" : "#f87171" }} />
+              <Typography variant="body2" sx={{ color: inStock ? "#86efac" : "#fca5a5" }}>{inStock ? "موجود" : "ناموجود"}</Typography>
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.5} sx={{ mt: 1.5 }}>
+              <Box>
+                {originalPrice > price && <Typography component="span" variant="body2" sx={{ mr: 1, color: "#7a7d82", textDecoration: "line-through" }}>{money(originalPrice)}</Typography>}
+                <Typography component="span" sx={{ color: "var(--color-text-primary)", fontWeight: 900, fontSize: "1.1rem" }}>{money(price)}</Typography>
+              </Box>
+
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Typography variant="body2" sx={{ color: "var(--color-text-secondary)" }}>تعداد</Typography>
+                <Stack direction="row" alignItems="center" sx={{ border: "1px solid var(--color-border)", borderRadius: 2 }}>
+                  <IconButton aria-label="Decrease quantity" size="small" onClick={() => onQuantity(item, -1)} disabled={pending || quantity <= 1} sx={{ color: "var(--color-text-primary)" }}><Remove fontSize="small" /></IconButton>
+                  <Typography sx={{ minWidth: 28, textAlign: "center", fontWeight: 800 }}>{quantity}</Typography>
+                  <IconButton aria-label="Increase quantity" size="small" onClick={() => onQuantity(item, 1)} disabled={pending || quantity >= maxQuantity} sx={{ color: "var(--color-text-primary)" }}><Add fontSize="small" /></IconButton>
+                </Stack>
+              </Stack>
+            </Stack>
+
+            <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
+              <Button size="small" startIcon={<FavoriteBorder />} onClick={() => onSave(item)} disabled={pending} sx={{ color: "var(--color-primary)", px: 0, textTransform: "none" }}>ذخیره برای بعد</Button>
+              <Button size="small" startIcon={<DeleteOutline />} onClick={() => onRemove(item.productId)} disabled={pending} sx={{ color: "var(--color-text-secondary)", px: 0, textTransform: "none" }}>حذف</Button>
+            </Stack>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TrustSection() {
+  const trustItems = [
+    { icon: <LockOutlined />, title: "پرداخت امن", text: "اطلاعات شما محافظت می‌شود" },
+    { icon: <CreditCard />, title: "روش‌های پرداخت", text: "کارت بانکی و درگاه زرین‌پال" },
+    { icon: <LocalShippingOutlined />, title: "ضمانت ارسال", text: "امکان پیگیری مرسوله" },
+    { icon: <ReplayOutlined />, title: "مرجوعی آسان", text: "مهلت مرجوعی ۳۰ روزه" },
+  ];
+
+  return (
+    <Box sx={{ mt: 2.5, display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.5 }}>
+      {trustItems.map((item) => (
+        <Stack key={item.title} direction="row" spacing={1.25} alignItems="flex-start" sx={{ p: 1.5, borderRadius: 2, bgcolor: "var(--color-surface-muted)" }}>
+          <Box sx={{ color: "var(--color-accent)", display: "grid", placeItems: "center" }}>{item.icon}</Box>
+          <Box sx={{ minWidth: 0 }}><Typography variant="body2" sx={{ fontWeight: 800 }}>{item.title}</Typography><Typography variant="caption" sx={{ color: "var(--color-text-secondary)" }}>{item.text}</Typography></Box>
+        </Stack>
+      ))}
+    </Box>
+  );
+}
+
+export default function CartPage() {
+  const siteSettings = useSiteSettings();
+  const exitCouponCode = String(siteSettings?.welcomePopupEnabled ? siteSettings?.welcomePopupCouponCode || "" : "").trim();
+  const [user, setUser] = useState({ id: "guest", guest: true });
+  const [items, setItems] = useState([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [pendingId, setPendingId] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [couponDiscountPercent, setCouponDiscountPercent] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const couponRef = useRef({ code: "", discountPercent: 0, expiresAt: null });
+  const [discount, setDiscount] = useState(0);
+  const [shippingCountry, setShippingCountry] = useState("US");
+  const [shippingPostalCode, setShippingPostalCode] = useState("");
+  const [shippingMethod, setShippingMethod] = useState(() => readCheckoutState().shipping.logisticName || readCheckoutState().shipping.method || "");
+  const [shippingEstimates, setShippingEstimates] = useState(initialEstimates);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [recommended, setRecommended] = useState([]);
+  const [recommendedPendingId, setRecommendedPendingId] = useState(null);
+  const [exitOpen, setExitOpen] = useState(false);
+
+  const countryOptions = useMemo(
+    () => Country.getAllCountries().map((country) => ({ code: country.isoCode, label: country.name })).sort((a, b) => a.label.localeCompare(b.label)),
+    []
+  );
+
+  const selectedShipping = shippingEstimates.find((estimate) => estimate.method === shippingMethod) || null;
+  const shippingCost = Number(selectedShipping?.cost) || 0;
+  const total = Math.max(0, subtotal + shippingCost - discount);
+
+  const syncCart = useCallback((data) => {
+    const nextItems = Array.isArray(data?.items) ? data.items : [];
+    const nextSubtotal = Number(data?.subtotal);
+    const resolvedSubtotal = Number.isFinite(nextSubtotal) ? nextSubtotal : subtotalFor(nextItems);
+    setItems(nextItems);
+    setSubtotal(resolvedSubtotal);
+    if (Object.prototype.hasOwnProperty.call(data || {}, "coupon")) {
+      const nextCoupon = data.coupon ? {
+        code: data.coupon.code || "",
+        discountPercent: Number(data.coupon.discountPercent) || 0,
+        expiresAt: data.coupon.expiresAt || null,
+      } : { code: "", discountPercent: 0, expiresAt: null };
+      couponRef.current = nextCoupon;
+      setCouponDiscountPercent(nextCoupon.discountPercent);
+      setAppliedCoupon(nextCoupon.code);
+      setDiscount(Number(data.discount) || 0);
+    } else {
+      const currentCoupon = couponRef.current;
+      setDiscount(currentCoupon.code ? Number((resolvedSubtotal * currentCoupon.discountPercent / 100).toFixed(2)) : 0);
+    }
+  }, []);
+
+  const loadCart = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    setError("");
+    try {
+      const session = await fetchSession();
+      setUser(session?.user || { id: "guest", guest: true });
+      const cart = await fetchCart();
+      syncCart(cart);
+    } catch (err) {
+      setError(err.message || "بارگذاری سبد خرید ممکن نیست.");
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  }, [syncCart]);
+
+  useEffect(() => {
+    queueMicrotask(loadCart);
+    fetch("/api/shop", { cache: "no-store" }).then((res) => res.json()).then((data) => setRecommended(Array.isArray(data) ? data.slice(0, 4) : [])).catch(() => {});
+  }, [loadCart]);
+
+  useEffect(() => {
+    const handleCartUpdate = (event) => syncCart(event.detail || {});
+    window.addEventListener("weluxo:cart-updated", handleCartUpdate);
+    return () => window.removeEventListener("weluxo:cart-updated", handleCartUpdate);
+  }, [syncCart]);
+
+  useEffect(() => {
+    const handleExitIntent = (event) => {
+      if (event.clientY > 0 || !items.length || !exitCouponCode || window.sessionStorage.getItem("weluxo_exit_offer_seen")) return;
+      window.sessionStorage.setItem("weluxo_exit_offer_seen", "1");
+      setExitOpen(true);
+    };
+    document.addEventListener("mouseleave", handleExitIntent);
+    return () => document.removeEventListener("mouseleave", handleExitIntent);
+  }, [items.length, exitCouponCode]);
+
+  async function handleQuantity(item, delta) {
+    const currentQuantity = Number(item.quantity) || 1;
+    const maxQuantity = Number(item.stock) > 0 ? Number(item.stock) : 99;
+    const nextQuantity = Math.min(maxQuantity, Math.max(1, currentQuantity + delta));
+    if (nextQuantity === currentQuantity) return;
+    setPendingId(item.productId);
+    setItems((current) => current.map((entry) => String(entry.productId) === String(item.productId) ? { ...entry, quantity: nextQuantity } : entry));
+    setSubtotal((current) => current + itemPrice(item) * (nextQuantity - currentQuantity));
+    try {
+      const result = await updateCartItem(item.productId, nextQuantity);
+      syncCart(result);
+    } catch (err) {
+      setError(err.message || "به‌روزرسانی تعداد انجام نشد");
+      await loadCart(false);
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function handleRemove(productId) {
+    const previous = items;
+    setPendingId(productId);
+    setItems((current) => current.filter((item) => String(item.productId) !== String(productId)));
+    setSubtotal((current) => subtotalFor(previous.filter((item) => String(item.productId) !== String(productId))));
+    try {
+      const result = await removeCartItem(productId);
+      syncCart(result);
+    } catch (err) {
+      setError(err.message || "حذف کالا انجام نشد");
+      await loadCart(false);
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function handleSave(item) {
+    setPendingId(item.productId);
+    try {
+      const result = await saveCartItem(item);
+      syncCart(result);
+      setNotice(`${item.title || "محصول"} برای بعد ذخیره شد.`);
+    } catch (err) {
+      setError(err.message || "ذخیره کالا انجام نشد");
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function handleApplyCoupon(event) {
+    event.preventDefault();
+    if (couponLoading) return;
+
+    setCouponLoading(true);
+    setError("");
+    try {
+      const result = await applyCartCoupon(couponCode);
+      const nextCode = result.code || couponCode.trim().toUpperCase();
+      const nextCoupon = { code: nextCode, discountPercent: Number(result.discountPercent) || 0, expiresAt: result.expiresAt || null };
+      couponRef.current = nextCoupon;
+      setCouponDiscountPercent(nextCoupon.discountPercent);
+      setAppliedCoupon(nextCode);
+      setDiscount(Number(result.discount) || 0);
+      updateCheckoutState({ coupon: { ...nextCoupon, discount: Number(result.discount) || 0 } });
+      setNotice(`${result.code || couponCode.toUpperCase()} اعمال شد؛ ${money(result.discount)} صرفه‌جویی کردید.`);
+    } catch (err) {
+      setError(err.message || "اعمال کد تخفیف انجام نشد");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  async function handleEstimateShipping(event) {
+    event.preventDefault();
+    setShippingLoading(true);
+    setError("");
+    try {
+      const result = await estimateCartShipping({ country: shippingCountry, postalCode: shippingPostalCode, method: shippingMethod });
+      setShippingEstimates(result.estimates || initialEstimates);
+      if (result.selected) chooseShippingMethod(result.selected);
+      setNotice("هزینه ارسال به‌روز شد.");
+    } catch (err) {
+      setError(err.message || "محاسبه هزینه ارسال انجام نشد");
+    } finally {
+      setShippingLoading(false);
+    }
+  }
+
+  function chooseShippingMethod(option) {
+    const method = option.logisticName || option.method;
+    setShippingMethod(method);
+    const checkoutState = readCheckoutState();
+    updateCheckoutState({ shipping: {
+      ...checkoutState.shipping,
+      country: shippingCountry,
+      postalCode: shippingPostalCode,
+      method,
+      logisticName: method,
+      label: option.label || method,
+      window: option.window || "",
+      cost: Number(option.cost) || 0,
+      fromCountryCode: option.fromCountryCode || "",
+    } });
+  }
+
+  async function handleRecommendedAdd(product) {
+    const details = productDetails(product);
+    const pendingId = String(details.id || details.slug || details.title);
+    setRecommendedPendingId(pendingId);
+    try {
+      const result = await addToCart({ productId: details.id, title: details.title, price: details.price, image: details.image, quantity: 1 });
+      syncCart(result);
+      setNotice(`${details.title} به سبد خرید اضافه شد.`);
+    } catch (err) {
+      setError(err.message || "افزودن محصول ممکن نیست.");
+    } finally {
+      setRecommendedPendingId(null);
+    }
+  }
+
+  const summary = (
+    <Card sx={{ width: "100%", minWidth: 0, bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", borderRadius: 3, position: { md: "sticky" }, top: { md: 24 } }}>
+      <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+        <Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>خلاصه سفارش</Typography>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 1.25 }}><Typography color="var(--color-text-secondary)">جمع جزء</Typography><Typography>{money(subtotal)}</Typography></Stack>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 1.25 }}><Typography color="var(--color-text-secondary)">ارسال</Typography><Typography color={shippingCost ? "var(--color-text-primary)" : "var(--color-success)"}>{shippingCost ? money(shippingCost) : "رایگان"}</Typography></Stack>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 1.25 }}><Typography color="var(--color-text-secondary)">مالیات</Typography><Typography color="var(--color-text-secondary)">در زمان پرداخت محاسبه می‌شود</Typography></Stack>
+        {discount > 0 && <Stack direction="row" justifyContent="space-between" sx={{ mb: 1.25 }}><Typography color="var(--color-text-secondary)">تخفیف {appliedCoupon && `(${appliedCoupon})`}</Typography><Typography color="var(--color-success)">-{money(discount)}</Typography></Stack>}
+        <Divider sx={{ borderColor: "var(--color-border)", my: 2 }} />
+        <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 2.5 }}><Typography variant="h6" sx={{ fontWeight: 900 }}>مبلغ نهایی</Typography><Typography variant="h5" sx={{ fontWeight: 900 }}>{money(total)}</Typography></Stack>
+        <Button component={Link} href={items.length ? "/checkout" : undefined} disabled={!items.length || loading} fullWidth variant="contained" size="large" sx={{ borderRadius: 999, py: 1.5, fontWeight: 900 }}>{loading ? "در حال بارگذاری سبد..." : "ادامه به تسویه‌حساب"}</Button>
+        <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 1.5, color: "var(--color-text-secondary)" }}><LockOutlined sx={{ fontSize: 17 }} /><Typography variant="caption">تسویه‌حساب امن</Typography></Stack>
+        <TrustSection />
+      </CardContent>
+    </Card>
+  );
+
+  if (loading) {
+    return <PageSkeleton variant="cart" />;
+  }
+
+  return (
+    <Box sx={{ backgroundColor: "var(--color-background)", minHeight: "100vh", color: "var(--color-text-primary)", py: { xs: 3, md: 6 } }}>
+      <Container maxWidth="lg">
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={2} sx={{ mb: 3 }}>
+          <Box>
+            <Link href="/" style={{ color: "var(--color-text-primary)", textDecoration: "none" }}><Typography variant="h5" sx={{ fontWeight: 950, letterSpacing: "-0.04em" }}>Weluxo</Typography></Link>
+            <Typography variant="body2" sx={{ mt: 0.75, color: "var(--color-text-secondary)" }}>سبد خرید امن</Typography>
+          </Box>
+          <Button component={Link} href="/shop" variant="outlined" sx={{ alignSelf: { xs: "stretch", sm: "auto" }, color: "var(--color-primary)", borderColor: "var(--color-primary)", borderRadius: 999 }}>ادامه خرید</Button>
+        </Stack>
+
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))" }, gap: 1.5, mb: 4 }}>
+          {["تسویه‌حساب امن", "ضمانت بازپرداخت", "ارسال سراسری", "پشتیبانی مشتریان"].map((label) => <Stack key={label} direction="row" spacing={0.75} alignItems="center" sx={{ color: "var(--color-text-secondary)" }}><CheckCircleOutline sx={{ fontSize: 17, color: "var(--color-accent)" }} /><Typography variant="caption">{label}</Typography></Stack>)}
+        </Box>
+
+        <Typography variant="h3" sx={{ fontWeight: 950, fontSize: { xs: "2rem", md: "3rem" }, mb: 3 }}>سبد خرید {items.length > 0 && <Typography component="span" sx={{ color: "var(--color-text-secondary)", fontSize: "0.48em", fontWeight: 700 }}>({items.length} {items.length === 1 ? "محصول" : "محصول"})</Typography>}</Typography>
+        {(error || notice) && <Alert severity={error ? "error" : "success"} onClose={() => { setError(""); setNotice(""); }} sx={{ mb: 3 }}>{error || notice}</Alert>}
+
+        {items.length === 0 ? (
+          <Box>
+            <Card sx={{ p: { xs: 4, md: 7 }, textAlign: "center", bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", borderRadius: 4 }}>
+              <ShoppingCartOutlined sx={{ fontSize: 72, color: "var(--color-primary)", mb: 1 }} />
+              <Typography variant="h4" sx={{ fontWeight: 900, mb: 1 }}>سبد خرید شما خالی است</Typography>
+              <Typography sx={{ color: "var(--color-text-secondary)", maxWidth: 430, mx: "auto", mb: 3 }}>Looks like you haven’t added anything yet. Discover something made for your next goal.</Typography>
+              <Button component={Link} href="/shop" variant="contained" size="large" sx={{ borderRadius: 999, px: 4 }}>ادامه خرید</Button>
+            </Card>
+            {!!recommended.length && <Box sx={{ mt: 5 }}><Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>پیشنهادهای مناسب شما</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: 2 }}>{recommended.map((product) => { const details = productDetails(product); const productId = String(details.id || details.slug || details.title); return <RecommendedProductCard key={productId} product={product} details={details} onAdd={handleRecommendedAdd} adding={recommendedPendingId === productId} />; })}</Box></Box>}
+          </Box>
+        ) : (
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0, 7fr) minmax(320px, 3fr)" }, gap: 3, alignItems: "start" }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Alert severity="info" sx={{ mb: 2 }}>هزینه ارسال بر اساس سبد خرید و مقصد شما محاسبه می‌شود.</Alert>
+              <Stack spacing={2}>{items.map((item) => <CartItem key={item.productId} item={item} pending={pendingId === item.productId} onQuantity={handleQuantity} onRemove={handleRemove} onSave={handleSave} />)}</Stack>
+
+              <Card sx={{ mt: 2, bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)" }}><CardContent><Typography variant="h6" sx={{ fontWeight: 850, mb: 1 }}>کد تخفیف دارید؟</Typography><Box component="form" onSubmit={handleApplyCoupon} sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}><TextField size="small" value={couponCode} onChange={(event) => setCouponCode(event.target.value)} placeholder="کد تخفیف را وارد کنید" disabled={couponLoading} sx={{ flex: "1 1 220px" }} /><Button type="submit" variant="outlined" disabled={couponLoading} aria-busy={couponLoading} startIcon={couponLoading ? <CircularProgress size={16} color="inherit" aria-label="در حال اعمال کد تخفیف" /> : undefined} sx={{ color: "var(--color-primary)", borderColor: "var(--color-primary)", borderRadius: 2, minWidth: 88 }}>{couponLoading ? "در حال اعمال..." : "اعمال"}</Button></Box>{appliedCoupon && <Typography variant="body2" sx={{ mt: 1.25, color: "var(--color-success)" }}>{appliedCoupon} · {couponDiscountPercent}% تخفیف اعمال شد</Typography>}</CardContent></Card>
+
+              <Card sx={{ mt: 2, bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)" }}><CardContent><Typography variant="h6" sx={{ fontWeight: 850, mb: 1 }}>محاسبه هزینه ارسال</Typography><Box component="form" onSubmit={handleEstimateShipping} sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr auto" }, gap: 1.5, alignItems: "start" }}><TextField select size="small" label="کشور" value={shippingCountry} onChange={(event) => setShippingCountry(event.target.value)}>{countryOptions.map((country) => <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>)}</TextField><TextField size="small" label="کد پستی" value={shippingPostalCode} onChange={(event) => setShippingPostalCode(event.target.value)} /><Button type="submit" variant="contained" disabled={shippingLoading} sx={{ borderRadius: 2, minHeight: 40 }}>{shippingLoading ? "در حال محاسبه..." : "محاسبه"}</Button></Box><Stack spacing={1} sx={{ mt: 2 }}>{shippingEstimates.map((estimate) => <Button key={estimate.method} onClick={() => chooseShippingMethod(estimate)} sx={{ justifyContent: "space-between", textAlign: "right", color: "var(--color-text-primary)", p: 1.5, borderRadius: 2, border: shippingMethod === estimate.method ? "1px solid var(--color-primary)" : "1px solid var(--color-border)", bgcolor: shippingMethod === estimate.method ? "var(--color-primary-soft)" : "transparent" }}><Box><Typography variant="body2" sx={{ fontWeight: 800 }}>{estimate.label}</Typography><Typography variant="caption" sx={{ color: "var(--color-text-secondary)" }}>{estimate.window}</Typography></Box><Typography>{estimate.cost ? money(estimate.cost) : "رایگان"}</Typography></Button>)}</Stack></CardContent></Card>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>{summary}</Box>
+            {!!recommended.length && <Box sx={{ gridColumn: { md: "1 / -1" }, mt: 2 }}><Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>محصولات پیشنهادی همراه</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: 2 }}>{recommended.map((product) => { const details = productDetails(product); return <RecommendedProductCard key={`frequent-${details.id || details.title}`} product={product} details={details} onAdd={handleRecommendedAdd} />; })}</Box></Box>}
+          </Box>
+        )}
+      </Container>
+
+      {exitCouponCode && <Dialog open={exitOpen} onClose={() => setExitOpen(false)} PaperProps={{ sx: { borderRadius: 3, p: 1 } }}><DialogTitle sx={{ fontWeight: 900 }}>{siteSettings.welcomePopupTitle}</DialogTitle><DialogContent><Typography color="text.secondary">{siteSettings.welcomePopupDescription} کد {exitCouponCode} را هنگام پرداخت وارد کنید.</Typography></DialogContent><DialogActions><Button onClick={() => setExitOpen(false)}>ادامه مرور</Button><Button variant="contained" onClick={async () => { try { const result = await applyCartCoupon(exitCouponCode); const nextCoupon = { code: result.code || exitCouponCode, discountPercent: Number(result.discountPercent) || 0, expiresAt: result.expiresAt || null }; couponRef.current = nextCoupon; setCouponDiscountPercent(nextCoupon.discountPercent); setCouponCode(exitCouponCode); setAppliedCoupon(nextCoupon.code); setDiscount(Number(result.discount) || 0); updateCheckoutState({ coupon: { ...nextCoupon, discount: Number(result.discount) || 0 } }); setNotice(`کد ${exitCouponCode} اعمال شد و تخفیف شما آماده است.`); } catch (err) { setError(err.message || "اعمال تخفیف ممکن نیست"); } setExitOpen(false); }}>{siteSettings.welcomePopupButtonLabel || "اعمال تخفیف"}</Button></DialogActions></Dialog>}
+    </Box>
+  );
+}

@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Next.js / React build output
+.fnext/
+.next/
+out/
+build/
+
+# Environment files
+.env*
+!.env.example
+!**/.env.example
+
+# Certificates and credential files
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*service-account*.json
+secrets/
+**/secrets/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Uploads / runtime artifacts
+public/uploads/*
+!public/uploads/.gitkeep
+bend/private_uploads/
+
+# Temporary files
+.tmp/
+tmp/
+!bend/TMp/
+!bend/TMp/create_checkout_attempts.sql
