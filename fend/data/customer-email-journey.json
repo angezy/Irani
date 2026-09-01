@@ -6,7 +6,7 @@
     {
       "key": "welcome",
       "number": "01",
-      "stage": "خوشامدگویی",
+      "stage": "Welcome",
       "triggerKey": "account_created",
       "triggerKeys": ["account_created", "email_opt_in"],
       "trigger": "ایجاد حساب یا موافقت با دریافت ایمیل",

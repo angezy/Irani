@@ -16,6 +16,7 @@ const { revokeAllUserSessions } = require('../utils/sessionSecurity');
 const { requirePermission } = require('../utils/rbac');
 const { recordSecurityEvent } = require('../utils/securityAudit');
 const { readIntegrationConfig, saveIntegrationValues } = require('../utils/integrationConfig');
+const { readAIKnowledge, writeAIKnowledge } = require('../utils/aiKnowledge');
 
 const FONT_UPLOAD_FORMATS = new Set(['woff2', 'woff', 'ttf', 'otf']);
 const fontUploadsDir = path.join(__dirname, '..', 'public', 'uploads', 'fonts');
@@ -58,6 +59,25 @@ const requireStaffManage = requirePermission('staff.manage', 'dashboardUser');
 const requireSettingsManage = requirePermission('settings.manage', 'dashboardUser');
 const requireMarketingManage = requirePermission('marketing.manage', 'dashboardUser');
 const requireCouponsManage = requirePermission('coupons.manage', 'dashboardUser');
+const requireContentManage = requirePermission('content.manage', 'dashboardUser');
+
+// Compatibility endpoints for deployments that route /api directly to
+// Express. The canonical implementation lives in the Next.js frontend.
+router.get('/api/dashboard/ai-knowledge', requireContentManage, async (_req, res) => {
+  res.set('Cache-Control', 'private, no-store');
+  res.json(await readAIKnowledge());
+});
+
+router.put('/api/dashboard/ai-knowledge', requireContentManage, async (req, res) => {
+  if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'Knowledge content is required' });
+  try {
+    res.set('Cache-Control', 'private, no-store');
+    res.json({ ok: true, knowledge: await writeAIKnowledge(req.body) });
+  } catch (error) {
+    console.error('/api/dashboard/ai-knowledge PUT error:', error);
+    res.status(500).json({ error: 'Unable to save AI knowledge' });
+  }
+});
 
 // Integration environment configuration ---------------------------------
 router.get('/api/dashboard/integrations', requirePermission('integrations.manage', 'dashboardUser'), (_req, res) => {
@@ -189,9 +209,9 @@ router.patch('/api/dashboard/coupons/:couponId', requireCouponsManage, async (re
 });
 
 const SITE_SETTING_DEFAULTS = {
-  siteName: process.env.STORE_NAME || 'Your Store',
-  siteDescription: `${process.env.STORE_NAME || 'Your Store'} - Your online store.`,
-  siteTagline: 'Shop with confidence',
+  siteName: process.env.STORE_NAME || 'فروشگاه ایرانی',
+  siteDescription: `${process.env.STORE_NAME || 'فروشگاه ایرانی'} - فروشگاه آنلاین شما.`,
+  siteTagline: 'با اطمینان خرید کنید',
   siteUrl: process.env.STORE_URL || process.env.FRONTEND_URL || 'http://localhost:3000',
   siteKeywords: 'online shop, lifestyle products, performance gear',
   siteLogoUrl: '',
@@ -224,12 +244,12 @@ const SITE_SETTING_DEFAULTS = {
   errorColor: '#c94a4a',
   supportEmail: process.env.SUPPORT_EMAIL || 'support@example.com',
   supportPhone: '',
-  supportHours: 'Support available within 24-48 hours',
+  supportHours: 'پشتیبانی در کمتر از ۲۴ تا ۴۸ ساعت پاسخ می‌دهد',
   welcomePopupEnabled: false,
   welcomePopupEyebrow: 'NEW CUSTOMER WELCOME',
-  welcomePopupTitle: 'Welcome to our store',
-  welcomePopupDescription: 'Configure a welcome offer from the owner dashboard when you are ready.',
-  welcomePopupButtonLabel: 'Start shopping',
+  welcomePopupTitle: 'به فروشگاه ما خوش آمدید',
+  welcomePopupDescription: 'پیشنهاد خوشامدگویی را از داشبورد مدیریت تنظیم کنید.',
+  welcomePopupButtonLabel: 'شروع خرید',
   welcomePopupCouponCode: '',
   welcomePopupFinePrint: '',
 };

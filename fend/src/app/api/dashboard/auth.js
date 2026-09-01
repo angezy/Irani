@@ -28,28 +28,28 @@ export async function requireDashboardAdmin(permission = "dashboard.view") {
     host ? `${protocol}://${host}` : null,
   ].map((value) => String(value || "").trim().replace(/\/$/, "")).filter(Boolean));
   if (!origin || !allowedOrigins.has(origin.replace(/\/$/, ""))) {
-    return Response.json({ error: "Request origin could not be verified" }, { status: 403 });
+    return Response.json({ error: "مبدأ درخواست تأیید نشد" }, { status: 403 });
   }
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_COOKIE_NAME)?.value;
   const user = token ? verifyToken(token) : null;
   const role = normalizeRole(user?.role || user?.accountRole);
   if (!user || !["owner", "admin"].includes(role)) {
-    return Response.json({ error: "Staff dashboard access required" }, { status: 401 });
+    return Response.json({ error: "دسترسی کارکنان به داشبورد لازم است" }, { status: 401 });
   }
   if (!hasDashboardPermission(role, permission)) {
-    return Response.json({ error: "You do not have permission to perform this action", code: "FORBIDDEN" }, { status: 403 });
+    return Response.json({ error: "شما اجازه انجام این کار را ندارید", code: "FORBIDDEN" }, { status: 403 });
   }
   const backendUrl = String(process.env.BACKEND_URL || "").trim().replace(/\/$/, "");
-  if (!backendUrl) return Response.json({ error: "Session validation is unavailable" }, { status: 503 });
+  if (!backendUrl) return Response.json({ error: "اعتبارسنجی نشست در دسترس نیست" }, { status: 503 });
   try {
     const validation = await fetch(`${backendUrl}/api/session/validate?role=admin`, {
       headers: { cookie: `${ADMIN_COOKIE_NAME}=${encodeURIComponent(token)}` },
       cache: "no-store",
     });
-    if (!validation.ok) return Response.json({ error: "Admin session is invalid or revoked" }, { status: 401 });
+    if (!validation.ok) return Response.json({ error: "نشست مدیر نامعتبر یا لغوشده است" }, { status: 401 });
   } catch (_error) {
-    return Response.json({ error: "Session validation is unavailable" }, { status: 503 });
+    return Response.json({ error: "اعتبارسنجی نشست در دسترس نیست" }, { status: 503 });
   }
   return null;
 }

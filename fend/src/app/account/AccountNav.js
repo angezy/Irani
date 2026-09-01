@@ -16,7 +16,7 @@ export default function AccountNav({ links }) {
             <Link className={`${styles.sidebarLink} ${active ? styles.sidebarLinkActive : ""}`} href={link.href} aria-current={active ? "page" : undefined}>
               <span className={styles.navIndex} aria-hidden="true">{link.index}</span>
               <span>{link.label}</span>
-              <span className={styles.navArrow} aria-hidden="true">→</span>
+              <span className={styles.navArrow} aria-hidden="true">←</span>
             </Link>
           </li>
         );

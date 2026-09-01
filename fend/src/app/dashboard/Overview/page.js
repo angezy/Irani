@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./overview.module.css";
 import PageSkeleton from "../../components/LoadingSkeletons";
+import { translateStatus } from "../../lib/statusLabels";
 
 const RANGE_OPTIONS = [
   ["today", "امروز"],
@@ -225,7 +226,7 @@ function TimeSeriesChart({ points, metric, currency }) {
 
   return (
     <div className={styles.timeSeries}>
-      <svg className={styles.timeSeriesSvg} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${metric === "orders" ? "Orders" : "Revenue"} by day`}>
+      <svg className={styles.timeSeriesSvg} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${metric === "orders" ? "سفارش‌ها" : "درآمد"} به تفکیک روز`}>
         <defs>
           <linearGradient id={`trend-fill-${metric}`} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor={COLORS.blue} stopOpacity=".24" />
@@ -315,13 +316,13 @@ export default function Overview() {
       const response = await fetch(`/api/admin/overview?${query}`, { credentials: "include", cache: "no-store" });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const requestError = new Error(payload.error || `Overview request failed (${response.status})`);
+        const requestError = new Error(payload.error || `دریافت گزارش کلی ناموفق بود (${response.status})`);
         requestError.code = payload.code || "";
         throw requestError;
       }
       setData(payload);
     } catch (requestError) {
-      setError(requestError.message || "Unable to load dashboard metrics");
+      setError(/[\u0600-\u06ff]/.test(String(requestError.message || "")) ? requestError.message : "بارگذاری شاخص‌های داشبورد ممکن نیست");
       setErrorCode(requestError.code || "");
     } finally {
       setLoading(false);
@@ -361,7 +362,7 @@ export default function Overview() {
         {filters.range === "custom" && <label>تا<input type="date" value={filters.to} onChange={setFilter("to")} /></label>}
         <label>واحد پول<input value={filters.currency} maxLength={3} onChange={setFilter("currency")} placeholder="IRR" /></label>
         <label>کشور<input value={filters.country} maxLength={2} onChange={setFilter("country")} placeholder="همه" /></label>
-        <label>وضعیت سفارش<select value={filters.orderStatus} onChange={setFilter("orderStatus")}><option value="">همه</option><option>Pending</option><option>Processing</option><option>Completed</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></label>
+        <label>وضعیت سفارش<select value={filters.orderStatus} onChange={setFilter("orderStatus")}><option value="">همه</option><option value="Pending">در انتظار</option><option value="Processing">در حال پردازش</option><option value="Completed">تکمیل‌شده</option><option value="Shipped">ارسال‌شده</option><option value="Delivered">تحویل‌شده</option><option value="Cancelled">لغوشده</option></select></label>
       </section>
 
       {error && <div className={styles.error}><strong>{errorCode === "CANONICAL_SCHEMA_NOT_READY" ? "ارتقای پایگاه داده لازم است." : "داشبورد در دسترس نیست."}</strong> {error}<button type="button" onClick={loadOverview}>تلاش دوباره</button></div>}
@@ -381,7 +382,7 @@ export default function Overview() {
                 <button type="button" className={trendMetric === "revenue" ? styles.activeTrend : ""} onClick={() => setTrendMetric("revenue")}>درآمد</button>
                 <button type="button" className={trendMetric === "orders" ? styles.activeTrend : ""} onClick={() => setTrendMetric("orders")}>سفارش‌ها</button>
               </div>
-              <span className={styles.trendPeriod}>{RANGE_OPTIONS.find(([value]) => value === filters.range)?.[1] || "Selected period"}</span>
+              <span className={styles.trendPeriod}>{RANGE_OPTIONS.find(([value]) => value === filters.range)?.[1] || "بازه انتخاب‌شده"}</span>
             </div>
             <TimeSeriesChart points={dailySeries} metric={trendMetric} currency={currency} />
           </ChartPanel>
@@ -429,7 +430,7 @@ export default function Overview() {
                 { label: "محصولات پیش‌نویس", value: data.products.draftProducts, color: COLORS.violet, href: drill("/dashboard/products", { status: "Draft" }) }
               ]}
               centerValue={number(data.products.activeProducts + data.products.draftProducts)}
-              centerLabel="catalog products"
+              centerLabel="محصول کاتالوگ"
             />
           </ChartPanel>
           <ChartPanel title="ریسک موجودی" subtitle="تنوع‌هایی که ممکن است موجودی را مختل کنند." href={drill("/dashboard/products", { stock: "low" })}>
@@ -438,8 +439,8 @@ export default function Overview() {
               { label: "تنوع‌های ناموجود", value: data.products.outOfStockProducts, color: COLORS.rose, href: drill("/dashboard/products", { stock: "out" }) }
             ]} />
             <div className={styles.insightRow}>
-              <InlineInsight label="Inventory cost" value={money(data.products.inventoryCost, currency)} tone="amber" />
-              <InlineInsight label="Profit potential" value={money(data.products.inventoryProfitPotential, currency)} tone="green" />
+              <InlineInsight label="هزینه موجودی" value={money(data.products.inventoryCost, currency)} tone="amber" />
+              <InlineInsight label="ظرفیت سود" value={money(data.products.inventoryProfitPotential, currency)} tone="green" />
             </div>
           </ChartPanel>
           <ChartPanel title="ارزش موجودی" subtitle="هزینه فعلی، ارزش فروش و حاشیه سود تحقق‌نیافته." href={drill("/dashboard/products", { view: "inventory-cost" })}>
@@ -539,7 +540,7 @@ export default function Overview() {
         <section className={styles.detailGrid}>
           <article className={styles.tablePanel}><h2>محصولات برتر</h2>{data.products.topProducts?.length ? <div className={styles.rows}>{data.products.topProducts.map(item => <Link key={item.id} href={drill("/dashboard/products", { product: item.id })}><span><strong>{item.name}</strong><small>{item.sku || "بدون شناسه"} · {number(item.units, 2)} عدد</small></span><b>{money(item.revenue, currency)}</b></Link>)}</div> : <EmptyRows>فروشی با فیلترهای انتخاب‌شده مطابقت ندارد.</EmptyRows>}</article>
           <article className={styles.tablePanel}><h2>مشتریان برتر</h2>{data.customers.topCustomers?.length ? <div className={styles.rows}>{data.customers.topCustomers.map(item => <Link key={item.id} href={drill("/dashboard/user", { customer: item.id })}><span><strong>{item.displayName}</strong><small>{item.customerNumber} · {number(item.orders)} سفارش</small></span><b>{money(item.lifetimeValue, currency)}</b></Link>)}</div> : <EmptyRows>مشتری‌ای با فیلترهای انتخاب‌شده مطابقت ندارد.</EmptyRows>}</article>
-          <article className={styles.tablePanel}><h2>تیکت‌های اخیر پشتیبانی</h2>{data.support.recentTickets?.length ? <div className={styles.rows}>{data.support.recentTickets.map(item => <Link key={item.id} href={`/dashboard/tikects?ticket=${item.id}`}><span><strong>{item.subject}</strong><small>{item.ticketNumber} · {item.priority}</small></span><b>{item.status}</b></Link>)}</div> : <EmptyRows>تیکت پشتیبانی‌ای پیدا نشد.</EmptyRows>}</article>
+          <article className={styles.tablePanel}><h2>تیکت‌های اخیر پشتیبانی</h2>{data.support.recentTickets?.length ? <div className={styles.rows}>{data.support.recentTickets.map(item => <Link key={item.id} href={`/dashboard/tikects?ticket=${item.id}`}><span><strong>{item.subject}</strong><small>{item.ticketNumber} · {translateStatus(item.priority, "اولویت عادی")}</small></span><b>{translateStatus(item.status, "باز")}</b></Link>)}</div> : <EmptyRows>تیکت پشتیبانی‌ای پیدا نشد.</EmptyRows>}</article>
           <article className={styles.tablePanel}><h2>مشتریان بر اساس سطح وفاداری</h2>{data.loyalty.customersByTier?.length ? <div className={styles.rows}>{data.loyalty.customersByTier.map(item => <Link key={item.tier} href={drill("/dashboard/loyalty", { tier: item.tier })}><span><strong>{item.tier}</strong><small>اعضای باشگاه وفاداری</small></span><b>{number(item.customers)}</b></Link>)}</div> : <EmptyRows>حساب وفاداری‌ای پیدا نشد.</EmptyRows>}</article>
         </section>
       </>}

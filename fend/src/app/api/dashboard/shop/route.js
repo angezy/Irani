@@ -9,16 +9,16 @@ const dataPath = path.join(process.cwd(), "data", "shop.json");
 
 const DEFAULT_CONTENT = {
   hero: {
-    title: "Shop the Collection",
-    description: "Discover curated essentials, trending drops, and limited releases tailored to your lifestyle.",
+    title: "مجموعه محصولات را ببینید",
+    description: "محصولات منتخب و کاربردی را برای سبک زندگی خود پیدا کنید.",
     backgroundImage:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
     backgroundPosition: "center",
   },
-  searchPlaceholder: "Search products",
-  ctaText: "Start Shopping",
-  catalogTitle: "Browse products",
-  emptyMessage: "No products match your search.",
+  searchPlaceholder: "جست‌وجوی محصولات",
+  ctaText: "شروع خرید",
+  catalogTitle: "مرور محصولات",
+  emptyMessage: "محصولی با جست‌وجوی شما پیدا نشد.",
   categoryLimit: 6,
 };
 
@@ -51,13 +51,13 @@ export async function POST(req) {
   try {
     const body = await req.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
     await ensureFile();
     await fs.writeFile(dataPath, JSON.stringify(body.content, null, 2), "utf8");
     return NextResponse.json({ ok: true, content: body.content });
   } catch (err) {
     console.error("shop content write error", err);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

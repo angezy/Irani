@@ -33,10 +33,13 @@ import {
 } from "@mui/material";
 import { toast } from "../../lib/notifications";
 
+const roleLabels = { customer: "مشتری", admin: "مدیر", owner: "مالک" };
+const localizedError = (value, fallback) => /[\u0600-\u06ff]/.test(String(value || "")) ? value : fallback;
+
 function formatDate(value) {
   if (!value) return "-";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString("fa-IR");
 }
 
 const display = (value) => {
@@ -64,11 +67,11 @@ export default function UsersPage() {
     setError(null);
     try {
       const res = await fetch("/api/dashboard/users", { credentials: "include" });
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      if (!res.ok) throw new Error("بارگذاری کاربران ممکن نیست.");
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message || "Unable to load users");
+      setError(localizedError(err.message, "بارگذاری کاربران ممکن نیست."));
     } finally {
       setLoading(false);
     }
@@ -94,14 +97,14 @@ export default function UsersPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.error || data.message || "Admin creation failed");
+        throw new Error(localizedError(data.error || data.message, "ایجاد حساب مدیر ممکن نیست."));
       }
-      toast.success("Admin created");
+      toast.success("حساب مدیر ایجاد شد.");
       setAdminForm({ username: "", email: "", password: "" });
       setCreateAdminOpen(false);
       await fetchUsers();
     } catch (err) {
-      toast.error("Admin creation failed", { description: err.message || "Please try again." });
+      toast.error("ایجاد حساب مدیر ممکن نیست.", { description: localizedError(err.message, "دوباره تلاش کنید.") });
     } finally {
       setCreatingAdmin(false);
     }
@@ -114,17 +117,17 @@ export default function UsersPage() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
         <div>
           <Typography variant="h4" fontWeight="bold">
-            Users
+            کاربران
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            All registered users with their roles and activity.
+            همه کاربران ثبت‌نام‌شده و نقش‌ها و فعالیت آن‌ها.
           </Typography>
         </div>
         <Stack direction="row" spacing={1.5} alignItems="center">
           {!loading && (
-            <Chip label={`${users.length} total`} color="primary" variant="outlined" size="small" />
+            <Chip label={`${users.length} کاربر`} color="primary" variant="outlined" size="small" />
           )}
-          {canManageStaff && <Button variant="contained" onClick={() => setCreateAdminOpen(true)}>Create admin</Button>}
+          {canManageStaff && <Button variant="contained" onClick={() => setCreateAdminOpen(true)}>ایجاد مدیر</Button>}
         </Stack>
       </Stack>
 
@@ -139,13 +142,13 @@ export default function UsersPage() {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Last Login</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>کاربر</TableCell>
+              <TableCell>ایمیل</TableCell>
+              <TableCell>نقش</TableCell>
+              <TableCell>تاریخ ایجاد</TableCell>
+              <TableCell>آخرین ورود</TableCell>
+              <TableCell>وضعیت</TableCell>
+              <TableCell align="right">عملیات</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -168,14 +171,14 @@ export default function UsersPage() {
                       <Stack direction="row" spacing={1.5} alignItems="center">
                         <Avatar
                           src={user.avatar || undefined}
-                          alt={user.username || user.name || "User"}
+                          alt={user.username || user.name || "کاربر"}
                           sx={{ width: 36, height: 36 }}
                         >
                           {(user.username || user.name || user.email || "U").slice(0, 1).toUpperCase()}
                         </Avatar>
                         <div>
                           <Typography fontWeight="bold" variant="body2">
-                            {user.username || user.name || "Unnamed"}
+                            {user.username || user.name || "بدون نام"}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             ID: {user.id ?? "?"}
@@ -186,7 +189,7 @@ export default function UsersPage() {
                     <TableCell>{user.email || "-"}</TableCell>
                     <TableCell>
                       <Chip
-                        label={user.role || "user"}
+                        label={roleLabels[user.role] || user.role || "کاربر"}
                         size="small"
                         color={user.role === "owner" ? "warning" : user.role === "admin" ? "primary" : "default"}
                         variant={user.role === "owner" || user.role === "admin" ? "filled" : "outlined"}
@@ -196,7 +199,7 @@ export default function UsersPage() {
                     <TableCell>{formatDate(user.lastLogin)}</TableCell>
                     <TableCell>
                       <Chip
-                        label={user.banned ? "Banned" : "Active"}
+                        label={user.banned ? "مسدود" : "فعال"}
                         size="small"
                         color={user.banned ? "error" : "success"}
                         variant={user.banned ? "filled" : "outlined"}
@@ -219,7 +222,7 @@ export default function UsersPage() {
                           });
                         }}
                       >
-                        Manage
+                        مدیریت
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -228,7 +231,7 @@ export default function UsersPage() {
               <TableRow>
                 <TableCell colSpan={5}>
                   <Typography align="center" color="text.secondary" py={2}>
-                    No users found.
+                    کاربری پیدا نشد.
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -244,14 +247,14 @@ export default function UsersPage() {
         fullWidth
       >
         <Box component="form" onSubmit={handleCreateAdmin}>
-          <DialogTitle>Create admin</DialogTitle>
+          <DialogTitle>ایجاد حساب مدیر</DialogTitle>
           <DialogContent dividers>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <Typography variant="body2" color="text.secondary">
-                Add an administrator with access to the dashboard.
+                مدیری با دسترسی به داشبورد اضافه کنید.
               </Typography>
               <TextField
-                label="Username"
+                label="نام کاربری"
                 value={adminForm.username}
                 onChange={(event) => setAdminForm((prev) => ({ ...prev, username: event.target.value }))}
                 autoComplete="username"
@@ -260,7 +263,7 @@ export default function UsersPage() {
                 disabled={creatingAdmin}
               />
               <TextField
-                label="Email"
+                label="ایمیل"
                 type="email"
                 value={adminForm.email}
                 onChange={(event) => setAdminForm((prev) => ({ ...prev, email: event.target.value }))}
@@ -270,7 +273,7 @@ export default function UsersPage() {
                 disabled={creatingAdmin}
               />
               <TextField
-                label="Password"
+                label="گذرواژه"
                 type="password"
                 value={adminForm.password}
                 onChange={(event) => setAdminForm((prev) => ({ ...prev, password: event.target.value }))}
@@ -283,30 +286,30 @@ export default function UsersPage() {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setCreateAdminOpen(false)} disabled={creatingAdmin}>
-              Cancel
+              انصراف
             </Button>
             <Button type="submit" variant="contained" disabled={creatingAdmin}>
-              {creatingAdmin ? "Creating..." : "Create admin"}
+              {creatingAdmin ? "در حال ایجاد…" : "ایجاد مدیر"}
             </Button>
           </DialogActions>
         </Box>
       </Dialog>
 
       <Dialog open={!!selected} onClose={() => setSelected(null)} maxWidth="sm" fullWidth>
-        <DialogTitle>User details</DialogTitle>
+        <DialogTitle>جزئیات کاربر</DialogTitle>
         <DialogContent dividers>
           {selected ? (
             <Stack spacing={2}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar
                   src={selected.avatar || undefined}
-                  alt={selected.username || selected.name || "User"}
+                  alt={selected.username || selected.name || "کاربر"}
                   sx={{ width: 48, height: 48 }}
                 >
-                  {(selected.username || selected.name || selected.email || "U").slice(0, 1).toUpperCase()}
+                  {(selected.username || selected.name || selected.email || "ک").slice(0, 1).toUpperCase()}
                 </Avatar>
                 <div>
-                  <Typography variant="h6">{selected.username || selected.name || "User"}</Typography>
+                  <Typography variant="h6">{selected.username || selected.name || "کاربر"}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     ID: {selected.id ?? "-"}
                   </Typography>
@@ -323,7 +326,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Email
+                      ایمیل
                     </Typography>
                     <Typography variant="body1">{display(selected.email)}</Typography>
                   </MuiStack>
@@ -335,7 +338,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Role
+                      نقش
                     </Typography>
                     <Select
                       size="small"
@@ -344,9 +347,9 @@ export default function UsersPage() {
                       disabled={!canManageStaff}
                       fullWidth
                     >
-                      <MenuItem value="customer">Customer</MenuItem>
-                      <MenuItem value="admin">Admin</MenuItem>
-                      <MenuItem value="owner">Owner</MenuItem>
+                      <MenuItem value="customer">مشتری</MenuItem>
+                      <MenuItem value="admin">مدیر</MenuItem>
+                      <MenuItem value="owner">مالک</MenuItem>
                     </Select>
                   </MuiStack>
                 </Grid>
@@ -358,12 +361,12 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Country / State
+                      کشور / استان
                     </Typography>
                     <Stack direction="row" spacing={1}>
                       <TextField
                         size="small"
-                        placeholder="Country"
+                        placeholder="کشور"
                         value={edit?.country || ""}
                         onChange={(e) => setEdit((prev) => ({ ...prev, country: e.target.value }))}
                         disabled={!canManageStaff}
@@ -371,7 +374,7 @@ export default function UsersPage() {
                       />
                       <TextField
                         size="small"
-                        placeholder="State"
+                        placeholder="استان"
                         value={edit?.state || ""}
                         onChange={(e) => setEdit((prev) => ({ ...prev, state: e.target.value }))}
                         disabled={!canManageStaff}
@@ -387,12 +390,12 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      City / ZIP
+                      شهر / کدپستی
                     </Typography>
                     <Stack direction="row" spacing={1}>
                       <TextField
                         size="small"
-                        placeholder="City"
+                        placeholder="شهر"
                         value={edit?.city || ""}
                         onChange={(e) => setEdit((prev) => ({ ...prev, city: e.target.value }))}
                         disabled={!canManageStaff}
@@ -400,7 +403,7 @@ export default function UsersPage() {
                       />
                       <TextField
                         size="small"
-                        placeholder="ZIP"
+                        placeholder="کدپستی"
                         value={edit?.zip || ""}
                         onChange={(e) => setEdit((prev) => ({ ...prev, zip: e.target.value }))}
                         disabled={!canManageStaff}
@@ -413,11 +416,11 @@ export default function UsersPage() {
                 <Grid size={12}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Address
+                      نشانی
                     </Typography>
                     <TextField
                       size="small"
-                      placeholder="Address"
+                      placeholder="نشانی"
                       value={edit?.address || ""}
                       onChange={(e) => setEdit((prev) => ({ ...prev, address: e.target.value }))}
                       disabled={!canManageStaff}
@@ -433,7 +436,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Created At
+                      تاریخ ایجاد
                     </Typography>
                     <Typography variant="body1">{formatDate(selected.createdAt)}</Typography>
                   </MuiStack>
@@ -445,7 +448,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Last Login
+                      آخرین ورود
                     </Typography>
                     <Typography variant="body1">{formatDate(selected.lastLogin)}</Typography>
                   </MuiStack>
@@ -464,7 +467,7 @@ export default function UsersPage() {
                         disabled={!canManageStaff}
                       />
                     }
-                    label={edit?.banned ? "Banned" : "Active"}
+                    label={edit?.banned ? "مسدود" : "فعال"}
                   />
                 </Grid>
 
@@ -475,7 +478,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Signup IP
+                      IP ثبت‌نام
                     </Typography>
                     <Typography variant="body1">{display(selected.signupIp)}</Typography>
                   </MuiStack>
@@ -487,7 +490,7 @@ export default function UsersPage() {
                   }}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Last IP
+                      آخرین IP
                     </Typography>
                     <Typography variant="body1">{display(selected.lastIp)}</Typography>
                   </MuiStack>
@@ -496,9 +499,9 @@ export default function UsersPage() {
                 <Grid size={12}>
                   <MuiStack spacing={0.5}>
                     <Typography variant="body2" color="text.secondary">
-                      Orders
+                      سفارش‌ها
                     </Typography>
-                    <Typography variant="body1">{selected.orderCount ?? 0} orders</Typography>
+                    <Typography variant="body1">{selected.orderCount ?? 0} سفارش</Typography>
                   </MuiStack>
                 </Grid>
               </Grid>
@@ -511,7 +514,7 @@ export default function UsersPage() {
             disabled={deleting}
             onClick={async () => {
               if (!selected) return;
-              const confirmDelete = window.confirm("Delete this user? This cannot be undone.");
+              const confirmDelete = window.confirm("این کاربر حذف شود؟ این کار قابل بازگشت نیست.");
               if (!confirmDelete) return;
               setDeleting(true);
               try {
@@ -521,20 +524,20 @@ export default function UsersPage() {
                 });
                 if (!res.ok) {
                   const data = await res.json().catch(() => ({}));
-                  throw new Error(data.error || data.message || `Delete failed (${res.status})`);
+                  throw new Error(localizedError(data.error || data.message, "حذف کاربر ممکن نیست."));
                 }
                 await fetchUsers();
                 setSelected(null);
               } catch (err) {
-                alert(err.message || "Delete failed");
+                alert(localizedError(err.message, "حذف کاربر ممکن نیست."));
               } finally {
                 setDeleting(false);
               }
             }}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? "در حال حذف…" : "حذف"}
           </Button>}
-          <Button onClick={() => setSelected(null)}>Close</Button>
+          <Button onClick={() => setSelected(null)}>بستن</Button>
           {canManageStaff && <Button
             variant="contained"
             disabled={saving}
@@ -550,18 +553,18 @@ export default function UsersPage() {
                 });
                 if (!res.ok) {
                   const data = await res.json().catch(() => ({}));
-                  throw new Error(data.error || data.message || `Update failed (${res.status})`);
+                  throw new Error(localizedError(data.error || data.message, "به‌روزرسانی کاربر ممکن نیست."));
                 }
                 await fetchUsers();
                 setSelected(null);
               } catch (err) {
-                alert(err.message || "Update failed");
+                alert(localizedError(err.message, "به‌روزرسانی کاربر ممکن نیست."));
               } finally {
                 setSaving(false);
               }
             }}
           >
-            {saving ? "Saving..." : "Save changes"}
+            {saving ? "در حال ذخیره…" : "ذخیره تغییرات"}
           </Button>}
         </DialogActions>
       </Dialog>

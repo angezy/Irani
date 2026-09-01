@@ -31,7 +31,7 @@ async function readContent(slug) {
 export async function GET(_request, { params }) {
   const { slug } = await params;
   const content = await readContent(slug);
-  if (!content) return NextResponse.json({ error: "Legal page not found" }, { status: 404 });
+  if (!content) return NextResponse.json({ error: "صفحه حقوقی پیدا نشد" }, { status: 404 });
   return NextResponse.json(content);
 }
 
@@ -40,17 +40,17 @@ export async function POST(request, { params }) {
   if (authError) return authError;
   const { slug } = await params;
   const dataPath = getDataPath(slug);
-  if (!dataPath) return NextResponse.json({ error: "Legal page not found" }, { status: 404 });
+  if (!dataPath) return NextResponse.json({ error: "صفحه حقوقی پیدا نشد" }, { status: 404 });
 
   try {
     const body = await request.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
     await fs.writeFile(dataPath, JSON.stringify(body.content, null, 2), "utf8");
     return NextResponse.json({ ok: true, content: body.content });
   } catch (err) {
     console.error(`${slug} content write error`, err);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

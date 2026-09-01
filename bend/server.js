@@ -20,6 +20,7 @@ const chatRouter = require("./routes/chatRoute");
 const { closePool, getPool } = require("./utils/dbConnection");
 const { startCustomerEmailAutomationWorker } = require("./utils/customerEmailAutomation");
 const { recordSecurityEvent } = require("./utils/securityAudit");
+const { persianApiErrorMiddleware } = require("./utils/persianApi");
 const {
   configuredOrigins,
   createDatabaseRateLimiter,
@@ -85,6 +86,7 @@ app.post("/api/security/csp-report", express.json({ type: ["application/csp-repo
 });
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: process.env.JSON_BODY_LIMIT || "1mb" }));
+app.use(persianApiErrorMiddleware);
 app.use(csrfProtection);
 
 const methodAndPath = (methods, paths) => (req) => methods.includes(req.method) && paths.some((candidate) => req.path.startsWith(candidate));

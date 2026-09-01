@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   AccountCircleOutlined,
   Add,
-  ArrowForwardRounded,
+  ArrowBackRounded,
   Close,
   DeleteOutline,
   ExpandMore,
@@ -395,12 +395,12 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
           </Box>
 
           <Box component="form" onSubmit={submitSearch} sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", flex: 1, maxWidth: 620, bgcolor: "var(--color-surface-muted)", border: "1px solid var(--color-border)", borderRadius: 999, px: 1.5, py: 0.25, transition: "border-color 160ms ease, box-shadow 160ms ease", "&:focus-within": { borderColor: "var(--color-primary)", boxShadow: "0 0 0 4px color-mix(in srgb, var(--color-primary) 12%, transparent)" } }}>
-            <Search sx={{ color: "#6d8174", mr: 1 }} />
+            <Search sx={{ color: "#6d8174", marginInlineEnd: 1 }} />
             <InputBase value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={headerCopy.searchPlaceholder} inputProps={{ "aria-label": headerCopy.searchPlaceholder }} sx={{ flex: 1, color: "#17352a", fontSize: 14 }} />
             <Button type="submit" size="small" sx={{ ...headerLinkSx, minWidth: 0, px: 2, borderRadius: 999, color: "var(--color-primary)", fontWeight: 800, textTransform: "none" }}>{headerCopy.searchButtonLabel}</Button>
           </Box>
 
-          <Stack direction="row" alignItems="center" spacing={{ xs: 0, sm: 0.5 }} sx={{ ml: "auto" }}>
+          <Stack direction="row" alignItems="center" spacing={{ xs: 0, sm: 0.5 }} sx={{ marginInlineStart: "auto" }}>
             <Button component={Link} href="/tracking" onClick={handleNav("/tracking")} startIcon={<LocalShippingOutlined />} sx={{ ...headerLinkSx, display: { xs: "none", lg: "flex" }, color: "var(--color-text-secondary)", textTransform: "none", fontWeight: 750, whiteSpace: "nowrap" }}>{headerCopy.trackOrderLabel}</Button>
             <Tooltip title={session ? headerCopy.accountTooltip : headerCopy.signInTooltip}>
               <IconButton onClick={(event) => { if (disableNav) return; setShopAnchor(null); setAboutAnchor(null); setAccountAnchor(event.currentTarget); }} aria-label={session ? headerCopy.accountLabel : headerCopy.signInLabel} sx={{ ...headerLinkSx, color: "var(--color-text-primary)", "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}>
@@ -409,7 +409,7 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
             </Tooltip>
             <Button component={Link} href={session ? "/account" : "/signin"} onClick={handleNav(session ? "/account" : "/signin")} sx={{ ...headerLinkSx, display: { xs: "none", lg: "flex" }, color: "var(--color-text-secondary)", textTransform: "none", fontWeight: 800, px: 0.5 }}>{session ? headerCopy.accountLabel : headerCopy.signInLabel}</Button>
             <Tooltip title={headerCopy.cartTooltip}>
-              <IconButton onClick={handleCartClick} aria-label={`باز کردن سبد خرید${cartCount ? `، ${cartCount} قلم` : ""}`} sx={{ ...headerLinkSx, color: "var(--color-text-primary)", ml: { sm: 0.5 }, "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}>
+              <IconButton onClick={handleCartClick} aria-label={`باز کردن سبد خرید${cartCount ? `، ${cartCount} قلم` : ""}`} sx={{ ...headerLinkSx, color: "var(--color-text-primary)", marginInlineStart: { sm: 0.5 }, "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}>
                 <Badge badgeContent={cartCount || null} color="secondary" max={99} overlap="circular">
                   <ShoppingBagOutlined />
                 </Badge>
@@ -471,7 +471,7 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
           <IconButton size="small" onClick={() => setCartAnchor(null)} aria-label={headerCopy.closeCartLabel} sx={{ ...headerLinkSx, "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}><Close fontSize="small" /></IconButton>
         </Stack>
         {cartLoading ? <Stack spacing={1}><Skeleton variant="rounded" height={58} /><Skeleton variant="rounded" height={58} /></Stack> : cartError ? <Typography sx={{ color: "error.main", fontSize: 14 }}>{cartError}</Typography> : cartItems.length === 0 ? (
-          <Box sx={{ py: 3, textAlign: "center" }}><ShoppingBagOutlined sx={{ color: "var(--color-accent)", fontSize: 34, mb: 1 }} /><Typography sx={{ color: "var(--color-text-secondary)", fontSize: 14 }}>{headerCopy.emptyCartLabel}</Typography><Button component={Link} href="/shop" onClick={handleNav("/shop")} endIcon={<ArrowForwardRounded />} sx={{ ...headerLinkSx, mt: 1, color: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>{headerCopy.startShoppingLabel}</Button></Box>
+          <Box sx={{ py: 3, textAlign: "center" }}><ShoppingBagOutlined sx={{ color: "var(--color-accent)", fontSize: 34, mb: 1 }} /><Typography sx={{ color: "var(--color-text-secondary)", fontSize: 14 }}>{headerCopy.emptyCartLabel}</Typography><Button component={Link} href="/shop" onClick={handleNav("/shop")} endIcon={<ArrowBackRounded />} sx={{ ...headerLinkSx, mt: 1, color: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>{headerCopy.startShoppingLabel}</Button></Box>
         ) : (
           <>
             <List dense disablePadding sx={{ maxHeight: 280, overflowY: "auto" }}>
@@ -482,7 +482,7 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
                 return (
                   <ListItem key={item.productId} disableGutters sx={{ py: 0.75, alignItems: "center" }}>
                     <ListItemAvatar>
-                      <Avatar src={item.image || undefined} alt={item.title || "محصول"} variant="rounded" sx={{ width: 48, height: 48, mr: 1.25, bgcolor: "var(--color-accent-soft)", color: "var(--color-accent)" }}>
+                      <Avatar src={item.image || undefined} alt={item.title || "محصول"} variant="rounded" sx={{ width: 48, height: 48, marginInlineEnd: 1.25, bgcolor: "var(--color-accent-soft)", color: "var(--color-accent)" }}>
                         {String(item.title || "محصول").slice(0, 1).toUpperCase()}
                       </Avatar>
                     </ListItemAvatar>
@@ -491,7 +491,7 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
                       secondary={`${headerCopy.quantityLabel} ${quantity} ${headerCopy.quantitySeparator} ${formatPrice(item.price)}`}
                       primaryTypographyProps={{ fontWeight: 750, fontSize: 14, color: "var(--color-text-primary)", noWrap: true }}
                       secondaryTypographyProps={{ fontSize: 12 }}
-                      sx={{ minWidth: 0, mr: 0.5 }}
+                      sx={{ minWidth: 0, marginInlineEnd: 0.5 }}
                     />
                     <Stack direction="row" alignItems="center" spacing={0.25} flexShrink={0}>
                       <IconButton size="small" aria-label={`کاهش تعداد ${item.title || "محصول"}`} onClick={() => handleCartQuantityChange(item, quantity - 1)} disabled={itemPending || quantity <= 1}>
@@ -518,10 +518,10 @@ export default function Header({ initialHeader = null, initialChrome = null, dis
         )}
       </Popover>
 
-      <Drawer anchor="left" open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: "min(88vw, 360px)", bgcolor: "var(--color-background)", color: "var(--color-text-primary)" } }}>
+      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: "min(88vw, 360px)", bgcolor: "var(--color-background)", color: "var(--color-text-primary)" } }}>
         <Box role="presentation" sx={{ p: 2.5 }}>
-           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}><Box sx={{ ...headerLinkSx, display: "flex", alignItems: "center", gap: 1.25, color: "var(--color-text-primary)" }} component={Link} href="/" onClick={handleNav("/")}>{logo}<Typography sx={{ fontWeight: 950, fontSize: 21, letterSpacing: "-0.04em" }}>{brandName}</Typography></Box><IconButton onClick={() => setMobileOpen(false)} aria-label="Close navigation" sx={{ ...headerLinkSx, "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}><Close /></IconButton></Stack>
-          <Box component="form" onSubmit={submitSearch} sx={{ display: "flex", alignItems: "center", bgcolor: "var(--color-surface-muted)", border: "1px solid var(--color-border)", borderRadius: 999, px: 1.5, mb: 2.5 }}><Search sx={{ color: "var(--color-text-secondary)", mr: 1 }} /><InputBase value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={headerCopy.mobileSearchPlaceholder} inputProps={{ "aria-label": headerCopy.searchPlaceholder }} sx={{ flex: 1, py: 0.8 }} /></Box>
+           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}><Box sx={{ ...headerLinkSx, display: "flex", alignItems: "center", gap: 1.25, color: "var(--color-text-primary)" }} component={Link} href="/" onClick={handleNav("/")}>{logo}<Typography sx={{ fontWeight: 950, fontSize: 21, letterSpacing: "-0.04em" }}>{brandName}</Typography></Box><IconButton onClick={() => setMobileOpen(false)} aria-label="بستن ناوبری" sx={{ ...headerLinkSx, "&:hover": { color: "var(--color-link-hover)", bgcolor: "var(--color-primary-soft)" } }}><Close /></IconButton></Stack>
+          <Box component="form" onSubmit={submitSearch} sx={{ display: "flex", alignItems: "center", bgcolor: "var(--color-surface-muted)", border: "1px solid var(--color-border)", borderRadius: 999, px: 1.5, mb: 2.5 }}><Search sx={{ color: "var(--color-text-secondary)", marginInlineEnd: 1 }} /><InputBase value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={headerCopy.mobileSearchPlaceholder} inputProps={{ "aria-label": headerCopy.searchPlaceholder }} sx={{ flex: 1, py: 0.8 }} /></Box>
           <List disablePadding>
              <ListItem disablePadding><ListItemButton component={Link} href="/shop" onClick={handleNav("/shop")} sx={{ ...headerMenuLinkSx, borderRadius: 2, fontWeight: 850 }}>{headerCopy.shopAllLabel}</ListItemButton></ListItem>
              <ListItem disablePadding><ListItemButton component={Link} href="/shop#trending-collection" onClick={handleNav("/shop#trending-collection")} sx={{ ...headerMenuLinkSx, borderRadius: 2 }}>{headerCopy.trendingLabel}</ListItemButton></ListItem>

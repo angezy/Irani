@@ -35,6 +35,18 @@ const scheduleOptions = [
   { value: "event", label: "هنگام رخداد رویداد" },
 ];
 
+const stageLabels = {
+  welcome: "خوشامدگویی",
+  "browse inspiration": "ایده برای انتخاب",
+  "cart reminder": "یادآوری سبد خرید",
+  "order confirmation": "تأیید سفارش",
+  "dispatch update": "به‌روزرسانی ارسال",
+  "out for delivery": "در حال تحویل",
+  delivered: "تحویل‌شده",
+};
+
+const stageLabel = (stage) => stageLabels[String(stage || "").trim().toLowerCase()] || stage || "نقطه تماس بدون عنوان";
+
 const triggerOptionFor = (step) => {
   const keys = Array.isArray(step?.triggerKeys) ? step.triggerKeys : [];
   return triggerOptions.find((option) => option.keys.length === keys.length && option.keys.every((key) => keys.includes(key)))
@@ -347,7 +359,7 @@ export default function MarketingPage() {
                   <div className={styles.stepHeader}>
                     <div>
                       <span className={styles.stepEyebrow}>نقطه تماس {index + 1}</span>
-                      <h3>{step.stage || "نقطه تماس بدون عنوان"}</h3>
+                      <h3>{stageLabel(step.stage)}</h3>
                     </div>
                     <div className={styles.stepActions}>
                       <span className={`${styles.typePill} ${step.type === "Transactional" ? styles.typeTransactional : ""}`}>
@@ -360,7 +372,7 @@ export default function MarketingPage() {
                   </div>
 
                   <div className={styles.fieldGrid}>
-                    <Field label="نام مرحله" value={step.stage} onChange={(value) => updateStep(index, "stage", value)} />
+                    <Field label="نام مرحله" value={stageLabel(step.stage)} onChange={(value) => updateStep(index, "stage", value)} />
                     <label className={styles.field}>
                       <span>نوع پیام</span>
                       <select value={step.type || "Marketing"} onChange={(event) => updateStep(index, "type", event.target.value)}>
@@ -488,7 +500,7 @@ export default function MarketingPage() {
                   },
                   branding: false,
                   promotion: false,
-                  content_style: "body { font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.65; padding: 12px; color: #1f2d42; } p { margin: 0 0 1em; }",
+                  content_style: "body { direction: rtl; text-align: right; font-family: Vazirmatn, Tahoma, Arial, sans-serif; font-size: 15px; line-height: 1.65; padding: 12px; color: #1f2d42; } p { margin: 0 0 1em; }",
                 }}
               />
             </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
@@ -139,7 +139,7 @@ function AddressCard({ address, title }) {
   );
 }
 
-function EmptyRows({ children = "No records captured." }) {
+function EmptyRows({ children = "هیچ رکوردی ثبت نشده است." }) {
   return <div className={styles.emptyInline}>{children}</div>;
 }
 
@@ -237,7 +237,7 @@ function DetailModal({ selected, detail, loading, error, onClose, onRetry }) {
 
                 <DetailSection title="فعالیت سفارش" eyebrow="سوابق وضعیت و پیگیری">
                   {(detail.history?.length || detail.trackingEvents?.length) ? <div className={styles.timeline}>
-                    {[...(detail.history || []).map((event) => ({ ...event, kind: "status", date: event.CreatedAt, title: `${label(event.PreviousStatus)} → ${label(event.NewStatus)}`, description: event.Reason })), ...(detail.trackingEvents || []).map((event) => ({ ...event, kind: "tracking", date: event.EventAt, title: event.Status, description: event.Description, location: event.Location }))].sort((a, b) => new Date(b.date) - new Date(a.date)).map((event, index) => <div className={styles.timelineItem} key={`${event.Id || event.TrackingEventId}-${index}`}><span className={`${styles.timelineDot} ${event.kind === "tracking" ? styles.timelineTracking : ""}`} /><div><div className={styles.timelineTop}><strong>{value(event.title)}</strong><time>{dateValue(event.date, true)}</time></div>{event.description && <p>{event.description}</p>}{event.location && <small>{event.location}</small>}</div></div>)}
+                    {[...(detail.history || []).map((event) => ({ ...event, kind: "status", date: event.CreatedAt, title: `${label(event.PreviousStatus)} ← ${label(event.NewStatus)}`, description: event.Reason })), ...(detail.trackingEvents || []).map((event) => ({ ...event, kind: "tracking", date: event.EventAt, title: label(event.Status), description: event.Description, location: event.Location }))].sort((a, b) => new Date(b.date) - new Date(a.date)).map((event, index) => <div className={styles.timelineItem} key={`${event.Id || event.TrackingEventId}-${index}`}><span className={`${styles.timelineDot} ${event.kind === "tracking" ? styles.timelineTracking : ""}`} /><div><div className={styles.timelineTop}><strong>{value(event.title)}</strong><time>{dateValue(event.date, true)}</time></div>{event.description && <p>{event.description}</p>}{event.location && <small>{event.location}</small>}</div></div>)}
                   </div> : <EmptyRows>هنوز فعالیتی ثبت نشده است.</EmptyRows>}
                 </DetailSection>
               </div>
@@ -337,13 +337,13 @@ export default function OrdersAdminPage({ title = "سفارش‌ها" }) {
         const response = await fetch(`/api/admin/records/orders?${query}`, { credentials: "include", cache: "no-store" });
         const body = await response.json().catch(() => ({}));
         if (!response.ok) {
-          const requestError = new Error(body.error || "Unable to load orders");
+          const requestError = new Error(body.error || "بارگذاری سفارش‌ها ممکن نیست");
           requestError.code = body.code || "";
           throw requestError;
         }
         if (active) setOrders(Array.isArray(body.rows) ? body.rows : []);
       } catch (requestError) {
-        if (active) { setOrders([]); setError(requestError.message || "Unable to load orders"); setErrorCode(requestError.code || ""); }
+        if (active) { setOrders([]); setError(requestError.message || "بارگذاری سفارش‌ها ممکن نیست"); setErrorCode(requestError.code || ""); }
       } finally {
         if (active) setLoading(false);
       }
@@ -361,10 +361,10 @@ export default function OrdersAdminPage({ title = "سفارش‌ها" }) {
     try {
       const response = await fetch(`/api/admin/orders/${encodeURIComponent(order.Id)}`, { credentials: "include", cache: "no-store" });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Unable to load order details");
+      if (!response.ok) throw new Error(body.error || "بارگذاری جزئیات سفارش ممکن نیست");
       if (detailRequestRef.current === requestId) setDetail(body);
     } catch (requestError) {
-      if (detailRequestRef.current === requestId) setDetailError(requestError.message || "Unable to load order details");
+      if (detailRequestRef.current === requestId) setDetailError(requestError.message || "بارگذاری جزئیات سفارش ممکن نیست");
     } finally {
       if (detailRequestRef.current === requestId) setDetailLoading(false);
     }
@@ -404,7 +404,7 @@ export default function OrdersAdminPage({ title = "سفارش‌ها" }) {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <Link href="/dashboard/Overview" className={styles.backLink}><ArrowBackRoundedIcon fontSize="inherit" /> گزارش کلی</Link>
+          <Link href="/dashboard/Overview" className={styles.backLink}><ArrowForwardRoundedIcon fontSize="inherit" /> بازگشت به گزارش کلی</Link>
           <p className={styles.eyebrow}>فروش / عملیات</p>
           <h1>{title}</h1>
           <p className={styles.subtitle}>همه سفارش‌های مشتریان را از یکجا جست‌وجو، بررسی و پیگیری کنید.</p>
@@ -424,9 +424,9 @@ export default function OrdersAdminPage({ title = "سفارش‌ها" }) {
         <label>بازه زمانی<select value={filters.range} onChange={updateFilter("range")}>{RANGE_OPTIONS.map(([option, optionLabel]) => <option key={option} value={option}>{optionLabel}</option>)}</select></label>
         {filters.range === "custom" && <label>از<input type="date" value={filters.from} onChange={updateFilter("from")} /></label>}
         {filters.range === "custom" && <label>تا<input type="date" value={filters.to} onChange={updateFilter("to")} /></label>}
-        <label>وضعیت<select value={filters.status} onChange={updateFilter("status")}><option value="">همه وضعیت‌ها</option><option>Pending</option><option>Processing</option><option>Completed</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></label>
-        <label>پرداخت<select value={filters.paymentStatus} onChange={updateFilter("paymentStatus")}><option value="">همه پرداخت‌ها</option><option>Pending</option><option>Authorized</option><option>Paid</option><option>Failed</option><option>Refunded</option></select></label>
-        <label>ارسال<select value={filters.fulfillmentStatus} onChange={updateFilter("fulfillmentStatus")}><option value="">همه وضعیت‌های ارسال</option><option>Unfulfilled</option><option>Processing</option><option>Shipped</option><option>Delivered</option></select></label>
+        <label>وضعیت<select value={filters.status} onChange={updateFilter("status")}><option value="">همه وضعیت‌ها</option><option value="Pending">در انتظار</option><option value="Processing">در حال پردازش</option><option value="Completed">تکمیل‌شده</option><option value="Shipped">ارسال‌شده</option><option value="Delivered">تحویل‌شده</option><option value="Cancelled">لغوشده</option></select></label>
+        <label>پرداخت<select value={filters.paymentStatus} onChange={updateFilter("paymentStatus")}><option value="">همه پرداخت‌ها</option><option value="Pending">در انتظار</option><option value="Authorized">تأییدشده</option><option value="Paid">پرداخت‌شده</option><option value="Failed">ناموفق</option><option value="Refunded">بازپرداخت‌شده</option></select></label>
+        <label>ارسال<select value={filters.fulfillmentStatus} onChange={updateFilter("fulfillmentStatus")}><option value="">همه وضعیت‌های ارسال</option><option value="Unfulfilled">در انتظار ارسال</option><option value="Processing">در حال پردازش</option><option value="Shipped">ارسال‌شده</option><option value="Delivered">تحویل‌شده</option></select></label>
         <label>واحد پول<select value={filters.currency} onChange={updateFilter("currency")}><option value="">همه واحدها</option><option value="IRR">ریال</option></select></label>
         <button type="button" className={styles.clearButton} onClick={clearFilters}>پاک کردن فیلترها</button>
       </section>

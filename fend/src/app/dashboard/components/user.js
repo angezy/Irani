@@ -3,5 +3,5 @@ import styles from './link.module.css'
 import Link from 'next/link'
 
 export default function Users(){
-  return <Link className={styles.link} href="/dashboard/user">Users</Link>
+  return <Link className={styles.link} href="/dashboard/user">کاربران</Link>
 }

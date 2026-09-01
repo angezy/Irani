@@ -72,7 +72,7 @@ export default function CookieConsentBanner() {
                 control={<Checkbox checked={Boolean(choices[option.key])} onChange={(event) => setChoices((current) => ({ ...current, [option.key]: event.target.checked }))} sx={{ color: "rgba(226,232,240,0.7)", "&.Mui-checked": { color: "#60a5fa" } }} />}
                 label={<Typography sx={{ color: "var(--color-text-primary)", fontWeight: 700 }}>{option.label}</Typography>}
               />
-              <Typography variant="caption" sx={{ display: "block", ml: 5.5, color: "var(--color-text-secondary)" }}>{option.description}</Typography>
+              <Typography variant="caption" sx={{ display: "block", marginInlineStart: 5.5, color: "var(--color-text-secondary)" }}>{option.description}</Typography>
             </Box>
           ))}
         </Stack>

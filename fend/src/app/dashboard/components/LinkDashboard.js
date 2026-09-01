@@ -3,5 +3,5 @@ import styles from './link.module.css'
 import Link from 'next/link'
 
 export default function LinkDashboard(){
-  return <Link className={styles.link} href="/dashboard">Dashboard</Link>
+  return <Link className={styles.link} href="/dashboard">داشبورد</Link>
 }

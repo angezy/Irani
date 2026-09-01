@@ -16,15 +16,15 @@ export default async function HelpCenterStructuredData({ content }) {
           "@type": "ContactPoint",
           contactType: "customer service",
           email: content?.contactSupport?.email || site.supportEmail,
-          availableLanguage: ["English"],
+          availableLanguage: ["Persian"],
         },
       },
       {
         "@type": "WebPage",
         "@id": `${siteUrl}/help-center#webpage`,
         url: `${siteUrl}/help-center`,
-        name: content?.seo?.title || `Help | ${site.siteName} Customer Support`,
-        description: content?.seo?.description || `${site.siteName} customer support and help.`,
+        name: content?.seo?.title || `راهنمای پشتیبانی مشتری ${site.siteName}`,
+        description: content?.seo?.description || `مرکز راهنما و پشتیبانی مشتری ${site.siteName}.`,
         isPartOf: { "@id": `${siteUrl}/#website` },
       },
       {
@@ -38,7 +38,7 @@ export default async function HelpCenterStructuredData({ content }) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "خانه", item: siteUrl },
-          { "@type": "ListItem", position: 2, name: "Help", item: `${siteUrl}/help-center` },
+          { "@type": "ListItem", position: 2, name: "مرکز راهنما", item: `${siteUrl}/help-center` },
         ],
       },
       ...(faqItems.length

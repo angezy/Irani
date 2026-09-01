@@ -145,7 +145,7 @@ export default function AddressesPage() {
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <div className={styles.panelTitle}>{editingId ? "Edit address" : "Add an address"}</div>
+              <div className={styles.panelTitle}>{editingId ? "ویرایش نشانی" : "افزودن نشانی"}</div>
               <div className={styles.panelSubtitle}>فیلدهای الزامی با مرورگر مشخص می‌شوند.</div>
             </div>
             <button className={styles.ghostBtn} type="button" onClick={closeForm}>انصراف</button>

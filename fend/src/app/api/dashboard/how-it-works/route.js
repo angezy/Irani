@@ -36,13 +36,13 @@ export async function POST(req) {
   try {
     const body = await req.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
     await ensureFile();
     await fs.writeFile(dataPath, JSON.stringify(body.content, null, 2), "utf8");
     return NextResponse.json({ ok: true, content: body.content });
   } catch (err) {
     console.error("how it works content write error", err);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

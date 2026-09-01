@@ -25,7 +25,7 @@ export default function AppBar({ onToggleSidebar, onSignOut, siteName = 'فرو�
           color: 'inherit',
           cursor: 'pointer',
           padding: 8,
-          marginRight: 12,
+          marginInlineEnd: 12,
           display: 'flex',
           alignItems: 'center',
           borderRadius: 10
@@ -41,7 +41,7 @@ export default function AppBar({ onToggleSidebar, onSignOut, siteName = 'فرو�
 
       <div style={{ fontWeight: 700 }}>{siteName} · {role === 'admin' ? 'داشبورد اپراتور' : 'داشبورد مدیر'}</div>
 
-      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ marginInlineStart: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
         <button
           onClick={onSignOut}
           style={{

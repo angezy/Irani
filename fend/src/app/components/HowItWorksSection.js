@@ -17,10 +17,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -50,7 +50,7 @@ function EditButton({ onClick, editable }) {
       sx={{
         position: "absolute",
         top: 12,
-        right: 12,
+        insetInlineStart: 12,
         color: "var(--color-text-primary)",
         bgcolor: "#ffffff",
         zIndex: 3,
@@ -103,7 +103,7 @@ function ActionButton({ href, children, variant = "contained", light = false }) 
       component={Link}
       href={href || "/shop"}
       variant={variant}
-      endIcon={<ArrowForwardIcon />}
+      endIcon={<ArrowBackIcon />}
       sx={{
         borderRadius: 999,
         px: 2.5,
@@ -155,13 +155,13 @@ function FlowVisual({ step, index }) {
                   {String(flowIndex + 1).padStart(2, "0")}
                 </Box>
                 <Typography sx={{ fontWeight: 750, color: "var(--color-text-primary)" }}>{item}</Typography>
-                {flowIndex < flow.length - 1 && <ChevronRightIcon sx={{ color: "var(--color-accent)", ml: "auto" }} />}
+                {flowIndex < flow.length - 1 && <ChevronLeftIcon sx={{ color: "var(--color-accent)", marginInlineStart: "auto" }} />}
               </Box>
             ))}
           </Stack>
         )}
         <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 800 }}>
-          Weluxo process / {step.number}
+          فرایند ولکسو / {step.number}
         </Typography>
       </Box>
     </Box>
@@ -223,11 +223,11 @@ export default function HowItWorksSection({ initialContent = null, onEdit = {}, 
             <Box component="img" src={hero.image} alt={hero.alt || hero.title} loading="eager" sx={{ width: "100%", height: "100%", minHeight: { xs: 300, md: 550 }, display: "block", objectFit: "cover", opacity: 0.82 }} />
             <Box sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(180deg, rgba(14,43,32,0.06), rgba(14,43,32,0.38))", md: "linear-gradient(90deg, rgba(14,43,32,0.68), rgba(14,43,32,0.05) 60%)" } }} />
             <Box sx={{ position: "absolute", left: { xs: 18, md: 32 }, right: { xs: 18, md: 32 }, bottom: { xs: 18, md: 32 }, p: 2, border: "1px solid var(--color-border)", bgcolor: "var(--color-surface-muted)", backdropFilter: "blur(12px)", borderRadius: 2.5 }}>
-              <Typography sx={{ color: "var(--color-accent)", fontSize: 11, letterSpacing: "0.12em", fontWeight: 800, mb: 1 }}>DISCOVER → DELIVERY</Typography>
+              <Typography sx={{ color: "var(--color-accent)", fontSize: 11, letterSpacing: "0.12em", fontWeight: 800, mb: 1 }}>از انتخاب تا تحویل</Typography>
               <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
                 {heroFlow.map((item, index) => {
                   const label = typeof item === "string" ? item : item.label;
-                  return <Typography key={`${label}-${index}`} sx={{ color: "white", fontSize: 13, fontWeight: 700 }}>{label}{index < heroFlow.length - 1 ? "  →" : ""}</Typography>;
+                  return <Typography key={`${label}-${index}`} sx={{ color: "white", fontSize: 13, fontWeight: 700 }}>{label}{index < heroFlow.length - 1 ? "  ←" : ""}</Typography>;
                 })}
               </Stack>
             </Box>
@@ -236,12 +236,12 @@ export default function HowItWorksSection({ initialContent = null, onEdit = {}, 
 
         <Box component="section" aria-labelledby="process-overview-title" sx={{ position: "relative", py: { xs: 3, md: 4 }, px: { xs: 2, md: 4 }, bgcolor: "var(--color-accent-soft)", border: "1px solid var(--color-border)", borderRadius: { xs: 3, md: 4 }, overflow: "hidden" }}>
           <EditButton onClick={onEdit.processOverview} editable={editable} />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: { xs: "flex-start", md: "end" }, gap: 2, mb: { xs: 4, md: 5 }, flexDirection: { xs: "column", md: "row" }, pr: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: { xs: "flex-start", md: "end" }, gap: 2, mb: { xs: 4, md: 5 }, flexDirection: { xs: "column", md: "row" }, paddingInlineStart: 4 }}>
             <Box>
               <Label>{overview.eyebrow}</Label>
               <Typography id="process-overview-title" component="h2" sx={{ fontWeight: 820, letterSpacing: "-0.04em", fontSize: { xs: "2rem", md: "3rem" }, lineHeight: 1.05 }}>{overview.title}</Typography>
             </Box>
-            <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 12, letterSpacing: "0.1em", fontWeight: 800 }}>01 — 05 / THE JOURNEY</Typography>
+            <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 12, letterSpacing: "0.1em", fontWeight: 800 }}>۰۱ — ۰۵ / مسیر خرید</Typography>
           </Box>
           <Box component="ol" sx={{ display: "flex", overflowX: "auto", listStyle: "none", p: 0, m: 0, pb: 1, "&::-webkit-scrollbar": { height: 6 }, "&::-webkit-scrollbar-thumb": { bgcolor: "var(--color-primary-light)", borderRadius: 4 } }}>
             {overviewSteps.map((step, index) => (
@@ -310,7 +310,7 @@ export default function HowItWorksSection({ initialContent = null, onEdit = {}, 
               }}>
               <Stack divider={<Divider flexItem sx={{ borderColor: "var(--color-border)" }} />}>
                 {supportLinks.map((link, index) => (
-                  <Button key={`${link.label}-${index}`} component={Link} href={link.url || "/contact"} endIcon={<ArrowForwardIcon />} sx={{ color: "var(--color-primary-soft)", justifyContent: "space-between", textTransform: "none", fontWeight: 750, py: 1.7, px: 0, fontSize: { xs: "1rem", md: "1.1rem" } }}>
+                  <Button key={`${link.label}-${index}`} component={Link} href={link.url || "/contact"} endIcon={<ArrowBackIcon />} sx={{ color: "var(--color-primary-soft)", justifyContent: "space-between", textTransform: "none", fontWeight: 750, py: 1.7, px: 0, fontSize: { xs: "1rem", md: "1.1rem" } }}>
                     {link.label}
                   </Button>
                 ))}
@@ -356,7 +356,7 @@ export default function HowItWorksSection({ initialContent = null, onEdit = {}, 
           <Box>
             {faqItems.map((item, index) => (
               <Accordion key={`${item.question}-${index}`} expanded={expandedFaq === index} onChange={() => setExpandedFaq(expandedFaq === index ? -1 : index)} disableGutters elevation={0} sx={{ bgcolor: "transparent", borderTop: "1px solid var(--color-border)", "&:last-child": { borderBottom: "1px solid var(--color-border)" }, "&::before": { display: "none" } }}>
-                <AccordionSummary expandIcon={<ChevronRightIcon />} aria-controls={`faq-panel-${index}`} id={`faq-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 64, "& .MuiAccordionSummary-content": { my: 0 } }}>
+                <AccordionSummary expandIcon={<ChevronLeftIcon />} aria-controls={`faq-panel-${index}`} id={`faq-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 64, "& .MuiAccordionSummary-content": { my: 0 } }}>
                   <Typography component="h3" sx={{ fontWeight: 750 }}>{item.question}</Typography>
                 </AccordionSummary>
                 <AccordionDetails id={`faq-panel-${index}`} sx={{ px: 0, pt: 0, pb: 2.5 }}>

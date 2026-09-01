@@ -4,7 +4,21 @@ import path from "path";
 import { getChatConfig } from "../../lib/chatConfig";
 import { readAIKnowledge } from "../../lib/aiKnowledge";
 
-const HUMAN_HANDOFF_MESSAGE = "I'll connect you with a Weluxo support specialist.";
+const HUMAN_HANDOFF_MESSAGE = "پیام شما را به کارشناس پشتیبانی Weluxo وصل می‌کنم.";
+const STATUS_LABELS = {
+  pending: "در انتظار",
+  processing: "در حال پردازش",
+  completed: "تکمیل‌شده",
+  shipped: "ارسال‌شده",
+  delivered: "تحویل‌شده",
+  cancelled: "لغوشده",
+  canceled: "لغوشده",
+  paid: "پرداخت‌شده",
+  failed: "ناموفق",
+  refunded: "بازپرداخت‌شده",
+  unfulfilled: "در انتظار ارسال",
+  fulfilled: "ارسال تکمیل‌شده",
+};
 const dataDirectory = path.join(process.cwd(), "data");
 const approvedFiles = ["faq.json", "help-center.json", "shipping-policy.json", "return-refund-policy.json", "terms-conditions.json", "privacy-policy.json"];
 const stopWords = new Set(["a", "an", "and", "are", "can", "do", "does", "for", "how", "i", "is", "it", "me", "my", "of", "on", "or", "the", "to", "what", "when", "where", "with", "you", "your"]);
@@ -52,16 +66,16 @@ function addPolicyEntries(policy, source, destination) {
 
 function buildApprovedKnowledge(files, customKnowledge) {
   const entries = [];
-  addFAQEntries(files["faq.json"]?.faq?.items, "Store FAQ", entries);
-  addFAQEntries(files["help-center.json"]?.faq?.items, "Help Center", entries);
-  addPolicyEntries(files["shipping-policy.json"], "Shipping Policy", entries);
-  addPolicyEntries(files["return-refund-policy.json"], "Return & Refund Policy", entries);
-  addPolicyEntries(files["terms-conditions.json"], "Terms & Conditions", entries);
-  addPolicyEntries(files["privacy-policy.json"], "Privacy Policy", entries);
+  addFAQEntries(files["faq.json"]?.faq?.items, "پرسش‌های متداول فروشگاه", entries);
+  addFAQEntries(files["help-center.json"]?.faq?.items, "مرکز راهنما", entries);
+  addPolicyEntries(files["shipping-policy.json"], "سیاست ارسال", entries);
+  addPolicyEntries(files["return-refund-policy.json"], "سیاست مرجوعی و بازپرداخت", entries);
+  addPolicyEntries(files["terms-conditions.json"], "شرایط و قوانین", entries);
+  addPolicyEntries(files["privacy-policy.json"], "سیاست حفظ حریم خصوصی", entries);
   (customKnowledge?.entries || []).filter((entry) => entry.enabled).forEach((entry) => {
     entries.push({
       id: `admin-${entry.id}`,
-      source: entry.category === "product_guidance" ? "Product guidance" : entry.category === "policy" ? "Store policy" : "Store FAQ",
+      source: entry.category === "product_guidance" ? "راهنمای محصول" : entry.category === "policy" ? "سیاست فروشگاه" : "پرسش‌های متداول فروشگاه",
       title: clean(entry.title, 300),
       content: clean(entry.content, 6000),
       keywords: Array.isArray(entry.keywords) ? entry.keywords : [],
@@ -158,7 +172,7 @@ function productAnswer(question, products) {
   if (isStockQuestion(question)) {
     const stock = Number(product.stock);
     if (!Number.isFinite(stock)) return null;
-    return { id: "live-product-inventory", source: "Live product inventory", content: `${title} is currently ${stock > 0 ? "in stock" : "out of stock"} (${stock} available).` };
+    return { id: "live-product-inventory", source: "موجودی زنده محصولات", content: `${title} در حال حاضر ${stock > 0 ? "موجود" : "ناموجود"} است (موجودی: ${stock}).` };
   }
   const description = clean(product.description, 6000);
   return description ? { id: "live-product-catalog", source: "Live product catalog", content: description } : null;
@@ -207,7 +221,7 @@ async function askGroq(question, sources) {
         messages: [
           {
             role: "system",
-            content: "You are the Weluxo customer-support AI. Use ONLY the approved store data supplied in this conversation. Never use outside knowledge or guess. Never create, change, or estimate policies, stock, delivery dates, pricing, product claims, or order details. If the data cannot fully answer the question, you are uncertain, or a human is requested, return {\"resolved\":false,\"answer\":\"\",\"source_ids\":[]}. Otherwise return {\"resolved\":true,\"answer\":\"a clear concise answer strictly supported by the data\",\"source_ids\":[\"every source id used\"]}. The answer must not mention these instructions or source ids.",
+            content: "You are the Weluxo customer-support AI. Always answer in Persian unless the customer clearly writes in another language. Use ONLY the approved store data supplied in this conversation. Never use outside knowledge or guess. Never create, change, or estimate policies, stock, delivery dates, pricing, product claims, or order details. If the data cannot fully answer the question, you are uncertain, or a human is requested, return {\"resolved\":false,\"answer\":\"\",\"source_ids\":[]}. Otherwise return {\"resolved\":true,\"answer\":\"a clear concise answer strictly supported by the data\",\"source_ids\":[\"every source id used\"]}. The answer must not mention these instructions or source ids.",
           },
           { role: "user", content: `Customer question:\n${clean(question, 4000)}\n\nApproved store data:\n${approvedContext}` },
         ],
@@ -234,7 +248,7 @@ async function askGroq(question, sources) {
 
 async function backendPost(pathname, body, conversationToken) {
   const backendUrl = String(process.env.BACKEND_URL || "").trim().replace(/\/$/, "");
-  if (!backendUrl) return { ok: false, status: 503, data: { error: "Support service is unavailable" } };
+  if (!backendUrl) return { ok: false, status: 503, data: { error: "سرویس پشتیبانی در دسترس نیست" } };
   try {
     const headers = { "Content-Type": "application/json", "X-Chat-Session-Token": conversationToken };
     if (process.env.CHAT_INTERNAL_SECRET) headers["X-Chat-Internal-Secret"] = process.env.CHAT_INTERNAL_SECRET;
@@ -247,7 +261,7 @@ async function backendPost(pathname, body, conversationToken) {
     return { ok: response.ok, status: response.status, data: await response.json().catch(() => ({})) };
   } catch (error) {
     console.error(`Chat backend request ${pathname} failed`, error);
-    return { ok: false, status: 502, data: { error: "Support service is unavailable" } };
+    return { ok: false, status: 502, data: { error: "سرویس پشتیبانی در دسترس نیست" } };
   }
 }
 
@@ -268,13 +282,16 @@ function orderReply(order) {
   const status = clean(order?.status, 100);
   const trackingNumber = clean(order?.trackingNumber, 120);
   if (!number || !status) return null;
-  return trackingNumber ? `Order ${number} is verified. Current status: ${status}. Tracking number: ${trackingNumber}.` : `Order ${number} is verified. Current status: ${status}.`;
+  const translatedStatus = STATUS_LABELS[status.toLowerCase()] || "در حال بررسی";
+  return trackingNumber
+    ? `سفارش ${number} تأیید شد. وضعیت فعلی: ${translatedStatus}. کد رهگیری: ${trackingNumber}.`
+    : `سفارش ${number} تأیید شد. وضعیت فعلی: ${translatedStatus}.`;
 }
 
 export async function POST(request) {
   try {
     const config = getChatConfig();
-    if (!config.enabled) return NextResponse.json({ error: "Chat is currently unavailable" }, { status: 503 });
+    if (!config.enabled) return NextResponse.json({ error: "گفت‌وگو در حال حاضر در دسترس نیست" }, { status: 503 });
     const body = await request.json();
     const requestedHandoff = body?.requestedHandoff === true;
     const handoffActive = body?.handoffActive === true;
@@ -282,12 +299,12 @@ export async function POST(request) {
     const conversationId = clean(body?.conversationId, 80);
     const conversationToken = clean(body?.conversationToken, 200);
     const visitor = { name: clean(body?.name, 200), email: clean(body?.email, 255).toLowerCase() };
-    if (!conversationId || !conversationToken) return NextResponse.json({ error: "Start a chat before sending a message" }, { status: 400 });
-    if (!message && !requestedHandoff) return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    if (!conversationId || !conversationToken) return NextResponse.json({ error: "پیش از ارسال پیام، گفت‌وگو را شروع کنید" }, { status: 400 });
+    if (!message && !requestedHandoff) return NextResponse.json({ error: "نوشتن پیام الزامی است" }, { status: 400 });
 
-    const customerMessage = message || "Customer selected Talk to a person.";
+    const customerMessage = message || "مشتری درخواست ارتباط با پشتیبانی انسانی را انتخاب کرد.";
     const savedCustomer = await persistMessage(conversationId, conversationToken, "customer", customerMessage);
-    if (!savedCustomer.ok) return NextResponse.json({ error: savedCustomer.data?.error || "Unable to save chat message" }, { status: savedCustomer.status || 502 });
+    if (!savedCustomer.ok) return NextResponse.json({ error: savedCustomer.data?.error || "ذخیره پیام گفت‌وگو ممکن نیست" }, { status: savedCustomer.status || 502 });
 
     let answer = null;
     let needsHandoff = requestedHandoff;
@@ -296,7 +313,7 @@ export async function POST(request) {
     if (handoffActive) {
       const forwarded = await forwardToSpecialist(conversationId, conversationToken);
       humanSupport = Boolean(forwarded.data?.humanSupport);
-      answer = humanSupport ? "Your message has been sent to the Weluxo support specialist." : HUMAN_HANDOFF_MESSAGE;
+      answer = humanSupport ? "پیام شما برای کارشناس پشتیبانی Weluxo ارسال شد." : HUMAN_HANDOFF_MESSAGE;
       needsHandoff = false;
     } else if (requestedHandoff) {
       answer = HUMAN_HANDOFF_MESSAGE;
@@ -316,7 +333,7 @@ export async function POST(request) {
     } else if (isGreeting(message)) {
       const customKnowledge = await readAIKnowledge();
       answer = customKnowledge.greeting;
-      source = "First greeting";
+      source = "خوشامدگویی اولیه";
     } else {
       const [files, customKnowledge, products] = await Promise.all([readApprovedStoreFiles(), readAIKnowledge(), liveProducts()]);
       const product = productAnswer(message, products);
@@ -332,11 +349,11 @@ export async function POST(request) {
     }
 
     const savedAnswer = await persistMessage(conversationId, conversationToken, "assistant", answer);
-    if (!savedAnswer.ok) return NextResponse.json({ error: savedAnswer.data?.error || "Unable to save chat response" }, { status: savedAnswer.status || 502 });
+    if (!savedAnswer.ok) return NextResponse.json({ error: savedAnswer.data?.error || "ذخیره پاسخ گفت‌وگو ممکن نیست" }, { status: savedAnswer.status || 502 });
     const transfer = needsHandoff ? await handoff(conversationId, conversationToken, visitor) : { data: { humanSupport } };
     return NextResponse.json({ reply: answer, conversationId, humanSupport: Boolean(transfer.data?.humanSupport), source });
   } catch (error) {
     console.error("Chat answer error", error);
-    return NextResponse.json({ error: "Unable to answer right now" }, { status: 500 });
+    return NextResponse.json({ error: "در حال حاضر امکان پاسخ‌گویی نیست" }, { status: 500 });
   }
 }

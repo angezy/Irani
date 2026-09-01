@@ -83,7 +83,7 @@ export default function CheckoutReturnPage() {
                 : "وضعیت پرداخت خود را بررسی کنید و ادامه دهید."}
             </Typography>
             {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-            {reference && <Typography variant="body2" sx={{ mb: 3, color: "var(--color-text-secondary)", wordBreak: "break-all" }}>Reference: {reference}</Typography>}
+            {reference && <Typography variant="body2" sx={{ mb: 3, color: "var(--color-text-secondary)", wordBreak: "break-all" }}>کد مرجع: {reference}</Typography>}
             {!isProcessing && (
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                 <Button component={Link} href={isCanceled || isFailed ? "/checkout/payment" : "/checkout"} variant="contained" sx={{ borderRadius: 999 }}>

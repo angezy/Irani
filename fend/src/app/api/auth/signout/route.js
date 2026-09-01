@@ -12,17 +12,17 @@ function clearSession(req) {
 }
 
 export async function GET() {
-  return NextResponse.json({ error: 'Use POST to sign out' }, { status: 405, headers: { Allow: 'POST' } })
+  return NextResponse.json({ error: 'برای خروج از POST استفاده کنید' }, { status: 405, headers: { Allow: 'POST' } })
 }
 
 export async function POST(request) {
   const origin = request.headers.get('origin')
   if (!origin || origin !== new URL(request.url).origin) {
-    return NextResponse.json({ error: 'Request origin could not be verified' }, { status: 403 })
+    return NextResponse.json({ error: 'مبدأ درخواست تأیید نشد' }, { status: 403 })
   }
   const upstream = await proxyRequest(request, ['api', 'logout'])
   if (!upstream.ok) {
-    return NextResponse.json({ error: 'Session could not be revoked' }, { status: upstream.status === 401 ? 401 : 503 })
+    return NextResponse.json({ error: 'نشست کاربری لغو نشد' }, { status: upstream.status === 401 ? 401 : 503 })
   }
   return clearSession(request)
 }

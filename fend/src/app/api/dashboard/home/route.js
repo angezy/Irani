@@ -10,57 +10,61 @@ const dataPath = path.join(process.cwd(), "data", "home.json");
 const DEFAULT_CONTENT = {
   heroCards: [
     {
-      title: "Hybrid Training Method",
-      subtitle: "Explosive strength · Core stability",
+      title: "روش تمرین ترکیبی",
+      subtitle: "قدرت انفجاری · ثبات مرکزی",
       image:
         "https://images.unsplash.com/photo-1558611848-73f7eb4001a1?auto=format&fit=crop&w=900&q=80",
     },
     {
-      title: "9% OFF Grand opening sale!",
-      subtitle: "Limited time launch pricing + pro plans.",
+      title: "۹٪ تخفیف افتتاحیه",
+      subtitle: "قیمت ویژه راه‌اندازی برای مدت محدود و برنامه‌های حرفه‌ای.",
       highlights: [
-        "Ergonomic design for every move",
-        "Durable build, gym and home ready",
-        "Free global shipping & easy returns",
+        "طراحی ارگونومیک برای هر حرکت",
+        "ساخت بادوام برای باشگاه و خانه",
+        "ارسال رایگان و مرجوعی آسان",
       ],
-      cta: "Shop the drop",
+      cta: "مشاهده محصولات جدید",
     },
   ],
   trainingBlock: {
     image:
       "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=80",
-    title: "TRAIN SMARTER. LOOK STRONGER. FEEL BETTER.",
+    title: "هوشمندانه‌تر تمرین کنید؛ قوی‌تر دیده شوید؛ بهتر احساس کنید.",
     copy:
-      "Engineered for athletes who demand more. Master posture, mobility, and power with equipment that keeps up with you—session after session.",
-    cta: "Start Training",
+      "برای ورزشکارانی ساخته شده که بیشتر می‌خواهند. با تجهیزاتی که در هر جلسه همراه شماست، وضعیت بدن، تحرک و قدرت خود را بهتر کنید.",
+    cta: "شروع تمرین",
   },
-  bannerText: "Functional Fitness · Pro Gear · Coach Built Programs",
+  bannerText: "تناسب‌اندام کاربردی · تجهیزات حرفه‌ای · برنامه‌های طراحی‌شده توسط مربی",
   productsSection: {
-    announcement: "New drops land every Monday \u00b7 Build your stack and save more on bundles",
-    title: "Products",
+    announcement: "محصولات جدید هر دوشنبه می‌رسند · با خرید بسته‌ای بیشتر صرفه‌جویی کنید",
+    title: "محصولات",
   },
   products: [
     {
-      title: "Grip Trainer",
-      price: "$69.00",
+      title: "دستهٔ تمرینی",
+      price: 690000,
+      currency: "IRT",
       image:
         "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=800&q=80",
     },
     {
-      title: "Power Handles",
-      price: "$54.00",
+      title: "دسته‌های قدرتی",
+      price: 540000,
+      currency: "IRT",
       image:
         "https://images.unsplash.com/photo-1528372444006-1bfc81acab02?auto=format&fit=crop&w=800&q=80",
     },
     {
-      title: "Strap Kit",
-      price: "$47.00",
+      title: "کیت بند تمرینی",
+      price: 470000,
+      currency: "IRT",
       image:
         "https://images.unsplash.com/photo-1527933053326-89d1746b76dc?auto=format&fit=crop&w=800&q=80",
     },
     {
-      title: "Level 2 Kit",
-      price: "$99.00",
+      title: "کیت سطح دوم",
+      price: 990000,
+      currency: "IRT",
       image:
         "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
     },
@@ -71,27 +75,27 @@ const DEFAULT_CONTENT = {
     "https://images.unsplash.com/photo-1541537103745-ea3429c65dc1?auto=format&fit=crop&w=600&q=80",
     "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?auto=format&fit=crop&w=600&q=80",
   ],
-  welcome: {
-    headline: "Welcome to",
-    title: "Your Partner in Performance.",
-    copy: "Programs, gear, and coaching built to keep you progressing. Sweat tested. Athlete approved.",
-    cta: "Join Now",
+    welcome: {
+    headline: "به فروشگاه ما خوش آمدید",
+    title: "همراه شما برای پیشرفت.",
+    copy: "برنامه، تجهیزات و آموزش برای ادامه مسیر شما؛ آزموده‌شده در تمرین و تأییدشده توسط ورزشکاران.",
+    cta: "همین حالا شروع کنید",
     image:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
   },
   reviews: {
-    headline: "+100 Reviews From Happy Athletes",
-    ratingText: "Average rating 4.9 / 5.0",
+    headline: "+۱۰۰ دیدگاه از ورزشکاران راضی",
+    ratingText: "میانگین امتیاز ۴٫۹ از ۵",
   },
   features: [
-    { title: "Fast Shipping", copy: "Worldwide delivery on every order." },
-    { title: "Secure Payment", copy: "Encrypted checkout for peace of mind." },
-    { title: "One Warranty", copy: "Covered for every serious training day." },
-    { title: "Expert Support", copy: "Coaches ready to guide your program." },
+    { title: "ارسال سریع", copy: "تحویل سفارش‌ها در سراسر کشور." },
+    { title: "پرداخت امن", copy: "تسویه‌حساب رمزگذاری‌شده برای آسودگی خاطر." },
+    { title: "ضمانت مطمئن", copy: "پوشش مناسب برای هر روز تمرین جدی." },
+    { title: "پشتیبانی تخصصی", copy: "کارشناسان آماده راهنمایی برنامه شما هستند." },
   ],
   menus: {
-    main: ["Home", "Shop", "Programs", "Support"],
-    footerTitle: "Stay on our list",
+    main: ["خانه", "فروشگاه", "برنامه‌ها", "پشتیبانی"],
+    footerTitle: "همراه ما بمانید",
   },
 };
 
@@ -129,13 +133,13 @@ export async function POST(req) {
   try {
     const body = await req.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
     await ensureFile();
     await writeContent(body.content);
     return NextResponse.json({ ok: true, content: body.content });
   } catch (err) {
     console.error("home content write error", err);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

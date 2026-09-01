@@ -14,8 +14,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import EditIcon from "@mui/icons-material/Edit";
 import defaultPrivacy from "../../../data/privacy-policy.json";
 
@@ -26,7 +26,7 @@ function EditButton({ onClick, editable }) {
       size="small"
       aria-label="ویرایش بخش"
       onClick={onClick}
-      sx={{ position: "absolute", top: 12, right: 12, zIndex: 2, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
+      sx={{ position: "absolute", top: 12, insetInlineStart: 12, zIndex: 2, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
     >
       <EditIcon fontSize="small" />
     </IconButton>
@@ -51,7 +51,7 @@ function LegalTable({ table }) {
       <Box component="table" sx={{ width: "100%", minWidth: 620, borderCollapse: "collapse", bgcolor: "#ffffff", border: "1px solid var(--color-border)" }}>
         <Box component="thead">
           <Box component="tr" sx={{ bgcolor: "var(--color-accent-soft)" }}>
-            {table.headers.map((header) => <Box component="th" scope="col" key={header} sx={{ textAlign: "left", p: 1.5, color: "var(--color-text-primary)", fontSize: 13, fontWeight: 800, borderBottom: "1px solid var(--color-border)" }}>{header}</Box>)}
+            {table.headers.map((header) => <Box component="th" scope="col" key={header} sx={{ textAlign: "right", p: 1.5, color: "var(--color-text-primary)", fontSize: 13, fontWeight: 800, borderBottom: "1px solid var(--color-border)" }}>{header}</Box>)}
           </Box>
         </Box>
         <Box component="tbody">
@@ -105,15 +105,15 @@ export default function LegalPageSection({ pageSlug, initialContent = null, onEd
           {sections.map((section, index) => (
             <Box component="section" aria-labelledby={`legal-section-${index}`} key={`${section.title}-${index}`} sx={{ position: "relative", borderBottom: index === sections.length - 1 ? 0 : "1px solid var(--color-border)", pb: index === sections.length - 1 ? 0 : { xs: 3, md: 5 } }}>
               <EditButton onClick={() => onEdit.section?.(index)} editable={editable} />
-              <Typography id={`legal-section-${index}`} component="h2" sx={{ fontWeight: 820, letterSpacing: "-0.035em", fontSize: { xs: "1.55rem", md: "2rem" }, mb: 2, pr: 5 }}>{section.title}</Typography>
+              <Typography id={`legal-section-${index}`} component="h2" sx={{ fontWeight: 820, letterSpacing: "-0.035em", fontSize: { xs: "1.55rem", md: "2rem" }, mb: 2, paddingInlineStart: "40px" }}>{section.title}</Typography>
               <Paragraphs text={section.body} />
               {Array.isArray(section.bullets) && section.bullets.length > 0 && (
-                <Box component="ul" sx={{ color: "var(--color-text-secondary)", pl: 3, mb: 2, "& li": { mb: 1.2, lineHeight: 1.7 } }}>
+                <Box component="ul" sx={{ color: "var(--color-text-secondary)", paddingInlineStart: "24px", mb: 2, "& li": { mb: 1.2, lineHeight: 1.7 } }}>
                   {section.bullets.map((bullet, bulletIndex) => <li key={`${bullet}-${bulletIndex}`}>{bullet}</li>)}
                 </Box>
               )}
               {Array.isArray(section.steps) && section.steps.length > 0 && (
-                <Box component="ol" sx={{ color: "var(--color-text-secondary)", pl: 3, mb: 2, "& li": { mb: 1.2, lineHeight: 1.7, pl: 0.5 } }}>
+                <Box component="ol" sx={{ color: "var(--color-text-secondary)", paddingInlineStart: "24px", mb: 2, "& li": { mb: 1.2, lineHeight: 1.7, paddingInlineStart: "4px" } }}>
                   {section.steps.map((step, stepIndex) => <li key={`${step}-${stepIndex}`}>{step}</li>)}
                 </Box>
               )}
@@ -130,7 +130,7 @@ export default function LegalPageSection({ pageSlug, initialContent = null, onEd
             {faqItems.length === 0 && <Typography sx={{ color: "var(--color-text-secondary)", py: 2 }}>هنوز پرسشی ثبت نشده است.</Typography>}
             {faqItems.map((item, index) => (
               <Accordion key={`${item.question}-${index}`} expanded={expandedFaq === index} onChange={() => setExpandedFaq(expandedFaq === index ? -1 : index)} disableGutters elevation={0} sx={{ bgcolor: "transparent", borderTop: "1px solid var(--color-border)", "&:last-child": { borderBottom: "1px solid var(--color-border)" }, "&::before": { display: "none" } }}>
-                <AccordionSummary expandIcon={<ChevronRightIcon />} aria-controls={`legal-faq-panel-${index}`} id={`legal-faq-header-${index}`} sx={{ px: 0, py: 1, minHeight: 64, "& .MuiAccordionSummary-content": { my: 0 } }}>
+                <AccordionSummary expandIcon={<ChevronLeftIcon />} aria-controls={`legal-faq-panel-${index}`} id={`legal-faq-header-${index}`} sx={{ px: 0, py: 1, minHeight: 64, "& .MuiAccordionSummary-content": { my: 0 } }}>
                   <Typography component="h3" sx={{ fontWeight: 750 }}>{item.question}</Typography>
                 </AccordionSummary>
                 <AccordionDetails id={`legal-faq-panel-${index}`} sx={{ px: 0, pt: 0, pb: 2.5 }}>
@@ -145,8 +145,8 @@ export default function LegalPageSection({ pageSlug, initialContent = null, onEd
           <Typography component="h2" sx={{ fontWeight: 800, mb: 1 }}>درباره سفارش کمک می‌خواهید؟</Typography>
           <Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.7, mb: 2 }}>اگر درباره یک سیاست یا سفارش پرسشی دارید، با پشتیبانی ولکسو تماس بگیرید.</Typography>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
-            <Button component={Link} href="/contact" variant="contained" endIcon={<ArrowForwardIcon />} sx={{ bgcolor: "var(--color-primary)", borderRadius: 999, textTransform: "none", fontWeight: 800 }}>تماس با پشتیبانی</Button>
-            <Button component={Link} href="/shop" variant="outlined" endIcon={<ArrowForwardIcon />} sx={{ color: "var(--color-primary)", borderColor: "var(--color-primary)", borderRadius: 999, textTransform: "none", fontWeight: 800 }}>ادامه خرید</Button>
+            <Button component={Link} href="/contact" variant="contained" endIcon={<ArrowBackIcon />} sx={{ bgcolor: "var(--color-primary)", borderRadius: 999, textTransform: "none", fontWeight: 800 }}>تماس با پشتیبانی</Button>
+            <Button component={Link} href="/shop" variant="outlined" endIcon={<ArrowBackIcon />} sx={{ color: "var(--color-primary)", borderColor: "var(--color-primary)", borderRadius: 999, textTransform: "none", fontWeight: 800 }}>ادامه خرید</Button>
           </Stack>
         </Box>
       </Container>

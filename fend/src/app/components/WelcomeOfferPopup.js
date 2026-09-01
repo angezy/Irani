@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowForwardRounded,
+  ArrowBackRounded,
   Close,
   LocalOfferOutlined,
 } from "@mui/icons-material";
@@ -125,7 +125,7 @@ export default function WelcomeOfferPopup() {
           sx={{
             position: "absolute",
             top: 12,
-            right: 12,
+            insetInlineStart: 12,
             zIndex: 1,
             color: "#ffffff",
             bgcolor: "rgba(255,255,255,0.12)",
@@ -163,7 +163,7 @@ export default function WelcomeOfferPopup() {
           onClick={handleClaim}
           fullWidth
           variant="contained"
-          endIcon={<ArrowForwardRounded />}
+          endIcon={<ArrowBackRounded />}
           sx={{ mt: 2.5, py: 1.35, bgcolor: "var(--color-primary)", color: "#ffffff", fontWeight: 900, "&:hover": { bgcolor: "var(--color-primary-dark)" } }}
         >
           {settings.welcomePopupButtonLabel}

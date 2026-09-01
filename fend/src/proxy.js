@@ -17,7 +17,7 @@ function contentSecurityPolicy(nonce) {
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self' https://nickswebprojects.site",
     "form-action 'self'",
     ...(development ? [] : ["upgrade-insecure-requests"]),
     "report-uri /api/security/csp-report",

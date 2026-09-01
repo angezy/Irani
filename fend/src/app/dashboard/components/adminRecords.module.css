@@ -5,7 +5,7 @@
 .header p, .caption { margin: 0; color: #6b788d; font-size: 13px; }
 .tableWrap { overflow-x: auto; background: #fff; border: 1px solid #e1e7f0; border-radius: 14px; box-shadow: 0 6px 22px rgba(29, 52, 92, .06); }
 .tableWrap table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.tableWrap th { padding: 12px 14px; color: #536078; background: #f8fafd; text-align: left; white-space: nowrap; }
+.tableWrap th { padding: 12px 14px; color: #536078; background: #f8fafd; text-align: right; white-space: nowrap; }
 .tableWrap td { padding: 12px 14px; border-top: 1px solid #edf0f5; white-space: nowrap; }
 .tableWrap tr:hover td { background: #f8fbff; }
 .message { padding: 20px; background: #fff; border: 1px solid #e1e7f0; border-radius: 12px; color: #647188; }

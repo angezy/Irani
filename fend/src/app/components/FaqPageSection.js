@@ -13,8 +13,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import EditIcon from "@mui/icons-material/Edit";
 import defaultContent from "../../../data/faq.json";
 
@@ -25,7 +25,7 @@ function EditButton({ onClick, editable }) {
       size="small"
       aria-label="ویرایش بخش"
       onClick={onClick}
-      sx={{ position: "absolute", top: 12, right: 12, zIndex: 3, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
+      sx={{ position: "absolute", top: 12, insetInlineStart: 12, zIndex: 3, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
     >
       <EditIcon fontSize="small" />
     </IconButton>
@@ -38,7 +38,7 @@ function ActionButton({ href, children, variant = "contained" }) {
       component={Link}
       href={href || "/shop"}
       variant={variant}
-      endIcon={<ArrowForwardIcon />}
+      endIcon={<ArrowBackIcon />}
       sx={{ borderRadius: 999, px: 2.5, py: 1.15, textTransform: "none", fontWeight: 800, ...(variant === "contained" ? { bgcolor: "var(--color-primary)", "&:hover": { bgcolor: "var(--color-primary-dark)" } } : { color: "var(--color-primary)", borderColor: "var(--color-primary)" }) }}
     >
       {children}
@@ -95,7 +95,7 @@ export default function FaqPageSection({ initialContent = null, onEdit = {}, edi
           {items.length === 0 && <Typography sx={{ color: "var(--color-text-secondary)", py: 3 }}>هنوز پرسشی اضافه نشده است.</Typography>}
           {items.map((item, index) => (
             <Accordion key={`${item.question}-${index}`} expanded={expandedFaq === index} onChange={() => setExpandedFaq(expandedFaq === index ? -1 : index)} disableGutters elevation={0} sx={{ bgcolor: "transparent", borderTop: "1px solid var(--color-border)", "&:last-child": { borderBottom: "1px solid var(--color-border)" }, "&::before": { display: "none" } }}>
-              <AccordionSummary expandIcon={<ChevronRightIcon />} aria-controls={`faq-page-panel-${index}`} id={`faq-page-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68, "& .MuiAccordionSummary-content": { my: 0 } }}>
+              <AccordionSummary expandIcon={<ChevronLeftIcon />} aria-controls={`faq-page-panel-${index}`} id={`faq-page-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68, "& .MuiAccordionSummary-content": { my: 0 } }}>
                 <Typography component="h3" sx={{ fontWeight: 750 }}>{item.question}</Typography>
               </AccordionSummary>
               <AccordionDetails id={`faq-page-panel-${index}`} sx={{ px: 0, pt: 0, pb: 2.5 }}>

@@ -68,7 +68,7 @@ export default function BlogSection({ initialContent = null, onEdit = {} }) {
         sx={{
           position: "absolute",
           top: 8,
-          right: 8,
+          insetInlineStart: 8,
           bgcolor: "var(--color-accent-soft)",
           color: "var(--color-primary)",
           "&:hover": { bgcolor: "var(--color-primary-soft)" },

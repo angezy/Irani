@@ -31,13 +31,13 @@ export async function POST(request) {
   try {
     const body = await request.json();
     if (!body || typeof body !== "object" || !body.header || !body.footer) {
-      return NextResponse.json({ error: "Missing site chrome content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوای سربرگ و پابرگ وارد نشده است" }, { status: 400 });
     }
     await ensureFile();
     await fs.writeFile(dataPath, JSON.stringify(body, null, 2), "utf8");
     return NextResponse.json({ ok: true, content: body });
   } catch (error) {
     console.error("site chrome write error", error);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

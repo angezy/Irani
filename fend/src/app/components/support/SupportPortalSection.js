@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Box, Button, Card, CardContent, Container, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import defaultHelpCenter from "../../../../data/help-center.json";
@@ -65,7 +65,7 @@ export default function SupportPortalSection() {
               xs: 12,
               sm: 6,
               md: index === 6 ? 12 : 3
-            }}><Card sx={{ height: "100%", bgcolor: index % 2 ? "var(--color-accent-soft)" : "#ffffff", border: "1px solid var(--color-border)", borderRadius: 3, boxShadow: "none" }}><CardContent sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column" }}><Typography component="h3" sx={{ fontWeight: 800, mb: 1 }}>{title}</Typography><Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.65, fontSize: 14, mb: 3 }}>{description}</Typography><Button component={Link} href={href} endIcon={<ArrowForwardIcon />} sx={{ mt: "auto", alignSelf: "flex-start", color: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>مشاهده راهنما</Button></CardContent></Card></Grid>)}
+            }}><Card sx={{ height: "100%", bgcolor: index % 2 ? "var(--color-accent-soft)" : "#ffffff", border: "1px solid var(--color-border)", borderRadius: 3, boxShadow: "none" }}><CardContent sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column" }}><Typography component="h3" sx={{ fontWeight: 800, mb: 1 }}>{title}</Typography><Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.65, fontSize: 14, mb: 3 }}>{description}</Typography><Button component={Link} href={href} endIcon={<ArrowBackIcon />} sx={{ mt: "auto", alignSelf: "flex-start", color: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>مشاهده راهنما</Button></CardContent></Card></Grid>)}
         </Grid>
       </Container>
     </Box>

@@ -48,12 +48,12 @@ function normalizeHexColor(value) {
 }
 
 const COLOR_RECOMMENDATIONS = [
-  { label: "Sunset", value: "#FF6B35" },
-  { label: "Forest", value: "#287A65" },
-  { label: "Ocean", value: "#315C78" },
-  { label: "Gold", value: "#F28C28" },
-  { label: "Rose", value: "#C94A4A" },
-  { label: "Slate", value: "#475569" },
+  { label: "غروب", value: "#FF6B35" },
+  { label: "جنگل", value: "#287A65" },
+  { label: "اقیانوس", value: "#315C78" },
+  { label: "طلایی", value: "#F28C28" },
+  { label: "رز", value: "#C94A4A" },
+  { label: "خاکستری", value: "#475569" },
 ];
 
 function getColorRecommendations(value) {
@@ -71,7 +71,7 @@ function getFontOptions(siteSettings) {
   const customFonts = Array.isArray(siteSettings?.customFonts) ? siteSettings.customFonts : [];
   const customOptions = customFonts.map((font) => ({
     value: `${CUSTOM_FONT_OPTION_PREFIX}${font.id}`,
-    label: `${font.name} · imported`,
+    label: `${font.name} · واردشده`,
     stack: getSiteFontFamily(CUSTOM_FONT_VALUE, font.name),
   }));
   const activeCustomId = String(siteSettings?.customFontId || "").trim();
@@ -82,13 +82,13 @@ function getFontOptions(siteSettings) {
     if (activeCustomId && !customOptions.some((option) => option.value === `${CUSTOM_FONT_OPTION_PREFIX}${activeCustomId}`)) {
       customOptions.push({
         value: `${CUSTOM_FONT_OPTION_PREFIX}${activeCustomId}`,
-        label: `${siteSettings.customFontName || "Custom font"} · active`,
+        label: `${siteSettings.customFontName || "فونت سفارشی"} · فعال`,
         stack: getSiteFontFamily(CUSTOM_FONT_VALUE, siteSettings.customFontName),
       });
     } else if (!activeCustomId) {
       customOptions.push({
         value: CUSTOM_FONT_VALUE,
-        label: `${siteSettings.customFontName || "Custom font"} · active`,
+        label: `${siteSettings.customFontName || "فونت سفارشی"} · فعال`,
         stack: getSiteFontFamily(CUSTOM_FONT_VALUE, siteSettings.customFontName),
       });
     }
@@ -102,76 +102,76 @@ function getFontOptions(siteSettings) {
 
 const FIELD_GROUPS = [
   {
-    title: "Brand identity",
-    description: "These values appear in the public header, footer, dashboard, and customer-facing shell.",
+    title: "هویت برند",
+    description: "این مقادیر در سربرگ، پابرگ، داشبورد و بخش‌های مشتری نمایش داده می‌شوند.",
     fields: [
-      { key: "siteName", label: "Site name", required: true },
-      { key: "siteTagline", label: "Tagline" },
-      { key: "siteDescription", label: "Site description", multiline: true, minRows: 3, required: true },
-      { key: "siteLogoUrl", label: "Logo URL", placeholder: "https://example.com/logo.svg" },
-      { key: "siteFaviconUrl", label: "Favicon URL", placeholder: "https://example.com/favicon.ico" },
+      { key: "siteName", label: "نام فروشگاه", required: true },
+      { key: "siteTagline", label: "شعار کوتاه" },
+      { key: "siteDescription", label: "توضیحات فروشگاه", multiline: true, minRows: 3, required: true },
+      { key: "siteLogoUrl", label: "نشانی لوگو", placeholder: "https://example.com/logo.svg" },
+      { key: "siteFaviconUrl", label: "نشانی favicon", placeholder: "https://example.com/favicon.ico" },
     ],
   },
   {
-    title: "Complete site colors",
-    description: "Edit every shared storefront color. Each field accepts a picker or a #RRGGBB / #RGB hex code.",
+    title: "رنگ‌های کامل سایت",
+    description: "تمام رنگ‌های مشترک فروشگاه را ویرایش کنید. هر فیلد انتخاب‌گر رنگ یا کد هگز #RRGGBB / #RGB را می‌پذیرد.",
     fields: [
-      { key: "primaryColor", label: "Primary", type: "color", helperText: "Main buttons and links" },
-      { key: "primaryDarkColor", label: "Primary dark", type: "color", helperText: "Hover and active states" },
-      { key: "linkHoverColor", label: "Link hover", type: "color", helperText: "Header and text link hover states" },
-      { key: "primaryLightColor", label: "Primary light", type: "color", helperText: "Soft highlights" },
-      { key: "primarySoftColor", label: "Primary soft", type: "color", helperText: "Selected backgrounds" },
-      { key: "accentColor", label: "Accent", type: "color", helperText: "Secondary actions" },
-      { key: "accentDarkColor", label: "Accent dark", type: "color", helperText: "Accent hover states" },
-      { key: "accentLightColor", label: "Accent light", type: "color", helperText: "Accent highlights" },
-      { key: "accentSoftColor", label: "Accent soft", type: "color", helperText: "Accent backgrounds" },
-      { key: "backgroundColor", label: "Page background", type: "color", helperText: "Main site background" },
-      { key: "surfaceColor", label: "Surface", type: "color", helperText: "Cards and panels" },
-      { key: "surfaceMutedColor", label: "Muted surface", type: "color", helperText: "Search and subtle panels" },
-      { key: "borderColor", label: "Borders", type: "color", helperText: "Dividers and outlines" },
-      { key: "textPrimaryColor", label: "Primary text", type: "color", helperText: "Headings and main text" },
-      { key: "textSecondaryColor", label: "Secondary text", type: "color", helperText: "Labels and supporting text" },
-      { key: "successColor", label: "Success", type: "color", helperText: "Success messages" },
-      { key: "warningColor", label: "Warning", type: "color", helperText: "Warning messages" },
-      { key: "errorColor", label: "Error", type: "color", helperText: "Error messages" },
+      { key: "primaryColor", label: "اصلی", type: "color", helperText: "دکمه‌ها و لینک‌های اصلی" },
+      { key: "primaryDarkColor", label: "اصلی تیره", type: "color", helperText: "حالت‌های فعال و هاور" },
+      { key: "linkHoverColor", label: "هاور لینک", type: "color", helperText: "حالت هاور لینک‌های سربرگ و متن" },
+      { key: "primaryLightColor", label: "اصلی روشن", type: "color", helperText: "برجسته‌سازی ملایم" },
+      { key: "primarySoftColor", label: "اصلی نرم", type: "color", helperText: "پس‌زمینه‌های انتخاب‌شده" },
+      { key: "accentColor", label: "تأکیدی", type: "color", helperText: "عملیات ثانویه" },
+      { key: "accentDarkColor", label: "تأکیدی تیره", type: "color", helperText: "حالت هاور رنگ تأکیدی" },
+      { key: "accentLightColor", label: "تأکیدی روشن", type: "color", helperText: "برجسته‌سازی تأکیدی" },
+      { key: "accentSoftColor", label: "تأکیدی نرم", type: "color", helperText: "پس‌زمینه‌های تأکیدی" },
+      { key: "backgroundColor", label: "پس‌زمینه صفحه", type: "color", helperText: "پس‌زمینه اصلی سایت" },
+      { key: "surfaceColor", label: "سطح", type: "color", helperText: "کارت‌ها و پنل‌ها" },
+      { key: "surfaceMutedColor", label: "سطح ملایم", type: "color", helperText: "جست‌وجو و پنل‌های ظریف" },
+      { key: "borderColor", label: "حاشیه‌ها", type: "color", helperText: "جداکننده‌ها و خطوط" },
+      { key: "textPrimaryColor", label: "متن اصلی", type: "color", helperText: "عنوان‌ها و متن اصلی" },
+      { key: "textSecondaryColor", label: "متن ثانویه", type: "color", helperText: "برچسب‌ها و متن پشتیبان" },
+      { key: "successColor", label: "موفقیت", type: "color", helperText: "پیام‌های موفقیت" },
+      { key: "warningColor", label: "هشدار", type: "color", helperText: "پیام‌های هشدار" },
+      { key: "errorColor", label: "خطا", type: "color", helperText: "پیام‌های خطا" },
     ],
   },
   {
-    title: "Typography",
-    description: "Choose a preset or upload a font for the storefront, account pages, and dashboard. Variable WOFF2/TTF files downloaded from Google Fonts are supported.",
+    title: "تایپوگرافی",
+    description: "برای فروشگاه، صفحات حساب و داشبورد فونت آماده انتخاب یا فونت جدید بارگذاری کنید. فایل‌های متغیر WOFF2/TTF پشتیبانی می‌شوند.",
     fields: [
-      { key: "fontFamily", label: "Site font", type: "select", options: SITE_FONT_OPTIONS, helperText: "Custom fonts are managed with the button below." },
+      { key: "fontFamily", label: "فونت سایت", type: "select", options: SITE_FONT_OPTIONS, helperText: "فونت‌های سفارشی با دکمه زیر مدیریت می‌شوند." },
     ],
   },
   {
-    title: "SEO and sharing",
-    description: "Used for browser metadata, search previews, social sharing, and canonical links.",
+    title: "سئو و اشتراک‌گذاری",
+    description: "برای متادیتای مرورگر، پیش‌نمایش جست‌وجو، اشتراک‌گذاری اجتماعی و لینک‌های canonical استفاده می‌شود.",
     fields: [
-      { key: "siteUrl", label: "Canonical site URL", required: true, placeholder: "https://example.com" },
-      { key: "siteKeywords", label: "SEO keywords", multiline: true, minRows: 2, helperText: "Separate keywords with commas." },
-      { key: "siteOgImageUrl", label: "Social preview image URL", placeholder: "https://example.com/social-card.jpg" },
+      { key: "siteUrl", label: "نشانی canonical سایت", required: true, placeholder: "https://example.com" },
+      { key: "siteKeywords", label: "کلمات کلیدی سئو", multiline: true, minRows: 2, helperText: "کلمات کلیدی را با ویرگول جدا کنید." },
+      { key: "siteOgImageUrl", label: "نشانی تصویر پیش‌نمایش اجتماعی", placeholder: "https://example.com/social-card.jpg" },
     ],
   },
   {
-    title: "Customer contact",
-    description: "Shown in support and contact experiences when those pages do not provide their own value.",
+    title: "ارتباط با مشتری",
+    description: "وقتی صفحات پشتیبانی و تماس مقدار جداگانه‌ای نداشته باشند، این اطلاعات نمایش داده می‌شود.",
     fields: [
-      { key: "supportEmail", label: "Support email", type: "email" },
-      { key: "supportPhone", label: "Support phone" },
-      { key: "supportHours", label: "Support hours" },
+      { key: "supportEmail", label: "ایمیل پشتیبانی", type: "email" },
+      { key: "supportPhone", label: "تلفن پشتیبانی" },
+      { key: "supportHours", label: "ساعات پشتیبانی" },
     ],
   },
   {
-    title: "First-visit welcome offer",
-    description: "Edit the optional popup shown once to new visitors. Configure a coupon first, then enable the offer.",
+    title: "پیشنهاد خوشامدگویی بازدید اول",
+    description: "پنجره اختیاری نمایش‌داده‌شده به بازدیدکنندگان جدید را ویرایش کنید. ابتدا کد تخفیف بسازید و سپس پیشنهاد را فعال کنید.",
     fields: [
-      { key: "welcomePopupEnabled", label: "Show welcome popup", type: "toggle", helperText: "Turn the first-visit offer on or off." },
-      { key: "welcomePopupEyebrow", label: "Eyebrow" },
-      { key: "welcomePopupTitle", label: "Offer title", fullWidth: true, required: true },
-      { key: "welcomePopupDescription", label: "Offer description", multiline: true, minRows: 2, fullWidth: true, required: true },
-      { key: "welcomePopupButtonLabel", label: "Button label" },
-      { key: "welcomePopupCouponCode", label: "Coupon code", helperText: "Use a code that exists in Dashboard → Coupons." },
-      { key: "welcomePopupFinePrint", label: "Fine print", fullWidth: true },
+      { key: "welcomePopupEnabled", label: "نمایش پنجره خوشامدگویی", type: "toggle", helperText: "پیشنهاد بازدید اول را فعال یا غیرفعال کنید." },
+      { key: "welcomePopupEyebrow", label: "برچسب بالایی" },
+      { key: "welcomePopupTitle", label: "عنوان پیشنهاد", fullWidth: true, required: true },
+      { key: "welcomePopupDescription", label: "توضیحات پیشنهاد", multiline: true, minRows: 2, fullWidth: true, required: true },
+      { key: "welcomePopupButtonLabel", label: "برچسب دکمه" },
+      { key: "welcomePopupCouponCode", label: "کد تخفیف", helperText: "از کدی استفاده کنید که در داشبورد ← کدهای تخفیف وجود دارد." },
+      { key: "welcomePopupFinePrint", label: "توضیحات ریز", fullWidth: true },
     ],
   },
 ];
@@ -201,9 +201,9 @@ export default function SiteSettingsPage() {
     queueMicrotask(() => setHydrated(true));
     let active = true;
     fetch("/api/dashboard/settings", { credentials: "include", cache: "no-store" })
-      .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.error || "Unable to load settings"))))
+      .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.error || "بارگذاری تنظیمات ممکن نیست"))))
       .then((data) => active && setForm((current) => normalizeSiteSettings({ ...current, ...(data.site || {}) })))
-      .catch((loadError) => active && setError(loadError.message || "Unable to load settings"))
+      .catch((loadError) => active && setError(loadError.message || "بارگذاری تنظیمات ممکن نیست"))
       .finally(() => active && setLoading(false));
 
     return () => {
@@ -268,7 +268,7 @@ export default function SiteSettingsPage() {
         body: payload,
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Unable to upload font");
+      if (!response.ok) throw new Error(body.error || "بارگذاری فونت ممکن نیست");
 
       setCustomFontDraft((current) => ({
         ...current,
@@ -278,9 +278,9 @@ export default function SiteSettingsPage() {
         id: body.id || current.id,
         fileName: body.name || file.name,
       }));
-      setMessage("Font uploaded. Add a name, then apply it to the site.");
+      setMessage("فونت بارگذاری شد. نام آن را وارد و سپس روی سایت اعمال کنید.");
     } catch (uploadError) {
-      setError(uploadError.message || "Unable to upload font");
+      setError(uploadError.message || "بارگذاری فونت ممکن نیست");
     } finally {
       setUploadingFont(false);
     }
@@ -290,11 +290,11 @@ export default function SiteSettingsPage() {
     const name = String(customFontDraft.name || "").trim();
     const url = String(customFontDraft.url || "").trim();
     if (!isValidCustomFontName(name)) {
-      setError("Enter a font name beginning with a letter. Use letters, numbers, spaces, hyphens, or underscores.");
+      setError("نام فونت باید با حرف شروع شود و فقط شامل حروف، عدد، فاصله، خط تیره یا زیرخط باشد.");
       return;
     }
     if (!isValidCustomFontUrl(url)) {
-      setError("Choose a font file or enter a valid HTTPS/custom font URL before applying it.");
+      setError("پیش از اعمال فونت، یک فایل فونت انتخاب کنید یا نشانی HTTPS معتبر برای فونت سفارشی وارد کنید.");
       return;
     }
 
@@ -322,14 +322,14 @@ export default function SiteSettingsPage() {
     setForm((current) => ({ ...current, ...nextValues }));
     window.dispatchEvent(new CustomEvent("site-settings-updated", { detail: nextValues }));
     setCustomFontDialogOpen(false);
-    setMessage(`${name} is ready. Save site settings to publish the font.`);
+    setMessage(`${name} آماده است. برای انتشار فونت، تنظیمات سایت را ذخیره کنید.`);
     setError("");
   };
 
   const save = async (event) => {
     event.preventDefault();
     if (!form.siteName.trim() || !form.siteDescription.trim() || !form.siteUrl.trim()) {
-      setError("Site name, site description, and canonical site URL are required.");
+      setError("نام فروشگاه، توضیحات فروشگاه و نشانی canonical سایت الزامی است.");
       return;
     }
     const colorFields = [
@@ -341,16 +341,16 @@ export default function SiteSettingsPage() {
     ];
     const invalidColor = colorFields.find((key) => !normalizeHexColor(form[key]));
     if (invalidColor) {
-      setError(`${invalidColor} must be a hex color such as #FF6B35.`);
+      setError(`مقدار رنگ «${invalidColor}» باید یک رنگ هگز مانند #FF6B35 باشد.`);
       return;
     }
     if (form.fontFamily === CUSTOM_FONT_VALUE) {
       if (!isValidCustomFontName(form.customFontName)) {
-        setError("Enter a valid custom font name before saving.");
+        setError("پیش از ذخیره، نام معتبر فونت سفارشی را وارد کنید.");
         return;
       }
       if (!isValidCustomFontUrl(form.customFontUrl)) {
-        setError("Upload a font file or enter a valid HTTPS/custom font URL before saving.");
+        setError("پیش از ذخیره، یک فایل فونت بارگذاری کنید یا نشانی HTTPS معتبر برای فونت سفارشی وارد کنید.");
         return;
       }
     }
@@ -366,14 +366,14 @@ export default function SiteSettingsPage() {
         body: JSON.stringify({ site: form }),
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Unable to save site settings");
+      if (!response.ok) throw new Error(body.error || "ذخیره تنظیمات سایت ممکن نیست");
       if (body.site) setForm((current) => normalizeSiteSettings({ ...current, ...body.site }));
       if (body.site && typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("site-settings-updated", { detail: body.site }));
       }
-      setMessage("Site settings saved. The selected font is now applied across the site.");
+      setMessage("تنظیمات سایت ذخیره شد و فونت انتخاب‌شده در سراسر سایت اعمال شد.");
     } catch (saveError) {
-      setError(saveError.message || "Unable to save site settings");
+      setError(saveError.message || "ذخیره تنظیمات سایت ممکن نیست");
     } finally {
       setSaving(false);
     }
@@ -404,9 +404,9 @@ export default function SiteSettingsPage() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1280, mx: "auto" }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 850, letterSpacing: "0.14em" }}>Store configuration</Typography>
-        <Typography component="h1" sx={{ mt: 0.5, color: "#0f172a", fontSize: { xs: 28, md: 36 }, fontWeight: 900, letterSpacing: "-0.04em" }}>Site identity &amp; SEO</Typography>
-        <Typography sx={{ mt: 0.75, color: "#64748b", maxWidth: 720 }}>Change the store name, font, colors, SEO defaults, logo, and support details from one place. These settings are shared by the public storefront and dashboard.</Typography>
+        <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 850, letterSpacing: "0.14em" }}>پیکربندی فروشگاه</Typography>
+        <Typography component="h1" sx={{ mt: 0.5, color: "#0f172a", fontSize: { xs: 28, md: 36 }, fontWeight: 900, letterSpacing: "-0.04em" }}>هویت سایت و سئو</Typography>
+        <Typography sx={{ mt: 0.75, color: "#64748b", maxWidth: 720 }}>نام فروشگاه، فونت، رنگ‌ها، پیش‌فرض‌های سئو، لوگو و اطلاعات پشتیبانی را از یکجا تغییر دهید. این تنظیمات بین فروشگاه عمومی و داشبورد مشترک هستند.</Typography>
       </Box>
 
       {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
@@ -452,7 +452,7 @@ export default function SiteSettingsPage() {
                                 onFocus={() => setActiveColorField(field.key)}
                                 onChange={(event) => updateField(field.key, event.target.value)}
                                 placeholder="#FF6B35"
-                                helperText={field.helperText || "Use #RRGGBB"}
+                                helperText={field.helperText || "قالب مجاز: #RRGGBB"}
                                 error={Boolean(form[field.key]) && !normalizeHexColor(form[field.key])}
                                 disabled={hydrated && (loading || saving)}
                                 inputProps={{ maxLength: 7, spellCheck: false }}
@@ -461,7 +461,7 @@ export default function SiteSettingsPage() {
                               {activeColorField === field.key && (
                                 <Box sx={{ mt: 0.75 }}>
                                   <Typography sx={{ mb: 0.5, color: "#64748b", fontSize: 11, fontWeight: 700 }}>
-                                    Recommended colors
+                                    رنگ‌های پیشنهادی
                                   </Typography>
                                   <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
                                     {getColorRecommendations(form[field.key]).map((recommendation) => (
@@ -471,7 +471,7 @@ export default function SiteSettingsPage() {
                                         type="button"
                                         onMouseDown={(event) => event.preventDefault()}
                                         onClick={() => updateField(field.key, recommendation.value)}
-                                        aria-label={`Use ${recommendation.label} ${recommendation.value}`}
+                                        aria-label={`استفاده از ${recommendation.label} ${recommendation.value}`}
                                         sx={{
                                           display: "inline-flex",
                                           alignItems: "center",
@@ -548,20 +548,20 @@ export default function SiteSettingsPage() {
                       </Grid>
                     ))}
                   </Grid>
-                  {group.title === "Typography" && (
+                  {group.title === "تایپوگرافی" && (
                     <Stack spacing={0.75} sx={{ mt: 2.5, pt: 2, borderTop: "1px solid #e2e8f0" }}>
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between">
                         <Box>
                           <Typography sx={{ color: "#0f172a", fontSize: 14, fontWeight: 800 }}>
-                            {form.fontFamily === CUSTOM_FONT_VALUE ? "Custom font active" : "Add a custom font"}
+                            {form.fontFamily === CUSTOM_FONT_VALUE ? "فونت سفارشی فعال است" : "افزودن فونت سفارشی"}
                           </Typography>
                           <Typography sx={{ color: "#64748b", fontSize: 12 }}>
                             {form.fontFamily === CUSTOM_FONT_VALUE
-                              ? `${form.customFontName || "Unnamed font"}${form.customFontVariable ? " · variable" : ""}`
-                              : "Upload a font file in a popup. It will not appear in the preset list."}
+                              ? `${form.customFontName || "فونت بدون نام"}${form.customFontVariable ? " · متغیر" : ""}`
+                              : "فایل فونت را در پنجره بازشده بارگذاری کنید؛ در فهرست آماده نمایش داده نمی‌شود."}
                           </Typography>
                         </Box>
-                        {form.fontFamily === CUSTOM_FONT_VALUE && form.customFontVariable && <Chip size="small" label="Variable" color="primary" variant="outlined" />}
+                        {form.fontFamily === CUSTOM_FONT_VALUE && form.customFontVariable && <Chip size="small" label="متغیر" color="primary" variant="outlined" />}
                       </Stack>
                       <Button
                         type="button"
@@ -571,7 +571,7 @@ export default function SiteSettingsPage() {
                         disabled={hydrated && (loading || saving)}
                         sx={{ alignSelf: "flex-start", mt: 0.5, borderRadius: 999, textTransform: "none", fontWeight: 800 }}
                       >
-                        {form.fontFamily === CUSTOM_FONT_VALUE ? "Edit custom font" : "Upload custom font"}
+                        {form.fontFamily === CUSTOM_FONT_VALUE ? "ویرایش فونت سفارشی" : "بارگذاری فونت سفارشی"}
                       </Button>
                     </Stack>
                   )}
@@ -588,16 +588,16 @@ export default function SiteSettingsPage() {
           }}>
           <Card sx={{ position: { lg: "sticky" }, top: { lg: 84 }, borderRadius: 3, bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", boxShadow: "0 12px 35px rgba(43,43,43,0.08)" }}>
             <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-              <Typography sx={{ color: "var(--color-accent)", fontSize: 11, fontWeight: 850, letterSpacing: "0.14em", textTransform: "uppercase" }}>Live preview</Typography>
-              <Typography sx={{ mt: 1.5, fontSize: 30, fontWeight: 950, letterSpacing: "-0.05em", color: form.primaryColor, fontFamily: getSiteFontFamily(form.fontFamily, form.customFontName) }}>{form.siteName || "Your site name"}</Typography>
-              <Typography sx={{ mt: 1, color: "var(--color-text-secondary)", lineHeight: 1.7, fontFamily: getSiteFontFamily(form.fontFamily, form.customFontName) }}>{form.siteDescription || "Your site description will appear here."}</Typography>
+              <Typography sx={{ color: "var(--color-accent)", fontSize: 11, fontWeight: 850, letterSpacing: "0.14em", textTransform: "uppercase" }}>پیش‌نمایش زنده</Typography>
+              <Typography sx={{ mt: 1.5, fontSize: 30, fontWeight: 950, letterSpacing: "-0.05em", color: form.primaryColor, fontFamily: getSiteFontFamily(form.fontFamily, form.customFontName) }}>{form.siteName || "نام سایت شما"}</Typography>
+              <Typography sx={{ mt: 1, color: "var(--color-text-secondary)", lineHeight: 1.7, fontFamily: getSiteFontFamily(form.fontFamily, form.customFontName) }}>{form.siteDescription || "توضیحات سایت شما اینجا نمایش داده می‌شود."}</Typography>
               <Divider sx={{ my: 2.5, borderColor: form.backgroundColor }} />
-              <Typography sx={{ fontSize: 12, color: "var(--color-text-secondary)" }}>Browser title</Typography>
-              <Typography sx={{ mt: 0.4, fontWeight: 800 }}>{form.siteName || "Your site name"}</Typography>
-              <Typography sx={{ mt: 2, fontSize: 12, color: "var(--color-text-secondary)" }}>Tagline</Typography>
-              <Typography sx={{ mt: 0.4, fontWeight: 800 }}>{form.siteTagline || "Your tagline"}</Typography>
+              <Typography sx={{ fontSize: 12, color: "var(--color-text-secondary)" }}>عنوان مرورگر</Typography>
+              <Typography sx={{ mt: 0.4, fontWeight: 800 }}>{form.siteName || "نام سایت شما"}</Typography>
+              <Typography sx={{ mt: 2, fontSize: 12, color: "var(--color-text-secondary)" }}>شعار کوتاه</Typography>
+              <Typography sx={{ mt: 0.4, fontWeight: 800 }}>{form.siteTagline || "شعار کوتاه شما"}</Typography>
               <Button type="submit" fullWidth variant="contained" startIcon={<SaveOutlinedIcon />} disabled={hydrated && (loading || saving)} sx={{ mt: 3, bgcolor: form.primaryColor, color: "#ffffff", borderRadius: 999, py: 1.15, textTransform: "none", fontWeight: 900, "&:hover": { bgcolor: form.primaryColor } }}>
-                {saving ? "Saving..." : "Save site settings"}
+                {saving ? "در حال ذخیره…" : "ذخیره تنظیمات سایت"}
               </Button>
             </CardContent>
           </Card>
@@ -605,9 +605,9 @@ export default function SiteSettingsPage() {
       </Grid>
 
       <Dialog open={customFontDialogOpen} onClose={closeCustomFontDialog} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ pr: 6, color: "#0f172a", fontWeight: 850 }}>
-          Upload a custom font
-          <IconButton aria-label="Close custom font dialog" onClick={closeCustomFontDialog} disabled={uploadingFont} sx={{ position: "absolute", top: 10, right: 12 }}>
+        <DialogTitle sx={{ paddingInlineStart: 6, color: "#0f172a", fontWeight: 850 }}>
+          بارگذاری فونت سفارشی
+          <IconButton aria-label="بستن پنجره فونت سفارشی" onClick={closeCustomFontDialog} disabled={uploadingFont} sx={{ position: "absolute", top: 10, insetInlineStart: 12 }}>
             <CloseOutlinedIcon />
           </IconButton>
         </DialogTitle>
@@ -616,56 +616,56 @@ export default function SiteSettingsPage() {
             {message && <Alert severity="success">{message}</Alert>}
             {error && <Alert severity="error">{error}</Alert>}
             <Typography sx={{ color: "#64748b", fontSize: 13 }}>
-              Upload a WOFF2, WOFF, TTF, or OTF file. Google Fonts variable downloads work when you mark the file as variable.
+              فایل WOFF2، WOFF، TTF یا OTF را بارگذاری کنید. فایل‌های متغیر Google Fonts در صورت علامت‌گذاری به‌عنوان متغیر پشتیبانی می‌شوند.
             </Typography>
             <TextField
               autoFocus
               fullWidth
               required
-              label="Font family name"
+              label="نام خانواده فونت"
               value={customFontDraft.name}
               onChange={(event) => updateCustomFontDraft("name", event.target.value)}
-              placeholder="Acme Sans"
-              helperText="Letters, numbers, spaces, hyphens, and underscores only."
+              placeholder="مثلاً وزیر سنس"
+              helperText="فقط حروف، عدد، فاصله، خط تیره و زیرخط مجاز است."
               disabled={uploadingFont}
             />
             <Box sx={{ p: 1.5, border: "1px dashed #cbd5e1", borderRadius: 2, bgcolor: "#f8fafc" }}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between">
                 <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{ color: "#0f172a", fontSize: 13, fontWeight: 800 }}>Font file</Typography>
+                  <Typography sx={{ color: "#0f172a", fontSize: 13, fontWeight: 800 }}>فایل فونت</Typography>
                   <Typography sx={{ color: "#64748b", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {customFontDraft.fileName || "No file uploaded yet"}
+                    {customFontDraft.fileName || "هنوز فایلی بارگذاری نشده است"}
                   </Typography>
                 </Box>
                 <Button type="button" variant="contained" startIcon={<CloudUploadOutlinedIcon />} onClick={() => customFontInputRef.current?.click()} disabled={uploadingFont} sx={{ flexShrink: 0, textTransform: "none", fontWeight: 800 }}>
-                  {uploadingFont ? "Uploading..." : "Choose file"}
+                  {uploadingFont ? "در حال بارگذاری…" : "انتخاب فایل"}
                 </Button>
                 <input ref={customFontInputRef} hidden type="file" accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf" onChange={uploadFont} />
               </Stack>
             </Box>
             <FormControlLabel
               control={<Checkbox checked={customFontDraft.variable} onChange={(event) => updateCustomFontDraft("variable", event.target.checked)} disabled={uploadingFont} />}
-              label={<Box><Typography sx={{ color: "#0f172a", fontSize: 13, fontWeight: 750 }}>This is a variable font</Typography><Typography sx={{ color: "#64748b", fontSize: 12 }}>Enable this for variable fonts downloaded from Google Fonts so all weight values use the font’s axis.</Typography></Box>}
-              sx={{ alignItems: "flex-start", ml: 0, mr: 0 }}
+              label={<Box><Typography sx={{ color: "#0f172a", fontSize: 13, fontWeight: 750 }}>این فونت متغیر است</Typography><Typography sx={{ color: "#64748b", fontSize: 12 }}>برای فونت‌های متغیر دانلودشده از Google Fonts این گزینه را فعال کنید تا همه وزن‌ها از محور فونت استفاده کنند.</Typography></Box>}
+              sx={{ alignItems: "flex-start", marginInline: 0 }}
             />
             <Divider />
-            <Typography sx={{ color: "#64748b", fontSize: 12, fontWeight: 750 }}>Or use an already hosted font file</Typography>
+            <Typography sx={{ color: "#64748b", fontSize: 12, fontWeight: 750 }}>یا از فایل فونتی که قبلاً میزبانی شده استفاده کنید</Typography>
             <TextField
               fullWidth
-              label="Font file URL"
+              label="نشانی فایل فونت"
               value={customFontDraft.url}
               onChange={(event) => updateCustomFontDraft("url", event.target.value)}
               placeholder="/uploads/fonts/acme-sans.woff2"
-              helperText="Use an uploaded file or an HTTPS URL with CORS enabled."
+              helperText="از فایل بارگذاری‌شده یا نشانی HTTPS با CORS فعال استفاده کنید."
               disabled={uploadingFont}
             />
             <TextField
               select
               fullWidth
-              label="Font format"
+              label="قالب فونت"
               value={customFontDraft.format}
               onChange={(event) => updateCustomFontDraft("format", event.target.value)}
-              helperText="Choose the format that matches the URL."
+              helperText="قالب متناسب با نشانی را انتخاب کنید."
               disabled={uploadingFont}
             >
               {SITE_FONT_FORMAT_OPTIONS.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
@@ -673,8 +673,8 @@ export default function SiteSettingsPage() {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
-          <Button onClick={closeCustomFontDialog} disabled={uploadingFont} sx={{ textTransform: "none", fontWeight: 750 }}>Cancel</Button>
-          <Button onClick={applyCustomFont} variant="contained" disabled={uploadingFont} sx={{ textTransform: "none", fontWeight: 800 }}>Use this font</Button>
+          <Button onClick={closeCustomFontDialog} disabled={uploadingFont} sx={{ textTransform: "none", fontWeight: 750 }}>انصراف</Button>
+          <Button onClick={applyCustomFont} variant="contained" disabled={uploadingFont} sx={{ textTransform: "none", fontWeight: 800 }}>استفاده از این فونت</Button>
         </DialogActions>
       </Dialog>
     </Box>

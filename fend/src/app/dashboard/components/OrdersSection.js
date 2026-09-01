@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography, Skeleton, List, ListItem, ListItemText, Chip, Stack } from "@mui/material";
+import { formatMoney } from "../../lib/locale";
+import { translateStatus } from "../../lib/statusLabels";
 
 export default function OrdersSection({ loading: parentLoading }) {
   const [loading, setLoading] = useState(parentLoading ?? true);
@@ -13,7 +15,7 @@ export default function OrdersSection({ loading: parentLoading }) {
       .then((data) => {
         if (!mounted) return;
         if (Array.isArray(data)) {
-          setOrders(data.map((o) => ({ id: o.id ?? o.orderId ?? o.OrderId, customer: o.customer ?? o.name, total: o.total ?? o.amount, status: o.status ?? "Pending", date: o.date ?? o.createdAt })));
+          setOrders(data.map((o) => ({ id: o.id ?? o.orderId ?? o.OrderId, customer: o.customer ?? o.name, total: o.total ?? o.amount, currency: o.currency ?? o.Currency, status: o.status ?? "Pending", date: o.date ?? o.createdAt })));
         } else {
           setOrders([]);
         }
@@ -40,8 +42,8 @@ export default function OrdersSection({ loading: parentLoading }) {
             <List>
               {orders.map((o) => (
                 <ListItem key={o.id} divider>
-                  <ListItemText primary={`${o.id} — ${o.customer}`} secondary={o.total} />
-                  <Chip label={o.status} color={o.status === "Processing" ? "warning" : o.status === "Delivered" ? "success" : "info"} size="small" />
+                  <ListItemText primary={`${o.id} — ${o.customer}`} secondary={formatMoney(o.total, o.currency)} />
+                  <Chip label={translateStatus(o.status)} color={o.status === "Processing" ? "warning" : o.status === "Delivered" ? "success" : "info"} size="small" />
                 </ListItem>
               ))}
             </List>

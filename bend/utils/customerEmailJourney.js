@@ -2,36 +2,36 @@ const fs = require("fs");
 const path = require("path");
 
 const TRIGGER_DEFINITIONS = {
-  account_created: { label: "Account created", aliases: ["account created", "new customer", "new account"] },
-  email_opt_in: { label: "Email marketing opt-in", aliases: ["email opt", "email opt-in", "marketing opt"] },
-  signed_up_no_purchase: { label: "Signed up without a purchase", aliases: ["signed-up customer has not purchased", "has not purchased", "no purchase"] },
-  cart_inactive: { label: "Cart inactive", aliases: ["cart has items", "cart inactivity", "checkout is not completed", "cart inactive"] },
-  payment_confirmed: { label: "Payment confirmed", aliases: ["payment confirmed", "order created", "order received"] },
-  order_packed: { label: "Order packed or tracking created", aliases: ["order is packed", "tracking number is created", "dispatch", "shipped"] },
-  out_for_delivery: { label: "Out for delivery", aliases: ["out for delivery", "carrier reports the parcel is out"] },
-  order_delivered: { label: "Order delivered", aliases: ["carrier reports delivery", "delivered", "order has arrived"] },
+  account_created: { label: "ایجاد حساب", aliases: ["account created", "new customer", "new account", "ایجاد حساب"] },
+  email_opt_in: { label: "موافقت با ایمیل بازاریابی", aliases: ["email opt", "email opt-in", "marketing opt", "موافقت با ایمیل"] },
+  signed_up_no_purchase: { label: "ثبت‌نام بدون خرید", aliases: ["signed-up customer has not purchased", "has not purchased", "no purchase", "بدون خرید"] },
+  cart_inactive: { label: "بی‌فعالیتی سبد خرید", aliases: ["cart has items", "cart inactivity", "checkout is not completed", "cart inactive", "بی‌فعالیتی سبد"] },
+  payment_confirmed: { label: "تأیید پرداخت", aliases: ["payment confirmed", "order created", "order received", "تأیید پرداخت"] },
+  order_packed: { label: "بسته‌بندی سفارش یا ایجاد کد رهگیری", aliases: ["order is packed", "tracking number is created", "dispatch", "shipped", "بسته‌بندی سفارش"] },
+  out_for_delivery: { label: "خروج برای تحویل", aliases: ["out for delivery", "carrier reports the parcel is out", "خروج برای تحویل"] },
+  order_delivered: { label: "تحویل سفارش", aliases: ["carrier reports delivery", "delivered", "order has arrived", "تحویل سفارش"] },
 };
 
 const SCHEDULE_DEFINITIONS = {
-  immediate: { label: "Immediately" },
-  delay: { label: "After a delay" },
-  event: { label: "When the event occurs" },
+  immediate: { label: "بلافاصله" },
+  delay: { label: "پس از تأخیر" },
+  event: { label: "هنگام رخداد رویداد" },
 };
 
 const DEFAULT_WELCOME_STEP = {
   key: "welcome",
-  stage: "Welcome",
+  stage: "خوشامدگویی",
   triggerKey: "account_created",
   triggerKeys: ["account_created", "email_opt_in"],
-  trigger: "Account created or email marketing opt-in",
+  trigger: "ایجاد حساب یا موافقت با ایمیل بازاریابی",
   scheduleType: "immediate",
   delayMinutes: 0,
-  timing: "Immediately",
+  timing: "بلافاصله",
   type: "Marketing",
-  subject: "Welcome to our store",
-  body: "Hi there,\n\nThanks for joining us. We are glad to have you here. Explore the store whenever you are ready.\n\nThe team",
-  purpose: "Welcome a new customer and introduce the store.",
-  cta: "Explore products",
+  subject: "به فروشگاه ما خوش آمدید",
+  body: "سلام،\n\nاز همراهی شما سپاسگزاریم. خوشحالیم که اینجا هستید. هر زمان آماده بودید، محصولات فروشگاه را ببینید.\n\nتیم فروشگاه ایرانی",
+  purpose: "خوشامدگویی به مشتری جدید و معرفی فروشگاه.",
+  cta: "مشاهده محصولات",
   href: "/shop",
 };
 
@@ -65,8 +65,8 @@ function triggerKeysFor(step = {}, index = 0) {
 function inferScheduleType(step = {}) {
   if (["immediate", "delay", "event"].includes(String(step.scheduleType || ""))) return step.scheduleType;
   const timing = String(step.timing || "").toLowerCase();
-  if (/immediate|right away|now/.test(timing)) return "immediate";
-  if (/carrier milestone|status changes|when the event|when .* occurs/.test(timing)) return "event";
+  if (/immediate|right away|now|بلافاصله|همین حالا/.test(timing)) return "immediate";
+  if (/carrier milestone|status changes|when the event|when .* occurs|رخداد رویداد|هنگام تغییر وضعیت/.test(timing)) return "event";
   return "delay";
 }
 
@@ -83,14 +83,14 @@ function inferDelayMinutes(step = {}) {
 
 function formatDelay(minutes) {
   const value = Math.max(0, Number(minutes) || 0);
-  if (value && value % 1_440 === 0) return `${value / 1_440} day${value === 1_440 ? "" : "s"} after the trigger`;
-  if (value && value % 60 === 0) return `${value / 60} hour${value === 60 ? "" : "s"} after the trigger`;
-  return `${value || 15} minute${value === 1 ? "" : "s"} after the trigger`;
+  if (value && value % 1_440 === 0) return `${value / 1_440} روز پس از رویداد`;
+  if (value && value % 60 === 0) return `${value / 60} ساعت پس از رویداد`;
+  return `${value || 15} دقیقه پس از رویداد`;
 }
 
 function formatTrigger(keys) {
   const labels = keys.map((key) => TRIGGER_DEFINITIONS[key]?.label).filter(Boolean);
-  return labels.join(" or ") || TRIGGER_DEFINITIONS.account_created.label;
+  return labels.join(" یا ") || TRIGGER_DEFINITIONS.account_created.label;
 }
 
 function normalizeJourneyStep(step = {}, index = 0) {
@@ -140,7 +140,7 @@ function readCustomerEmailJourney() {
       // frontend content file is not present in a split deployment.
     }
   }
-  return { title: "Customer email journey", status: "Active", steps: [DEFAULT_WELCOME_STEP] };
+  return { title: "مسیر ایمیل مشتری", status: "فعال", steps: [DEFAULT_WELCOME_STEP] };
 }
 
 function isMarketingStep(step) {
@@ -151,8 +151,8 @@ function isWelcomeStep(step) {
   const stage = String(step?.stage || "").toLowerCase();
   const keys = triggerKeysFor(step);
   const trigger = String(step?.trigger || "").toLowerCase();
-  return stage.includes("welcome") || String(step?.key || "").toLowerCase() === "welcome"
-    || (!step?.key && keys.includes("account_created") && trigger.includes("account created"));
+  return stage.includes("welcome") || stage.includes("خوشامد") || String(step?.key || "").toLowerCase() === "welcome"
+    || (!step?.key && keys.includes("account_created") && (trigger.includes("account created") || trigger.includes("ایجاد حساب")));
 }
 
 function isSignupTriggeredStep(step) {

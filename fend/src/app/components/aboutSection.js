@@ -28,7 +28,7 @@ export default function AboutSection({ initialContent = null, onEdit = {} }) {
       <IconButton
         size="small"
         onClick={onEdit[key]}
-        sx={{ position: "absolute", top: 0, right: 0, bgcolor: "var(--color-accent-soft)", color: "var(--color-primary)" }}
+        sx={{ position: "absolute", top: 0, insetInlineStart: 0, bgcolor: "var(--color-accent-soft)", color: "var(--color-primary)" }}
       >
         <EditIcon fontSize="small" />
       </IconButton>
@@ -98,7 +98,7 @@ export default function AboutSection({ initialContent = null, onEdit = {} }) {
                 {paragraph}
               </Typography>
             ))}
-            <Box sx={{ pl: 3, mt: 1 }}>
+            <Box sx={{ paddingInlineStart: 3, mt: 1 }}>
               <Typography variant="body1" sx={{ color: "var(--color-primary)", lineHeight: 2 }}>
                 {"\u2022"} کیفیت مهم‌تر از کمیت است.
               </Typography>
@@ -139,7 +139,7 @@ export default function AboutSection({ initialContent = null, onEdit = {} }) {
                 {paragraph}
               </Typography>
             ))}
-            <Box sx={{ pl: 3, mt: 1 }}>
+            <Box sx={{ paddingInlineStart: 3, mt: 1 }}>
               <Typography variant="body1" sx={{ color: "var(--color-text-secondary)", lineHeight: 2 }}>
                 {"\u2022"} مجموعه‌های محصول با دقت انتخاب‌شده
               </Typography>

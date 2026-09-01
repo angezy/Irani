@@ -121,7 +121,7 @@ export default function TestimonialSection() {
                 <Card elevation={0} sx={{ p: 3, borderRadius: "20px" }}>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
-                      <Skeleton variant="circular" width={56} height={56} sx={{ mr: 2 }} />
+                      <Skeleton variant="circular" width={56} height={56} sx={{ marginInlineEnd: 2 }} />
                       <Box sx={{ flex: 1 }}>
                         <Skeleton width="60%" height={20} />
                         <Skeleton width="40%" height={16} />
@@ -152,7 +152,7 @@ export default function TestimonialSection() {
                 >
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
-                      <Avatar src={t.avatar} alt={t.name} sx={{ width: 56, height: 56, mr: 2 }} />
+                      <Avatar src={t.avatar} alt={t.name} sx={{ width: 56, height: 56, marginInlineEnd: 2 }} />
                       <Box>
                         <Typography variant="subtitle1" fontWeight="bold">
                           {t.name}

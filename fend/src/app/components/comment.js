@@ -115,7 +115,7 @@ export default function CommentSection() {
                     variant="circular"
                     width={40}
                     height={40}
-                    sx={{ mr: 2 }}
+                    sx={{ marginInlineEnd: 2 }}
                   />
                   <ListItemText
                     primary={<Skeleton variant="text" width={120} />}
@@ -143,7 +143,7 @@ export default function CommentSection() {
                   <Avatar
                     src={c.img}
                     alt={c.name}
-                    sx={{ width: 45, height: 45, mr: 2 }}
+                    sx={{ width: 45, height: 45, marginInlineEnd: 2 }}
                   >
                     {!c.img && c.name
                       ? c.name.split(" ").map((n) => n[0]).slice(0, 2).join("")

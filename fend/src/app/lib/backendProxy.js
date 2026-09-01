@@ -33,7 +33,7 @@ export async function proxyRequest(request, upstreamPath) {
   const baseUrl = backendBaseUrl();
   if (!baseUrl) {
     return Response.json(
-      { error: "Backend is not configured. Set BACKEND_URL on the frontend server." },
+      { error: "سرویس فروشگاه در سمت سرور تنظیم نشده است." },
       { status: 503 }
     );
   }
@@ -82,6 +82,6 @@ export async function proxyRequest(request, upstreamPath) {
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
   } catch (error) {
     console.error("Backend proxy request failed:", error);
-    return Response.json({ error: "Backend service is unavailable." }, { status: 502 });
+    return Response.json({ error: "سرویس فروشگاه در دسترس نیست." }, { status: 502 });
   }
 }

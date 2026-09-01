@@ -14,7 +14,7 @@ export async function getFaqContent() {
 export async function getFaqMetadata(content) {
   const site = await getSiteSettingsServer();
   const seo = content?.seo || {};
-  const title = seo.title || content?.hero?.title || `${site.siteName} FAQ`;
+  const title = seo.title || content?.hero?.title || `پرسش‌های متداول ${site.siteName}`;
   const description = seo.description || content?.hero?.intro || `Find answers about shopping with ${site.siteName}.`;
   const url = siteUrlFor(site, "/faq");
   return {

@@ -28,7 +28,7 @@ const emptyForm = { code: "", discountPercent: "10", expiresAt: "" };
 function formatDate(value) {
   if (!value) return "—";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
+      return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("fa-IR");
 }
 
 function statusColor(status) {
@@ -54,10 +54,10 @@ export default function CouponsPage() {
     try {
       const response = await fetch("/api/dashboard/coupons", { credentials: "include", cache: "no-store" });
       const body = await response.json().catch(() => []);
-      if (!response.ok) throw new Error(body.error || "Unable to load coupons");
+      if (!response.ok) throw new Error(body.error || "بارگذاری کدهای تخفیف ممکن نیست");
       setCoupons(Array.isArray(body) ? body : []);
     } catch (loadError) {
-      setError(loadError.message || "Unable to load coupons");
+      setError(loadError.message || "بارگذاری کدهای تخفیف ممکن نیست");
     } finally {
       setLoading(false);
     }
@@ -78,12 +78,12 @@ export default function CouponsPage() {
     setMessage("");
     setError("");
     if (!form.code.trim() || !form.expiresAt) {
-      setError("Enter a coupon code and an expiration date.");
+      setError("کد تخفیف و تاریخ انقضا را وارد کنید.");
       return;
     }
     const expiresAt = new Date(form.expiresAt);
     if (Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() <= Date.now()) {
-      setError("Expiration must be in the future.");
+      setError("تاریخ انقضا باید در آینده باشد.");
       return;
     }
 
@@ -100,12 +100,12 @@ export default function CouponsPage() {
         }),
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Unable to create coupon");
+      if (!response.ok) throw new Error(body.error || "ایجاد کد تخفیف ممکن نیست");
       setCoupons((current) => [body, ...current]);
       setForm(emptyForm);
-      setMessage(`${body.code} is ready to use at checkout.`);
+      setMessage(`${body.code} برای استفاده در پرداخت آماده است.`);
     } catch (saveError) {
-      setError(saveError.message || "Unable to create coupon");
+      setError(saveError.message || "ایجاد کد تخفیف ممکن نیست");
     } finally {
       setSaving(false);
     }
@@ -124,11 +124,11 @@ export default function CouponsPage() {
         body: JSON.stringify({ isActive: !coupon.isActive }),
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Unable to update coupon");
+      if (!response.ok) throw new Error(body.error || "به‌روزرسانی کد تخفیف ممکن نیست");
       setCoupons((current) => current.map((entry) => entry.id === body.id ? body : entry));
-      setMessage(`${body.code} is now ${body.status.toLowerCase()}.`);
+      setMessage(`${body.code} اکنون ${body.status === "Active" ? "فعال" : "غیرفعال"} است.`);
     } catch (updateError) {
-      setError(updateError.message || "Unable to update coupon");
+      setError(updateError.message || "به‌روزرسانی کد تخفیف ممکن نیست");
     } finally {
       setUpdatingId(null);
     }
@@ -138,11 +138,11 @@ export default function CouponsPage() {
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1280, mx: "auto" }}>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "flex-end" }} gap={2} sx={{ mb: 3 }}>
         <Box>
-          <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 850, letterSpacing: "0.14em" }}>Marketing tools</Typography>
-          <Typography component="h1" sx={{ mt: 0.5, color: "#0f172a", fontSize: { xs: 28, md: 36 }, fontWeight: 900, letterSpacing: "-0.04em" }}>Coupons</Typography>
-          <Typography sx={{ mt: 0.75, color: "#64748b", maxWidth: 720 }}>Create percentage discounts that customers can apply in the cart before secure checkout. Expired codes stop working automatically.</Typography>
+          <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 850, letterSpacing: "0.14em" }}>ابزارهای بازاریابی</Typography>
+          <Typography component="h1" sx={{ mt: 0.5, color: "#0f172a", fontSize: { xs: 28, md: 36 }, fontWeight: 900, letterSpacing: "-0.04em" }}>کدهای تخفیف</Typography>
+          <Typography sx={{ mt: 0.75, color: "#64748b", maxWidth: 720 }}>تخفیف درصدی بسازید تا مشتریان پیش از پرداخت امن آن را در سبد خرید اعمال کنند. کدهای منقضی‌شده خودکار از کار می‌افتند.</Typography>
         </Box>
-        <Chip icon={<LocalOfferOutlinedIcon />} label={`${activeCount} active`} color="primary" variant="outlined" />
+        <Chip icon={<LocalOfferOutlinedIcon />} label={`${activeCount} فعال`} color="primary" variant="outlined" />
       </Stack>
 
       {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
@@ -152,14 +152,14 @@ export default function CouponsPage() {
         <CardContent component="form" onSubmit={createCoupon} sx={{ p: { xs: 2, md: 3 }, "&:last-child": { pb: { xs: 2, md: 3 } } }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
             <AddOutlinedIcon sx={{ color: "var(--color-primary)" }} />
-            <Typography sx={{ color: "#0f172a", fontSize: 19, fontWeight: 850 }}>Create a coupon</Typography>
+            <Typography sx={{ color: "#0f172a", fontSize: 19, fontWeight: 850 }}>ایجاد کد تخفیف</Typography>
           </Stack>
-          <Typography sx={{ color: "#64748b", fontSize: 13, mb: 2.5 }}>Codes are case-insensitive and become active as soon as they are saved.</Typography>
+          <Typography sx={{ color: "#64748b", fontSize: 13, mb: 2.5 }}>کدها به بزرگی و کوچکی حروف حساس نیستند و پس از ذخیره فعال می‌شوند.</Typography>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ md: "flex-start" }}>
-            <TextField fullWidth label="Coupon code" value={form.code} onChange={(event) => updateForm("code", event.target.value)} placeholder="SUMMER20" inputProps={{ maxLength: 64, spellCheck: false }} helperText="3-64 letters, numbers, hyphens, or underscores" />
-            <TextField fullWidth label="Discount percentage" type="number" value={form.discountPercent} onChange={(event) => updateForm("discountPercent", event.target.value)} inputProps={{ min: 0.01, max: 100, step: 0.01 }} InputProps={{ endAdornment: <Typography sx={{ color: "#64748b" }}>%</Typography> }} />
-            <TextField fullWidth label="Expires" type="datetime-local" value={form.expiresAt} onChange={(event) => updateForm("expiresAt", event.target.value)} InputLabelProps={{ shrink: true }} helperText="Customers cannot use the code after this time" />
-            <Button type="submit" variant="contained" disabled={saving} startIcon={saving ? <CircularProgress size={18} color="inherit" /> : <AddOutlinedIcon />} sx={{ minWidth: 150, minHeight: 56, borderRadius: 2, fontWeight: 800 }}>{saving ? "Saving..." : "Create coupon"}</Button>
+            <TextField fullWidth label="کد تخفیف" value={form.code} onChange={(event) => updateForm("code", event.target.value)} placeholder="تابستان۲۰" inputProps={{ maxLength: 64, spellCheck: false }} helperText="۳ تا ۶۴ حرف، عدد، خط تیره یا زیرخط" />
+            <TextField fullWidth label="درصد تخفیف" type="number" value={form.discountPercent} onChange={(event) => updateForm("discountPercent", event.target.value)} inputProps={{ min: 0.01, max: 100, step: 0.01 }} InputProps={{ endAdornment: <Typography sx={{ color: "#64748b" }}>%</Typography> }} />
+            <TextField fullWidth label="تاریخ انقضا" type="datetime-local" value={form.expiresAt} onChange={(event) => updateForm("expiresAt", event.target.value)} InputLabelProps={{ shrink: true }} helperText="پس از این زمان مشتریان نمی‌توانند از کد استفاده کنند" />
+            <Button type="submit" variant="contained" disabled={saving} startIcon={saving ? <CircularProgress size={18} color="inherit" /> : <AddOutlinedIcon />} sx={{ minWidth: 150, minHeight: 56, borderRadius: 2, fontWeight: 800 }}>{saving ? "در حال ذخیره…" : "ایجاد کد تخفیف"}</Button>
           </Stack>
         </CardContent>
       </Card>
@@ -167,26 +167,26 @@ export default function CouponsPage() {
       <Card sx={{ borderRadius: 3, border: "1px solid #e2e8f0", boxShadow: "0 8px 25px rgba(15,23,42,0.05)" }}>
         <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
           <Box sx={{ p: { xs: 2, md: 3 }, pb: 2 }}>
-            <Typography sx={{ color: "#0f172a", fontSize: 19, fontWeight: 850 }}>All coupons</Typography>
-            <Typography sx={{ color: "#64748b", fontSize: 13, mt: 0.5 }}>Inactive and expired coupons remain visible for reference.</Typography>
+            <Typography sx={{ color: "#0f172a", fontSize: 19, fontWeight: 850 }}>همه کدهای تخفیف</Typography>
+            <Typography sx={{ color: "#64748b", fontSize: 13, mt: 0.5 }}>کدهای غیرفعال و منقضی برای مراجعه بعدی همچنان نمایش داده می‌شوند.</Typography>
           </Box>
           <Divider />
           {loading ? (
             <Stack alignItems="center" sx={{ py: 6 }}><CircularProgress size={28} /></Stack>
           ) : !coupons.length ? (
-            <Typography sx={{ p: 3, color: "#64748b" }}>No coupons have been created yet.</Typography>
+            <Typography sx={{ p: 3, color: "#64748b" }}>هنوز کد تخفیفی ایجاد نشده است.</Typography>
           ) : (
             <TableContainer>
               <Table>
-                <TableHead><TableRow><TableCell sx={{ fontWeight: 800 }}>Code</TableCell><TableCell sx={{ fontWeight: 800 }}>Discount</TableCell><TableCell sx={{ fontWeight: 800 }}>Expires</TableCell><TableCell sx={{ fontWeight: 800 }}>Status</TableCell><TableCell align="right" sx={{ fontWeight: 800 }}>Action</TableCell></TableRow></TableHead>
+                <TableHead><TableRow><TableCell sx={{ fontWeight: 800 }}>کد</TableCell><TableCell sx={{ fontWeight: 800 }}>تخفیف</TableCell><TableCell sx={{ fontWeight: 800 }}>انقضا</TableCell><TableCell sx={{ fontWeight: 800 }}>وضعیت</TableCell><TableCell align="right" sx={{ fontWeight: 800 }}>عملیات</TableCell></TableRow></TableHead>
                 <TableBody>
                   {coupons.map((coupon, index) => (
                     <TableRow key={coupon.id ?? coupon.code ?? `coupon-${index}`} hover>
                       <TableCell><Typography sx={{ fontWeight: 850, letterSpacing: "0.04em" }}>{coupon.code}</Typography></TableCell>
                       <TableCell>{Number(coupon.discountPercent).toFixed(2).replace(/\.00$/, "")} %</TableCell>
                       <TableCell>{formatDate(coupon.expiresAt)}</TableCell>
-                      <TableCell><Chip size="small" label={coupon.status} color={statusColor(coupon.status)} /></TableCell>
-                      <TableCell align="right"><Button size="small" onClick={() => toggleCoupon(coupon)} disabled={coupon.status === "Expired" || updatingId === coupon.id} sx={{ textTransform: "none" }}>{updatingId === coupon.id ? "Saving..." : coupon.isActive ? "Deactivate" : "Reactivate"}</Button></TableCell>
+                      <TableCell><Chip size="small" label={coupon.status === "Active" ? "فعال" : coupon.status === "Expired" ? "منقضی" : "غیرفعال"} color={statusColor(coupon.status)} /></TableCell>
+                      <TableCell align="right"><Button size="small" onClick={() => toggleCoupon(coupon)} disabled={coupon.status === "Expired" || updatingId === coupon.id} sx={{ textTransform: "none" }}>{updatingId === coupon.id ? "در حال ذخیره…" : coupon.isActive ? "غیرفعال‌سازی" : "فعال‌سازی دوباره"}</Button></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

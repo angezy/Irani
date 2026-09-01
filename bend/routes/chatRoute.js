@@ -2,6 +2,7 @@ const express = require("express");
 const sql = require("mssql");
 const crypto = require("crypto");
 const { getPool } = require("../utils/dbConnection");
+const { readAIKnowledge } = require("../utils/aiKnowledge");
 
 const router = express.Router();
 let chatSchemaPromise = null;
@@ -41,8 +42,34 @@ function cleanText(value, max = 4000) {
 }
 
 function storeName() {
-  return String(process.env.STORE_NAME || "Your Store").trim().slice(0, 100) || "Your Store";
+  return String(process.env.STORE_NAME || process.env.NEXT_PUBLIC_STORE_NAME || "فروشگاه ایرانی").trim().slice(0, 100) || "فروشگاه ایرانی";
 }
+
+function chatText(primary, legacy, fallback) {
+  const value = process.env[primary] ?? process.env[legacy];
+  return typeof value === "string" && value.trim() ? value.trim() : fallback;
+}
+
+// Compatibility endpoint for deployments that route /api directly to Express.
+// The canonical implementation lives in the Next.js frontend server.
+router.get("/api/chat/config", async (_req, res) => {
+  const store = storeName();
+  const knowledge = await readAIKnowledge();
+  const configuredEnabled = process.env.CHAT_ENABLED ?? process.env.WELUXO_CHAT_ENABLED;
+  const title = chatText("CHAT_TITLE", "WELUXO_CHAT_TITLE", `پشتیبانی هوشمند ${store}`);
+  res.set("Cache-Control", "no-store");
+  res.json({
+    enabled: configuredEnabled !== "false",
+    title,
+    subtitle: chatText("CHAT_SUBTITLE", "WELUXO_CHAT_SUBTITLE", `پاسخ‌ها از کتابخانه راهنمای ${store}`),
+    greeting: knowledge.greeting || chatText("CHAT_GREETING", "WELUXO_CHAT_GREETING", `سلام؛ من پشتیبان هوشمند ${store} هستم. امروز برای پیدا کردن چه چیزی کمک می‌خواهید؟`),
+    placeholder: chatText("CHAT_PLACEHOLDER", "WELUXO_CHAT_PLACEHOLDER", "درباره سفارش یا ارسال بپرسید…"),
+    triggerLabel: chatText("CHAT_TRIGGER_LABEL", "WELUXO_CHAT_TRIGGER_LABEL", "باز کردن گفت‌وگوی زنده"),
+    thinking: chatText("CHAT_THINKING", "WELUXO_CHAT_THINKING", "در حال بررسی…"),
+    fallback: chatText("CHAT_FALLBACK", "WELUXO_CHAT_FALLBACK", `پاسخ دقیقی در راهنمای ${store} پیدا نشد. درباره ارسال، سفارش، مرجوعی، پرداخت، محصولات یا حساب خود بپرسید.`),
+    error: chatText("CHAT_ERROR", "WELUXO_CHAT_ERROR", "در حال حاضر دسترسی به پشتیبانی ممکن نیست. دوباره تلاش کنید."),
+  });
+});
 
 function validConversationId(value) {
   const conversationId = String(value || "").trim();
@@ -263,14 +290,14 @@ async function latestConversationId(pool) {
 
 function notificationText(conversationId, message, visitor) {
   return [
-    `New customer message on ${storeName()}`,
-    `Conversation: ${conversationId}`,
-    `Name: ${visitor?.name || "Not provided"}`,
-    `Email: ${visitor?.email || "Not provided"}`,
+    `پیام جدید مشتری در ${storeName()}`,
+    `گفت‌وگو: ${conversationId}`,
+    `نام: ${visitor?.name || "وارد نشده"}`,
+    `ایمیل: ${visitor?.email || "وارد نشده"}`,
     "",
     message,
     "",
-    "Type your answer in the reply box below, then send it.",
+    "پاسخ خود را در کادر پاسخ وارد و ارسال کنید.",
   ].join("\n");
 }
 
@@ -282,15 +309,15 @@ function telegramCustomerMessage(conversationId, message, visitor) {
     reply_markup: {
       force_reply: true,
       selective: true,
-      input_field_placeholder: "Type your reply to the customer",
+      input_field_placeholder: "پاسخ خود را برای مشتری وارد کنید",
     },
   };
 }
 
 function transcriptLabel(senderType) {
-  if (senderType === "agent") return "Support specialist";
-  if (senderType === "assistant") return `${storeName()} assistant`;
-  return "Customer";
+  if (senderType === "agent") return "کارشناس پشتیبانی";
+  if (senderType === "assistant") return `دستیار ${storeName()}`;
+  return "مشتری";
 }
 
 function splitTelegramText(value, maxLength = 3400) {
@@ -311,16 +338,16 @@ function splitTelegramText(value, maxLength = 3400) {
 
 async function sendTelegramTranscript(conversationId, visitor, transcript) {
   const heading = [
-    `${storeName()} support handoff`,
-    `Conversation: ${conversationId}`,
-    `Name: ${visitor?.name || "Not provided"}`,
-    `Email: ${visitor?.email || "Not provided"}`,
+    `ارجاع پشتیبانی ${storeName()}`,
+    `گفت‌وگو: ${conversationId}`,
+    `نام: ${visitor?.name || "وارد نشده"}`,
+    `ایمیل: ${visitor?.email || "وارد نشده"}`,
     "",
-    "Chat transcript:",
+    "متن گفت‌وگو:",
   ].join("\n");
   const transcriptText = transcript.length
     ? transcript.map((message) => `${transcriptLabel(message.senderType)}: ${message.text}`).join("\n\n")
-    : "Customer selected Talk to a person before sending a message.";
+    : "مشتری پیش از ارسال پیام، ارتباط با کارشناس را انتخاب کرد.";
   const chunks = splitTelegramText(`${heading}\n${transcriptText}`);
   for (const [index, chunk] of chunks.entries()) {
     await sendTelegram("sendMessage", {
@@ -332,12 +359,12 @@ async function sendTelegramTranscript(conversationId, visitor, transcript) {
 
   return sendTelegram("sendMessage", {
     chat_id: telegramConfig().adminChatId,
-    text: `Reply to this message to answer the ${storeName()} conversation ${conversationId}.`,
+    text: `برای پاسخ به گفت‌وگوی ${conversationId} در ${storeName()} به این پیام پاسخ دهید.`,
     disable_web_page_preview: true,
     reply_markup: {
       force_reply: true,
       selective: true,
-      input_field_placeholder: "Type your reply to the customer",
+      input_field_placeholder: "پاسخ خود را برای مشتری وارد کنید",
     },
   });
 }

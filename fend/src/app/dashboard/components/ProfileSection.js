@@ -19,7 +19,7 @@ export default function ProfileSection({ loading: parentLoading }) {
       })
       .catch((err) => {
         if (!mounted) return;
-        setError(err?.message || 'Failed to load');
+        setError(/[\u0600-\u06ff]/.test(String(err?.message || "")) ? err.message : "بارگذاری پروفایل ممکن نیست.");
       })
       .finally(() => mounted && setLoading(false));
 
@@ -62,7 +62,7 @@ export default function ProfileSection({ loading: parentLoading }) {
                 <Typography variant="body2">{profile?.bio}</Typography>
               )}
               <Box mt={2}>
-                {loading ? <Skeleton variant="rounded" width={110} height={32} sx={{ borderRadius: 1.5 }} /> : <Button size="small" variant="contained">View profile</Button>}
+                {loading ? <Skeleton variant="rounded" width={110} height={32} sx={{ borderRadius: 1.5 }} /> : <Button size="small" variant="contained">مشاهده پروفایل</Button>}
               </Box>
             </CardContent>
           </Card>
@@ -76,7 +76,7 @@ export default function ProfileSection({ loading: parentLoading }) {
           <Card sx={{ borderRadius: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                {loading ? <Skeleton width={200} /> : "Quick Stats"}
+                {loading ? <Skeleton width={200} /> : "آمار سریع"}
               </Typography>
               {loading ? (
                 <Grid container spacing={2}>
@@ -97,15 +97,15 @@ export default function ProfileSection({ loading: parentLoading }) {
               ) : (
                 <Grid container spacing={2}>
                   <Grid size={4}>
-                    <Typography variant="subtitle2" color="text.secondary">Orders</Typography>
+                    <Typography variant="subtitle2" color="text.secondary">سفارش‌ها</Typography>
                     <Typography variant="h6">128</Typography>
                   </Grid>
                   <Grid size={4}>
-                    <Typography variant="subtitle2" color="text.secondary">Revenue</Typography>
+                    <Typography variant="subtitle2" color="text.secondary">فروش</Typography>
                     <Typography variant="h6">$23,450</Typography>
                   </Grid>
                   <Grid size={4}>
-                    <Typography variant="subtitle2" color="text.secondary">Products</Typography>
+                    <Typography variant="subtitle2" color="text.secondary">محصولات</Typography>
                     <Typography variant="h6">320</Typography>
                   </Grid>
                 </Grid>

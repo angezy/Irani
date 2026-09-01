@@ -17,8 +17,8 @@ export default async function FaqStructuredData({ content }) {
         "@type": "WebPage",
         "@id": `${siteUrl}/faq#webpage`,
         url: `${siteUrl}/faq`,
-        name: content?.seo?.title || content?.hero?.title || `${site.siteName} FAQ`,
-        description: content?.seo?.description || content?.hero?.intro || `${site.siteName} frequently asked questions.`,
+        name: content?.seo?.title || content?.hero?.title || `پرسش‌های متداول ${site.siteName}`,
+        description: content?.seo?.description || content?.hero?.intro || `پرسش‌های متداول و پاسخ‌های ${site.siteName}.`,
         isPartOf: { "@id": `${siteUrl}/#website` },
       },
       {
@@ -32,7 +32,7 @@ export default async function FaqStructuredData({ content }) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "خانه", item: siteUrl },
-          { "@type": "ListItem", position: 2, name: "FAQ", item: `${siteUrl}/faq` },
+          { "@type": "ListItem", position: 2, name: "پرسش‌های متداول", item: `${siteUrl}/faq` },
         ],
       },
       ...(items.length

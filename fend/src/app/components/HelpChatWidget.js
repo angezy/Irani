@@ -279,8 +279,8 @@ export default function HelpChatWidget({ floating = true, initialOpen = false, t
     resetExpiredChatSession();
     setConfig((current) => ({
       ...current,
-      title: current.title.endsWith(" Support") ? `${current.title.slice(0, -" Support".length)} AI Concierge` : current.title,
-      subtitle: current.subtitle === "A team member will reply from Telegram" ? `Answers from the ${siteSettings.siteName} help library` : current.subtitle,
+      title: current.title.endsWith(" پشتیبانی انسانی") ? `${current.title.slice(0, -" پشتیبانی انسانی".length)} راهنمای هوشمند` : current.title,
+      subtitle: current.subtitle === "پاسخ‌گویی توسط تیم پشتیبانی در تلگرام انجام می‌شود" ? `پاسخ‌ها از کتابخانه راهنمای ${siteSettings.siteName}` : current.subtitle,
     }));
   }
 
@@ -298,7 +298,7 @@ export default function HelpChatWidget({ floating = true, initialOpen = false, t
     const targetConversationToken = fresh ? "" : conversationToken;
     const name = visitor.name.trim();
     const email = visitor.email.trim().toLowerCase();
-    if (!name || !/^\S+@\S+\.\S+$/.test(email)) throw new Error("Please enter your name and a valid email address before starting the chat.");
+    if (!name || !/^\S+@\S+\.\S+$/.test(email)) throw new Error("پیش از شروع گفت‌وگو، نام و نشانی ایمیل معتبر خود را وارد کنید.");
     setStarting(true);
     try {
       const response = await fetch("/api/chat/start", {
@@ -378,7 +378,7 @@ export default function HelpChatWidget({ floating = true, initialOpen = false, t
       if (!response.ok) throw new Error(data.error || config.error);
       if (data.humanSupport) {
         setHumanSupportEnabled(true);
-        setConfig((current) => ({ ...current, title: `${current.title.replace(/ AI Concierge$/, "")} Support`, subtitle: "A team member will reply from Telegram" }));
+        setConfig((current) => ({ ...current, title: `${current.title.replace(/ راهنمای هوشمند$/, "")} پشتیبانی انسانی`, subtitle: "پاسخ‌گویی توسط تیم پشتیبانی در تلگرام انجام می‌شود" }));
         try { window.sessionStorage.setItem("weluxoChatHumanSupport", "true"); } catch (_storageError) {}
       }
       setMessages((current) => [...current, ...(restarted ? [{ role: "user", text: message }] : []), { role: "assistant", text: data.reply || config.error }]);
@@ -391,7 +391,7 @@ export default function HelpChatWidget({ floating = true, initialOpen = false, t
 
   const panelSx = floating
     ? { position: "fixed", right: { xs: 12, md: 28 }, bottom: { xs: 72, md: 78 }, width: { xs: "calc(100vw - 24px)", sm: 360 }, zIndex: 1301 }
-    : { position: "absolute", left: 0, top: "calc(100% + 10px)", width: { xs: "calc(100vw - 48px)", sm: 360 }, maxWidth: "calc(100vw - 48px)", zIndex: 20 };
+    : { position: "absolute", insetInlineEnd: 0, top: "calc(100% + 10px)", width: { xs: "calc(100vw - 48px)", sm: 360 }, maxWidth: "calc(100vw - 48px)", zIndex: 20 };
 
   if (!config.enabled) return null;
 

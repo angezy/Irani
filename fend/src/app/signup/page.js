@@ -112,7 +112,7 @@ export default function SignupPage() {
         body: JSON.stringify({ ...form, username }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || data.message || "Signup failed");
+      if (!response.ok) throw new Error(data.error || data.message || "ثبت‌نام ناموفق بود");
 
       toast.success("حساب ساخته شد", { description: "اکنون می‌توانید وارد شوید.", duration: 1200 });
       router.push("/signin");
@@ -179,7 +179,7 @@ export default function SignupPage() {
 
               <TextField label="کد پستی (اختیاری)" value={form.zip} onChange={handleChange("zip")} fullWidth autoComplete="postal-code" InputLabelProps={{ sx: labelSx }} InputProps={{ sx: inputSx }} />
 
-              <Stack direction="row" spacing={0.25} alignItems="center" sx={{ ml: -1 }}>
+              <Stack direction="row" spacing={0.25} alignItems="center" sx={{ marginInlineStart: -1 }}>
                 <FormControlLabel
                   control={<Checkbox checked={form.keepSignedIn} onChange={(event) => setForm((current) => ({ ...current, keepSignedIn: event.target.checked }))} sx={checkboxSx} />}
                   label={<Typography sx={{ color: "var(--color-text-primary)", fontSize: 14 }}>مرا وارد نگه دار</Typography>}

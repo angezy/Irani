@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { fetchOrders, fetchSession } from "../../lib/apiClient";
 import { AccountPageSkeleton } from "../../components/LoadingSkeletons";
+import { formatMoney } from "../../lib/locale";
+import { translateStatus } from "../../lib/statusLabels";
 import styles from "../account.module.css";
 
 export default function OrdersPage() {
@@ -53,19 +55,19 @@ export default function OrdersPage() {
                 <div className={styles.orderHeader}>
                   <strong>#{order.id}</strong>
                   <span className={styles.pill} style={{ background: order.status === "Delivered" ? "#dcfce7" : "#fef9c3" }}>
-                    {order.status}
+                    {translateStatus(order.status, "در حال پردازش")}
                   </span>
                 </div>
                 <div style={{ color: "#475569", marginBottom: 6 }}>
                   ثبت‌شده در: {order.placedAt ? new Date(order.placedAt).toLocaleString("fa-IR") : "-"}
                 </div>
                 <div style={{ fontWeight: 700, color: "var(--color-text-primary)", marginBottom: 8 }}>
-                  مبلغ کل: {order.total?.toLocaleString ? order.total.toLocaleString("fa-IR") : order.total} ریال
+                  مبلغ کل: {formatMoney(order.total, order.currency)}
                 </div>
                 <div style={{ color: "#475569", fontSize: 13 }}>
                   {order.items?.map((item, idx) => (
                     <div key={`${order.id}-${idx}`}>
-                      {item.quantity} × {item.title} – {item.price?.toLocaleString ? item.price.toLocaleString("fa-IR") : item.price} ریال
+                      {item.quantity} × {item.title} – {formatMoney(item.price, item.currency || order.currency)}
                     </div>
                   ))}
                 </div>

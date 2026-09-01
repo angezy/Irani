@@ -5,6 +5,7 @@ import Link from "next/link";
 import { fetchOrderById, fetchOrders, fetchSession } from "../../lib/apiClient";
 import { hideSupplierBranding } from "../../lib/customerFacingText";
 import { formatMoney } from "../../lib/locale";
+import { translateStatus } from "../../lib/statusLabels";
 import { AccountPageSkeleton } from "../../components/LoadingSkeletons";
 import styles from "./tracking.module.css";
 
@@ -160,7 +161,7 @@ export default function AccountTrackingPage() {
         <section className={styles.resultStack} aria-live="polite">
           <div className={styles.orderHeader}>
             <div><div className={styles.sectionKicker}>سفارش پیدا شد</div><h2>#{order.id}</h2><p>ثبت‌شده در {formatDateTime(order.placedAt)}</p></div>
-            <div className={styles.statusBadge}>{order.status || "در حال پردازش"}</div>
+            <div className={styles.statusBadge}>{translateStatus(order.status, "در حال پردازش")}</div>
           </div>
 
           <div className={styles.summaryGrid}>
@@ -186,7 +187,7 @@ export default function AccountTrackingPage() {
 
           <div className={styles.timelineCard}>
             <div className={styles.cardHeader}><div><div className={styles.sectionKicker}>به‌روزرسانی‌ها</div><h3>خط زمانی ارسال</h3></div><span className={styles.location}>{order.tracking?.currentLocation || "در حال پردازش سفارش"}</span></div>
-            <div className={styles.timeline}>{(order.tracking?.events || []).map((event, index) => <div className={`${styles.timelineEvent} ${index === 0 ? styles.timelineLatest : ""}`} key={`${event.eventAt || event.createdAt}-${index}`}><div className={styles.timelineRail}><span /></div><div><strong>{hideSupplierBranding(event.title || event.status, "به‌روزرسانی سفارش")}</strong><p>{hideSupplierBranding(event.description, "وضعیت سفارش شما به‌روزرسانی شده است.")}</p><small>{formatDateTime(event.eventAt || event.createdAt)}{event.location ? ` · ${event.location}` : ""}</small></div></div>)}</div>
+            <div className={styles.timeline}>{(order.tracking?.events || []).map((event, index) => <div className={`${styles.timelineEvent} ${index === 0 ? styles.timelineLatest : ""}`} key={`${event.eventAt || event.createdAt}-${index}`}><div className={styles.timelineRail}><span /></div><div><strong>{hideSupplierBranding(event.title || translateStatus(event.status, "به‌روزرسانی سفارش"), "به‌روزرسانی سفارش")}</strong><p>{hideSupplierBranding(event.description, "وضعیت سفارش شما به‌روزرسانی شده است.")}</p><small>{formatDateTime(event.eventAt || event.createdAt)}{event.location ? ` · ${event.location}` : ""}</small></div></div>)}</div>
           </div>
         </section>
       )}

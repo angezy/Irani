@@ -191,7 +191,7 @@ async function queueJourneyEvent({
       .input("TriggerKey", sql.NVarChar(80), text(triggerKeysFor(step)[0], 80))
       .input("MessageType", sql.NVarChar(20), text(step.type || "Marketing", 20))
       .input("IsMarketing", sql.Bit, isMarketing)
-      .input("Subject", sql.NVarChar(180), text(step.subject, 180) || "A helpful update from our store")
+      .input("Subject", sql.NVarChar(180), text(step.subject, 180) || "یک به‌روزرسانی کاربردی از فروشگاه ایرانی")
       .input("Body", sql.NVarChar(sql.MAX), text(step.body, 5000))
       .input("Cta", sql.NVarChar(80), text(step.cta, 80) || null)
       .input("Href", sql.NVarChar(500), text(step.href, 500) || null)

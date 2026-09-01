@@ -18,8 +18,8 @@ import PageSkeleton from "@/app/components/LoadingSkeletons";
 
 const EMPTY_PRODUCT = { title: "", price: "", image: "", alt: "" };
 const DEFAULT_PRODUCTS_SECTION = {
-  announcement: "New drops land every Monday \u00b7 Build your stack and save more on bundles",
-  title: "Products",
+  announcement: "محصولات تازه هر دوشنبه اضافه می‌شوند · با خرید بسته‌ای بیشتر صرفه‌جویی کنید",
+  title: "محصولات",
 };
 const EMPTY_FEATURE = { title: "", copy: "" };
 const readFileAsDataUrl = (file) =>
@@ -95,43 +95,43 @@ export default function PageEditor() {
     fetch("/api/dashboard/home")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setContent(data))
-      .catch(() => mounted && setError("Failed to load content"))
+      .catch(() => mounted && setError("بارگذاری محتوای صفحه ممکن نیست."))
       .finally(() => mounted && setLoading(false));
 
     fetch("/api/dashboard/blog")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setBlogContent(data))
-      .catch(() => mounted && setError("Failed to load blog content"))
+      .catch(() => mounted && setError("بارگذاری محتوای وبلاگ ممکن نیست."))
       .finally(() => mounted && setLoadingBlog(false));
     fetch("/api/dashboard/about")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setAboutContent(data))
-      .catch(() => mounted && setError("Failed to load about content"))
+      .catch(() => mounted && setError("بارگذاری محتوای درباره ما ممکن نیست."))
       .finally(() => mounted && setLoadingAbout(false));
     fetch("/api/dashboard/why-weluxo")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setWhyContent(data))
-      .catch(() => mounted && setError("Failed to load Why Weluxo content"))
+      .catch(() => mounted && setError("بارگذاری محتوای مزیت‌های فروشگاه ممکن نیست."))
       .finally(() => mounted && setLoadingWhy(false));
     fetch("/api/dashboard/how-it-works")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setHowContent(data))
-      .catch(() => mounted && setError("Failed to load How It Works content"))
+      .catch(() => mounted && setError("بارگذاری محتوای روند خرید ممکن نیست."))
       .finally(() => mounted && setLoadingHow(false));
     fetch("/api/dashboard/faq")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setFaqContent(data))
-      .catch(() => mounted && setError("Failed to load FAQ content"))
+      .catch(() => mounted && setError("بارگذاری پرسش‌های متداول ممکن نیست."))
       .finally(() => mounted && setLoadingFaq(false));
     fetch("/api/dashboard/help-center")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setHelpCenterContent(data))
-      .catch(() => mounted && setError("Failed to load Help content"))
+      .catch(() => mounted && setError("بارگذاری محتوای راهنما ممکن نیست."))
       .finally(() => mounted && setLoadingHelpCenter(false));
     fetch("/api/dashboard/shop")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => mounted && setShopContent(data))
-      .catch(() => mounted && setError("Failed to load Shop content"))
+      .catch(() => mounted && setError("بارگذاری محتوای فروشگاه ممکن نیست."))
       .finally(() => mounted && setLoadingShop(false));
     fetch("/api/dashboard/site-chrome")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
@@ -144,7 +144,7 @@ export default function PageEditor() {
       )
     )
       .then((pages) => mounted && setLegalContent(Object.fromEntries(LEGAL_SLUGS.map((slug, index) => [slug, pages[index]]))))
-      .catch(() => mounted && setError("Failed to load legal page content"))
+      .catch(() => mounted && setError("بارگذاری صفحات حقوقی ممکن نیست."))
       .finally(() => mounted && setLoadingLegal(false));
     return () => {
       mounted = false;
@@ -533,9 +533,9 @@ export default function PageEditor() {
       );
 
       if (!res.ok || !blogRes.ok || !aboutRes.ok || !whyRes.ok || !howRes.ok || !faqRes.ok || !helpCenterRes.ok || !shopRes.ok || !siteChromeRes.ok || legalResponses.some((response) => !response.ok)) throw new Error("save");
-      setMessage("Saved! Refresh preview if needed.");
+      setMessage("ذخیره شد؛ در صورت نیاز پیش‌نمایش را تازه کنید.");
     } catch (err) {
-      setError("Save failed. Try again.");
+      setError("ذخیره‌سازی انجام نشد؛ دوباره تلاش کنید.");
     } finally {
       setSaving(false);
     }
@@ -648,56 +648,56 @@ export default function PageEditor() {
       };
       return (
         <>
-          <h4 style={{ margin: "4px 0 0" }}>Header announcement</h4>
+          <h4 style={{ margin: "4px 0 0" }}>اعلان سربرگ</h4>
           <Input label="Shipping message" value={header.announcementShipping || ""} onChange={(v) => updateHeader("announcementShipping", v)} />
           <Input label="Support message" value={header.announcementSupport || ""} onChange={(v) => updateHeader("announcementSupport", v)} />
           <Input label="Announcement separator" value={header.announcementSeparator || ""} onChange={(v) => updateHeader("announcementSeparator", v)} />
 
-          <h4 style={{ margin: "12px 0 0" }}>Header navigation and cart</h4>
+          <h4 style={{ margin: "12px 0 0" }}>ناوبری و سبد خرید سربرگ</h4>
           {["searchPlaceholder", "searchButtonLabel", "trackOrderLabel", "signInLabel", "accountLabel", "accountTooltip", "signInTooltip", "cartTooltip", "shopAllLabel", "trendingLabel", "categoriesLabel", "categoryHeading", "blogLabel", "aboutLabel", "helpLabel", "helpTooltip", "allProductsLabel", "myAccountLabel", "ordersLabel", "supportLabel", "signOutLabel", "helpCenterLabel", "mobileTrackOrderLabel", "cartLabel", "mobileSearchPlaceholder", "yourCartLabel", "cartReadyLabel", "cartItemLabel", "cartItemsLabel", "closeCartLabel", "emptyCartLabel", "startShoppingLabel", "quantityLabel", "quantitySeparator", "subtotalLabel", "viewCartLabel", "checkoutLabel"].map((field) => (
-            <Input key={field} label={field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase())} value={header[field] || ""} onChange={(v) => updateHeader(field, v)} />
+            <Input key={field} label={editorLabel(field)} value={header[field] || ""} onChange={(v) => updateHeader(field, v)} />
           ))}
 
-          <h4 style={{ margin: "12px 0 0" }}>Header category links</h4>
+          <h4 style={{ margin: "12px 0 0" }}>پیوندهای دسته‌بندی سربرگ</h4>
           {(header.categoryLinks || []).map((link, index) => (
             <div key={`category-${index}`} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Category {index + 1}</div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>دسته {index + 1}</div>
               <Input label="Label" value={link?.label || ""} onChange={(v) => updateHeaderLink("categoryLinks", index, "label", v)} />
               <Input label="URL" value={link?.href || ""} onChange={(v) => updateHeaderLink("categoryLinks", index, "href", v)} />
             </div>
           ))}
-          <h4 style={{ margin: "12px 0 0" }}>Header about links</h4>
+          <h4 style={{ margin: "12px 0 0" }}>پیوندهای درباره ما در سربرگ</h4>
           {(header.aboutLinks || []).map((link, index) => (
             <div key={`about-${index}`} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>About link {index + 1}</div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>پیوند درباره ما {index + 1}</div>
               <Input label="Label" value={link?.label || ""} onChange={(v) => updateHeaderLink("aboutLinks", index, "label", v)} />
               <Input label="URL" value={link?.href || ""} onChange={(v) => updateHeaderLink("aboutLinks", index, "href", v)} />
             </div>
           ))}
 
-          <h4 style={{ margin: "12px 0 0" }}>Footer brand and trust cards</h4>
+          <h4 style={{ margin: "12px 0 0" }}>برند و کارت‌های اعتماد پابرگ</h4>
           <Input label="Logo text" value={footer.logoText || ""} onChange={(v) => updateFooter("logoText", v)} />
           <Textarea label="Brand description" value={footer.brandDescription || ""} onChange={(v) => updateFooter("brandDescription", v)} />
           {(footer.trustItems || []).map((item, index) => (
             <div key={`trust-${index}`} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Trust card {index + 1}</div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>کارت اعتماد {index + 1}</div>
               <Input label="Icon key (shipping, support, or secure)" value={item?.icon || ""} onChange={(v) => updateSiteChromeArrayItem(["footer", "trustItems"], index, { ...(item || {}), icon: v })} />
               <Input label="Title" value={item?.title || ""} onChange={(v) => updateSiteChromeArrayItem(["footer", "trustItems"], index, { ...(item || {}), title: v })} />
               <Textarea label="Copy" value={item?.copy || ""} onChange={(v) => updateSiteChromeArrayItem(["footer", "trustItems"], index, { ...(item || {}), copy: v })} />
             </div>
           ))}
 
-          <h4 style={{ margin: "12px 0 0" }}>Footer columns</h4>
+          <h4 style={{ margin: "12px 0 0" }}>ستون‌های پابرگ</h4>
           <Input label="Shop column title" value={footer.columns?.shopTitle || ""} onChange={(v) => updateFooterNested("columns", "shopTitle", v)} />
           <Input label="Support column title" value={footer.columns?.supportTitle || ""} onChange={(v) => updateFooterNested("columns", "supportTitle", v)} />
           <Input label="Company column title" value={footer.columns?.companyTitle || ""} onChange={(v) => updateFooterNested("columns", "companyTitle", v)} />
           <Input label="Legal column title" value={footer.columns?.legalTitle || ""} onChange={(v) => updateFooterNested("columns", "legalTitle", v)} />
           {["shopLinks", "supportLinks", "companyLinks", "legalLinks"].map((field) => (
             <div key={field} style={{ display: "grid", gap: 8 }}>
-              <h4 style={{ margin: "8px 0 0" }}>{field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase())}</h4>
+              <h4 style={{ margin: "8px 0 0" }}>{editorLabel(field)}</h4>
               {(footer[field] || []).map((link, index) => (
                 <div key={`${field}-${index}`} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Link {index + 1}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>پیوند {index + 1}</div>
                   <Input label="Label" value={link?.label || ""} onChange={(v) => updateLink(field, index, "label", v)} />
                   <Input label="URL" value={link?.href || ""} onChange={(v) => updateLink(field, index, "href", v)} />
                 </div>
@@ -705,21 +705,21 @@ export default function PageEditor() {
             </div>
           ))}
 
-          <h4 style={{ margin: "12px 0 0" }}>Footer support callout</h4>
+          <h4 style={{ margin: "12px 0 0" }}>فراخوان پشتیبانی پابرگ</h4>
           <Input label="Eyebrow" value={footer.contact?.eyebrow || ""} onChange={(v) => updateFooterNested("contact", "eyebrow", v)} />
           <Input label="Title" value={footer.contact?.title || ""} onChange={(v) => updateFooterNested("contact", "title", v)} />
           <Textarea label="Copy" value={footer.contact?.copy || ""} onChange={(v) => updateFooterNested("contact", "copy", v)} />
           <Input label="Button label" value={footer.contact?.buttonLabel || ""} onChange={(v) => updateFooterNested("contact", "buttonLabel", v)} />
           <Input label="Button URL" value={footer.contact?.buttonHref || ""} onChange={(v) => updateFooterNested("contact", "buttonHref", v)} />
 
-          <h4 style={{ margin: "12px 0 0" }}>Footer utility text</h4>
+          <h4 style={{ margin: "12px 0 0" }}>متن کاربردی پابرگ</h4>
           <Input label="Copyright suffix" value={footer.copyrightSuffix || ""} onChange={(v) => updateFooter("copyrightSuffix", v)} />
           <Input label="Security status" value={footer.securityLabel || ""} onChange={(v) => updateFooter("securityLabel", v)} />
           <Input label="Support status" value={footer.supportStatusLabel || ""} onChange={(v) => updateFooter("supportStatusLabel", v)} />
-          <h4 style={{ margin: "12px 0 0" }}>Footer social links</h4>
+          <h4 style={{ margin: "12px 0 0" }}>پیوندهای شبکه‌های اجتماعی پابرگ</h4>
           {(footer.socials || []).map((social, index) => (
             <div key={`social-${index}`} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>{social?.platform || `Social ${index + 1}`}</div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>{social?.platform || `شبکه اجتماعی ${index + 1}`}</div>
               <Input label="Accessible label" value={social?.label || ""} onChange={(v) => updateLink("socials", index, "label", v)} />
               <Input label="URL" value={social?.href || ""} onChange={(v) => updateLink("socials", index, "href", v)} />
             </div>
@@ -979,7 +979,7 @@ export default function PageEditor() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
               {(content?.products || []).map((p, idx) => (
                 <div key={idx} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "white" }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>Product {idx + 1}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>محصول {idx + 1}</div>
                   <Input label="Title" value={p?.title || ""} onChange={(v) => updateArrayItem("products", idx, { ...(p || EMPTY_PRODUCT), title: v })} />
                   <Input label="Price" value={p?.price || ""} onChange={(v) => updateArrayItem("products", idx, { ...(p || EMPTY_PRODUCT), price: v })} />
                   <Input label="Alt text" value={p?.alt || ""} onChange={(v) => updateArrayItem("products", idx, { ...(p || EMPTY_PRODUCT), alt: v })} />
@@ -1334,54 +1334,54 @@ export default function PageEditor() {
   }
 
   if (!content) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوایی بارگذاری نشده است."}</div>;
   }
   if (!blogContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No blog content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای وبلاگ بارگذاری نشده است."}</div>;
   }
   if (!aboutContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No about content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای درباره ما بارگذاری نشده است."}</div>;
   }
   if (!whyContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No Why Weluxo content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای مزیت‌های فروشگاه بارگذاری نشده است."}</div>;
   }
   if (!howContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No How It Works content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای روند خرید بارگذاری نشده است."}</div>;
   }
   if (!faqContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No FAQ content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای پرسش‌های متداول بارگذاری نشده است."}</div>;
   }
   if (!helpCenterContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No Help content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای راهنما بارگذاری نشده است."}</div>;
   }
   if (!shopContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No Shop content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای فروشگاه بارگذاری نشده است."}</div>;
   }
   if (!legalContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No legal page content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای صفحات حقوقی بارگذاری نشده است."}</div>;
   }
   if (!siteChromeContent) {
-    return <div style={{ padding: 16, color: "#b00" }}>{error || "No header and footer content loaded."}</div>;
+    return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوای سربرگ و پابرگ بارگذاری نشده است."}</div>;
   }
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#0b0f1a" }}>
       <div style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "#94a3b8", fontSize: 12 }}>Preview route:</span>
+          <span style={{ color: "#94a3b8", fontSize: 12 }}>مسیر پیش‌نمایش:</span>
           {[
-            { label: "Home", path: "/" },
-            { label: "Blog", path: "/blog" },
-            { label: "Shop", path: "/shop" },
-            { label: "About", path: "/aboutus" },
-            { label: "Why Weluxo", path: "/why-weluxo" },
-            { label: "How It Works", path: "/how-it-works" },
-            { label: "FAQ", path: "/faq" },
-            { label: "Help", path: "/help-center" },
-            { label: "Privacy", path: "/privacy-policy" },
-            { label: "Terms", path: "/terms-conditions" },
-            { label: "Shipping", path: "/shipping-policy" },
-            { label: "Returns", path: "/return-refund-policy" },
+            { label: "خانه", path: "/" },
+            { label: "وبلاگ", path: "/blog" },
+            { label: "فروشگاه", path: "/shop" },
+            { label: "درباره ما", path: "/aboutus" },
+            { label: "مزیت‌های فروشگاه", path: "/why-weluxo" },
+            { label: "روند خرید", path: "/how-it-works" },
+            { label: "پرسش‌های متداول", path: "/faq" },
+            { label: "راهنما", path: "/help-center" },
+            { label: "حریم خصوصی", path: "/privacy-policy" },
+            { label: "شرایط و ضوابط", path: "/terms-conditions" },
+            { label: "سیاست ارسال", path: "/shipping-policy" },
+            { label: "مرجوعی و بازپرداخت", path: "/return-refund-policy" },
           ].map((item) => (
             <button
               key={item.path}
@@ -1409,9 +1409,9 @@ export default function PageEditor() {
               cursor: "pointer",
             }}
           >
-            Edit header & footer
+            ویرایش سربرگ و پابرگ
           </button>
-          <span style={{ color: "#64748b", fontSize: 12 }}>Page copy and global site text are editable here.</span>
+          <span style={{ color: "#64748b", fontSize: 12 }}>متن صفحات و نوشته‌های عمومی فروشگاه را از اینجا ویرایش کنید.</span>
         </div>
         {message && <span style={{ color: "#0a8", alignSelf: "center" }}>{message}</span>}
         {error && <span style={{ color: "#c00", alignSelf: "center" }}>{error}</span>}
@@ -1427,13 +1427,13 @@ export default function PageEditor() {
             cursor: saving ? "default" : "pointer",
           }}
         >
-          {saving ? "Saving..." : "Save changes"}
+          {saving ? "در حال ذخیره…" : "ذخیره تغییرات"}
         </button>
       </div>
 
       <div style={{ flex: 1, overflow: "auto" }}>
         <Header initialChrome={siteChromeContent} disableNav />
-        {!showInlinePreview && <iframe title="Preview" src={previewPath} style={{ width: "100%", height: "60vh", border: 0, background: "white" }} />}
+        {!showInlinePreview && <iframe title="پیش‌نمایش" src={previewPath} style={{ width: "100%", height: "60vh", border: 0, background: "white" }} />}
         {showInlinePreview && previewPath === "/" && (
           <>
             <Section
@@ -1573,14 +1573,14 @@ export default function PageEditor() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000 }}>
           <div style={{ width: 800, maxWidth: "95%", maxHeight: "90vh", overflow: "auto", background: "white", borderRadius: 10, padding: 16, boxShadow: "0 12px 40px rgba(0,0,0,0.25)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <h3 style={{ margin: 0, textTransform: "capitalize" }}>{activeSection}</h3>
-              <button onClick={closeModal} style={{ border: "1px solid #ddd", borderRadius: 6, background: "white", padding: "6px 10px", cursor: "pointer" }}>Close</button>
+              <h3 style={{ margin: 0 }}>{editorSectionTitle(activeSection)}</h3>
+              <button onClick={closeModal} style={{ border: "1px solid #ddd", borderRadius: 6, background: "white", padding: "6px 10px", cursor: "pointer" }}>بستن</button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{renderModalBody()}</div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 12 }}>
-              <button onClick={closeModal} style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", background: "white" }} disabled={saving}>Cancel</button>
+              <button onClick={closeModal} style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", background: "white" }} disabled={saving}>انصراف</button>
               <button onClick={handleSave} disabled={saving} style={{ padding: "8px 12px", borderRadius: 6, border: "0", background: "#0a66ff", color: "white" }}>
-                {saving ? "Saving..." : "Save changes"}
+                {saving ? "در حال ذخیره…" : "ذخیره تغییرات"}
               </button>
             </div>
           </div>
@@ -1590,10 +1590,73 @@ export default function PageEditor() {
   );
 }
 
+const editorLabel = (label) => {
+  const labels = {
+    searchPlaceholder: "جای‌نمای جست‌وجو", searchButtonLabel: "برچسب دکمه جست‌وجو", trackOrderLabel: "برچسب رهگیری سفارش", signInLabel: "برچسب ورود", accountLabel: "برچسب حساب", accountTooltip: "راهنمای حساب", signInTooltip: "راهنمای ورود", cartTooltip: "راهنمای سبد خرید", shopAllLabel: "برچسب همه محصولات", trendingLabel: "برچسب پرفروش‌ها", categoriesLabel: "برچسب دسته‌ها", categoryHeading: "عنوان دسته‌بندی", blogLabel: "برچسب وبلاگ", aboutLabel: "برچسب درباره ما", helpLabel: "برچسب راهنما", helpTooltip: "راهنمای راهنما", allProductsLabel: "برچسب همه محصولات", myAccountLabel: "برچسب حساب من", ordersLabel: "برچسب سفارش‌ها", supportLabel: "برچسب پشتیبانی", signOutLabel: "برچسب خروج", helpCenterLabel: "برچسب مرکز راهنما", mobileTrackOrderLabel: "برچسب موبایلی رهگیری سفارش", cartLabel: "برچسب سبد خرید", mobileSearchPlaceholder: "جای‌نمای جست‌وجوی موبایل", yourCartLabel: "عنوان سبد خرید", cartReadyLabel: "پیام آماده بودن سبد خرید", cartItemLabel: "برچسب یک قلم", cartItemsLabel: "برچسب چند قلم", closeCartLabel: "برچسب بستن سبد خرید", emptyCartLabel: "پیام سبد خالی", startShoppingLabel: "برچسب شروع خرید", quantityLabel: "برچسب تعداد", quantitySeparator: "جداکننده تعداد", subtotalLabel: "برچسب جمع جزء", viewCartLabel: "برچسب مشاهده سبد", checkoutLabel: "برچسب تسویه‌حساب",
+    shopLinks: "پیوندهای فروشگاه", supportLinks: "پیوندهای پشتیبانی", companyLinks: "پیوندهای شرکت", legalLinks: "پیوندهای حقوقی",
+    ID: "شناسه", Number: "شماره", Eyebrow: "متن بالایی", Title: "عنوان", Copy: "متن", Body: "بدنه متن",
+    "Highlights (one per line)": "نکات برجسته (هر مورد در یک خط)", "Visual flow (one per line)": "روند تصویری (هر مورد در یک خط)",
+    "CTA text": "متن دکمه اقدام", "CTA URL": "نشانی دکمه اقدام", "Image URL": "نشانی تصویر", "Alt text": "متن جایگزین",
+    "Opening answer": "متن آغازین", "SEO title": "عنوان سئو", "Meta description": "توضیحات متا", "Primary keyword": "کلیدواژه اصلی", "Secondary keywords": "کلیدواژه‌های فرعی",
+    "Section title": "عنوان بخش", "Bullets (one per line)": "موارد (هر مورد در یک خط)", "Steps (one per line)": "مراحل (هر مورد در یک خط)",
+    "FAQ title": "عنوان پرسش‌های متداول", Intro: "مقدمه", "Social title": "عنوان شبکه‌های اجتماعی", "Social description": "توضیحات شبکه‌های اجتماعی",
+    "Primary CTA": "دکمه اصلی", "Primary URL": "نشانی اصلی", "Secondary CTA": "دکمه دوم", "Secondary URL": "نشانی دوم",
+    "Shipping message": "پیام ارسال", "Support message": "پیام پشتیبانی", "Announcement separator": "جداکننده اعلان", Label: "برچسب", URL: "نشانی",
+    "Logo text": "متن لوگو", "Brand description": "توضیحات برند", "Icon key (shipping, support, or secure)": "کلید آیکن (ارسال، پشتیبانی یا امنیت)",
+    "Shop column title": "عنوان ستون فروشگاه", "Support column title": "عنوان ستون پشتیبانی", "Company column title": "عنوان ستون شرکت", "Legal column title": "عنوان ستون حقوقی",
+    "Button label": "برچسب دکمه", "Button URL": "نشانی دکمه", "Copyright suffix": "پسوند حق نشر", "Security status": "وضعیت امنیت", "Support status": "وضعیت پشتیبانی",
+    "Accessible label": "برچسب دسترس‌پذیر", "Table content": "محتوای جدول", "Headers (one per line)": "سرستون‌ها (هر مورد در یک خط)",
+    Question: "پرسش", Answer: "پاسخ", "Category title": "عنوان دسته", "Articles (one per line)": "مقاله‌ها (هر مورد در یک خط)",
+    "Title or customer question": "عنوان یا پرسش مشتری", "Approved answer": "پاسخ تأییدشده", "Search keywords": "کلیدواژه‌های جست‌وجو",
+    Excerpt: "خلاصه", Author: "نویسنده", Date: "تاریخ", "Slug/URL": "نامک/نشانی", "Tags (one per line)": "برچسب‌ها (هر مورد در یک خط)",
+  };
+  return labels[label] || String(label || "").replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
+};
+
+function editorSectionTitle(section) {
+  const key = String(section || "");
+  if (key.startsWith("howStep:")) return `مرحله مسیر ${Number(key.split(":")[1]) + 1}`;
+  if (key.startsWith("legal:")) return "ویرایش صفحه حقوقی";
+  const titles = {
+    siteChrome: "سربرگ و پابرگ",
+    banner: "اعلان اصلی",
+    hero1: "کارت قهرمان اول",
+    hero2: "کارت قهرمان دوم",
+    training: "بخش آموزش",
+    products: "بخش محصولات",
+    actionShots: "تصاویر اقدام",
+    welcome: "بخش خوشامدگویی",
+    reviews: "دیدگاه‌ها",
+    features: "ویژگی‌ها",
+    menus: "منوها",
+    blogHero: "قهرمان وبلاگ",
+    blogPosts: "پست‌های وبلاگ",
+    shopHero: "قهرمان فروشگاه",
+    shopCatalog: "کاتالوگ فروشگاه",
+    aboutHero: "قهرمان درباره ما",
+    aboutMission: "ماموریت",
+    aboutValues: "ارزش‌ها",
+    aboutApproach: "رویکرد",
+    aboutTeam: "تیم",
+    aboutStory: "داستان",
+    aboutContactCta: "فراخوان تماس",
+    whyHero: "قهرمان مزیت‌های فروشگاه",
+    howHero: "قهرمان روند خرید",
+    faqHero: "قهرمان پرسش‌های متداول",
+    faqQuestions: "پرسش‌های متداول",
+    faqSupport: "پشتیبانی پرسش‌های متداول",
+    helpHero: "قهرمان راهنما",
+    helpCategories: "دسته‌های راهنما",
+    helpContact: "تماس با پشتیبانی",
+    helpFaq: "پرسش‌های راهنما",
+  };
+  return titles[key] || editorLabel(key);
+}
+
 function Input({ label, value, onChange }) {
   return (
     <label style={{ display: "block" }}>
-      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{editorLabel(label)}</div>
       <input
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
@@ -1611,7 +1674,7 @@ function Input({ label, value, onChange }) {
 function Textarea({ label, value, onChange }) {
   return (
     <label style={{ display: "block" }}>
-      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{editorLabel(label)}</div>
       <textarea
         value={value || ""}
         rows={4}
@@ -1632,7 +1695,7 @@ function Textarea({ label, value, onChange }) {
 function FileInput({ label, onSelect }) {
   return (
     <label style={{ display: "block" }}>
-      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>{editorLabel(label)}</div>
       <input
         type="file"
         accept="image/*"
@@ -1663,7 +1726,7 @@ function LegalTableEditor({ table, onChange }) {
   };
   return (
     <div style={{ display: "grid", gap: 10, border: "1px solid #e5e7eb", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-      <div style={{ fontWeight: 600 }}>Table content</div>
+      <div style={{ fontWeight: 600 }}>محتوای جدول</div>
       <Textarea label="Headers (one per line)" value={headers.join("\n")} onChange={(value) => onChange({ ...table, headers: value.split("\n").filter(Boolean) })} />
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8 }}>
@@ -1681,13 +1744,13 @@ function LegalFaqEditor({ slug, path, items = [], onChange, onAdd, onRemove }) {
     <div style={{ display: "grid", gap: 10 }}>
       {(Array.isArray(items) ? items : []).map((item, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa", position: "relative" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>FAQ {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پرسش متداول شماره {index + 1}</div>
           <Input label="Question" value={item?.question || ""} onChange={(value) => onChange(slug, path, index, { ...(item || EMPTY_HOW_FAQ), question: value })} />
           <Textarea label="Answer" value={item?.answer || ""} onChange={(value) => onChange(slug, path, index, { ...(item || EMPTY_HOW_FAQ), answer: value })} />
-          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>Remove question</button>
+          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>حذف پرسش</button>
         </div>
       ))}
-      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ Add question</button>
+      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ افزودن پرسش</button>
     </div>
   );
 }
@@ -1697,7 +1760,7 @@ function HowOverviewEditor({ steps = [], onChange }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 10 }}>
       {(Array.isArray(steps) ? steps : []).map((step, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Journey step {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>مرحله مسیر شماره {index + 1}</div>
           <Input label="Number" value={step?.number || ""} onChange={(v) => onChange(["processOverview", "steps"], index, { ...(step || {}), number: v })} />
           <Input label="Label" value={step?.label || ""} onChange={(v) => onChange(["processOverview", "steps"], index, { ...(step || {}), label: v })} />
         </div>
@@ -1711,7 +1774,7 @@ function HowLinkEditor({ path, links = [], onChange }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
       {(Array.isArray(links) ? links : []).map((link, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Support link {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پیوند پشتیبانی شماره {index + 1}</div>
           <Input label="Label" value={link?.label || ""} onChange={(v) => onChange(path, index, { ...(link || EMPTY_HOW_LINK), label: v })} />
           <Input label="URL" value={link?.url || ""} onChange={(v) => onChange(path, index, { ...(link || EMPTY_HOW_LINK), url: v })} />
         </div>
@@ -1725,7 +1788,7 @@ function HowPrincipleEditor({ path, principles = [], onChange }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
       {(Array.isArray(principles) ? principles : []).map((principle, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Principle {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>اصل شماره {index + 1}</div>
           <Input label="Title" value={principle?.title || ""} onChange={(v) => onChange(path, index, { ...(principle || EMPTY_HOW_PRINCIPLE), title: v })} />
           <Textarea label="Copy" value={principle?.copy || ""} onChange={(v) => onChange(path, index, { ...(principle || EMPTY_HOW_PRINCIPLE), copy: v })} />
         </div>
@@ -1739,13 +1802,13 @@ function HowFaqEditor({ path, items = [], onChange, onAdd, onRemove }) {
     <div style={{ display: "grid", gap: 10 }}>
       {(Array.isArray(items) ? items : []).map((item, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>FAQ {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پرسش متداول شماره {index + 1}</div>
           <Input label="Question" value={item?.question || ""} onChange={(v) => onChange(path, index, { ...(item || EMPTY_HOW_FAQ), question: v })} />
           <Textarea label="Answer" value={item?.answer || ""} onChange={(v) => onChange(path, index, { ...(item || EMPTY_HOW_FAQ), answer: v })} />
-          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>Remove question</button>
+          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>حذف پرسش</button>
         </div>
       ))}
-      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ Add question</button>
+      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ افزودن پرسش</button>
     </div>
   );
 }
@@ -1755,13 +1818,13 @@ function FaqEditor({ path, items = [], onChange, onAdd, onRemove }) {
     <div style={{ display: "grid", gap: 10 }}>
       {(Array.isArray(items) ? items : []).map((item, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Question {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پرسش شماره {index + 1}</div>
           <Input label="Question" value={item?.question || ""} onChange={(value) => onChange(path, index, { ...(item || EMPTY_FAQ_ITEM), question: value })} />
           <Textarea label="Answer" value={item?.answer || ""} onChange={(value) => onChange(path, index, { ...(item || EMPTY_FAQ_ITEM), answer: value })} />
-          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>Remove question</button>
+          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>حذف پرسش</button>
         </div>
       ))}
-      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ Add question</button>
+      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ افزودن پرسش</button>
     </div>
   );
 }
@@ -1771,13 +1834,13 @@ function HelpCategoryEditor({ path, items = [], onChange, onAdd, onRemove }) {
     <div style={{ display: "grid", gap: 10 }}>
       {(Array.isArray(items) ? items : []).map((item, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Help category {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>دسته راهنما شماره {index + 1}</div>
           <Input label="Category title" value={item?.title || ""} onChange={(value) => onChange(path, index, { ...(item || EMPTY_HELP_CATEGORY), title: value })} />
           <Textarea label="Articles (one per line)" value={(item?.articles || []).join("\n")} onChange={(value) => onChange(path, index, { ...(item || EMPTY_HELP_CATEGORY), articles: value.split("\n").filter(Boolean) })} />
-          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>Remove category</button>
+          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>حذف دسته</button>
         </div>
       ))}
-      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ Add category</button>
+      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ افزودن دسته</button>
     </div>
   );
 }
@@ -1787,13 +1850,13 @@ function HelpFaqEditor({ path, items = [], onChange, onAdd, onRemove }) {
     <div style={{ display: "grid", gap: 10 }}>
       {(Array.isArray(items) ? items : []).map((item, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>FAQ {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پرسش متداول شماره {index + 1}</div>
           <Input label="Question" value={item?.question || ""} onChange={(value) => onChange(path, index, { ...(item || EMPTY_HELP_FAQ), question: value })} />
           <Textarea label="Answer" value={item?.answer || ""} onChange={(value) => onChange(path, index, { ...(item || EMPTY_HELP_FAQ), answer: value })} />
-          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>Remove question</button>
+          <button type="button" onClick={() => onRemove?.(index)} style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff", borderRadius: 6, padding: "6px 9px", cursor: "pointer" }}>حذف پرسش</button>
         </div>
       ))}
-      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ Add question</button>
+      <button type="button" onClick={onAdd} style={{ padding: "10px", borderRadius: 8, border: "1px dashed #94a3b8", background: "white", cursor: "pointer" }}>+ افزودن پرسش</button>
     </div>
   );
 }
@@ -1803,7 +1866,7 @@ function WhyCardEditor({ path, cards = [], onChange }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
       {(Array.isArray(cards) ? cards : []).map((card, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Card {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>کارت {index + 1}</div>
           <Input label="Title" value={card?.title || ""} onChange={(v) => onChange(path, index, { ...(card || EMPTY_WHY_CARD), title: v })} />
           <Textarea label="Copy" value={card?.copy || ""} onChange={(v) => onChange(path, index, { ...(card || EMPTY_WHY_CARD), copy: v })} />
         </div>
@@ -1817,7 +1880,7 @@ function WhyLinkEditor({ path, links = [], onChange }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
       {(Array.isArray(links) ? links : []).map((link, index) => (
         <div key={index} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10, background: "#fafafa" }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>Support link {index + 1}</div>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>پیوند پشتیبانی {index + 1}</div>
           <Input label="Label" value={link?.label || ""} onChange={(v) => onChange(path, index, { ...(link || EMPTY_WHY_LINK), label: v })} />
           <Input label="URL" value={link?.url || ""} onChange={(v) => onChange(path, index, { ...(link || EMPTY_WHY_LINK), url: v })} />
         </div>

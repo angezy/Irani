@@ -14,8 +14,8 @@ export async function getHelpCenterContent() {
 export async function getHelpCenterMetadata(content) {
   const site = await getSiteSettingsServer();
   const seo = content?.seo || {};
-  const title = seo.title || `Help | ${site.siteName} Customer Support`;
-  const description = seo.description || `Get help with ${site.siteName} orders, shipping, returns, refunds, product support, and customer service.`;
+  const title = seo.title || `مرکز راهنمای پشتیبانی ${site.siteName}`;
+  const description = seo.description || `راهنمای سفارش، ارسال، مرجوعی، بازپرداخت، محصولات و پشتیبانی مشتری ${site.siteName}.`;
   const url = siteUrlFor(site, "/help-center");
   return {
     title,

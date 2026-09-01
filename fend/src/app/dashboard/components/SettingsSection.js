@@ -14,7 +14,7 @@ export default function SettingsSection({ loading: parentLoading }) {
     queueMicrotask(() => setLoading(true));
     fetch('/api/dashboard/settings')
       .then((r) => {
-        if (!r.ok) throw new Error(`Settings request failed (${r.status})`);
+        if (!r.ok) throw new Error("بارگذاری تنظیمات ممکن نیست.");
         return r.json();
       })
       .then((data) => {
@@ -22,7 +22,7 @@ export default function SettingsSection({ loading: parentLoading }) {
         setEmailNotif(Boolean(data.emailNotifications));
         setDarkMode(Boolean(data.darkMode));
       })
-      .catch((err) => mounted && setError(err.message || "Unable to load settings"))
+      .catch((err) => mounted && setError(/[\u0600-\u06ff]/.test(String(err.message || "")) ? err.message : "بارگذاری تنظیمات ممکن نیست."))
       .finally(() => mounted && setLoading(false));
 
     return () => (mounted = false);
@@ -43,11 +43,11 @@ export default function SettingsSection({ loading: parentLoading }) {
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload.error || 'Unable to save setting');
+        throw new Error(/[\u0600-\u06ff]/.test(String(payload.error || "")) ? payload.error : "ذخیره تنظیمات ممکن نیست.");
       }
     } catch (err) {
       setValue(previous);
-      setError(err.message || 'Unable to save setting');
+      setError(/[\u0600-\u06ff]/.test(String(err.message || "")) ? err.message : "ذخیره تنظیمات ممکن نیست.");
     } finally {
       setSaving(false);
     }
@@ -56,7 +56,7 @@ export default function SettingsSection({ loading: parentLoading }) {
   return (
     <Card sx={{ mb: 3, borderRadius: 3, boxShadow: 2 }}>
       <CardContent>
-        <Typography variant="h6" mb={2}>Store Settings</Typography>
+        <Typography variant="h6" mb={2}>تنظیمات فروشگاه</Typography>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         {loading ? (
           <Stack spacing={1.25}>
@@ -77,7 +77,7 @@ export default function SettingsSection({ loading: parentLoading }) {
                   onChange={(event) => saveSetting("emailNotifications", event.target.checked)}
                 />
               }
-              label="Email Notifications"
+              label="اعلان‌های ایمیلی"
             />
             <br />
             <FormControlLabel
@@ -88,7 +88,7 @@ export default function SettingsSection({ loading: parentLoading }) {
                   onChange={(event) => saveSetting("darkMode", event.target.checked)}
                 />
               }
-              label="Dark Mode"
+              label="حالت تاریک"
             />
           </>
         )}

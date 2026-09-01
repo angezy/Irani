@@ -64,8 +64,8 @@ function productHref(product, title) {
 const LEGACY_FALLBACK = {
   heroCards: [
     {
-      title: "Nova One Smart Bottle",
-      subtitle: "Keeps water cold for 24 hours, tracks your intake automatically.",
+      title: "بطری هوشمند نوا وان",
+      subtitle: "آب را ۲۴ ساعت خنک نگه می‌دارد و میزان مصرف شما را خودکار ثبت می‌کند.",
       image:
         "https://images.unsplash.com/photo-1526402462921-3c62b6d1f1ab?auto=format&fit=crop&w=1200&q=80",
     },
@@ -220,7 +220,7 @@ export default function HeroSection({ initialContent = null, onEdit = {} }) {
         sx={{
           position: "absolute",
           top: 8,
-          right: 8,
+          insetInlineStart: 8,
           bgcolor: "rgba(0,0,0,0.5)",
           color: "white",
           "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
@@ -476,7 +476,7 @@ export default function HeroSection({ initialContent = null, onEdit = {} }) {
               const rawPrice = item.price ?? item.Price ?? "";
               const price =
                 typeof rawPrice === "number"
-                  ? formatMoney(rawPrice)
+                  ? formatMoney(rawPrice, item.currency)
                   : typeof rawPrice === "string" && rawPrice.trim().length
                   ? rawPrice
                   : "";

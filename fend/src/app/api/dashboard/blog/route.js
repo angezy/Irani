@@ -10,45 +10,45 @@ const dataPath = path.join(process.cwd(), "data", "blog.json");
 
 const DEFAULT_CONTENT = {
   hero: {
-    title: "Smart Wellness Starts Here.",
-    subtitle: "Stories, tips, and training insights from coaches and athletes.",
-    ctaText: "Read the latest",
+    title: "تندرستی هوشمند از اینجا آغاز می‌شود.",
+    subtitle: "داستان‌ها، نکته‌ها و تجربه‌های تمرینی از مربیان و ورزشکاران.",
+    ctaText: "تازه‌ترین مطالب",
     ctaUrl: "/blog",
     image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80",
-    alt: "Athlete with smart trainer",
+    alt: "ورزشکار با تجهیزات تمرینی هوشمند",
   },
   posts: [
     {
       id: "post-1",
-      title: "Ergonomic Design That Powers Every Move",
-      excerpt: "We broke down the biomechanics behind our latest release—here’s how it keeps you stable and strong.",
-      author: "Coach Alex",
+      title: "طراحی ارگونومیک برای هر حرکت",
+      excerpt: "بیومکانیک محصول جدید را بررسی کرده‌ایم؛ ببینید چگونه شما را باثبات و نیرومند نگه می‌دارد.",
+      author: "مربی الکس",
       date: "2024-12-01",
       image: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80",
-      alt: "Closeup of training gear",
-      tags: ["Gear", "Design"],
+      alt: "نمای نزدیک تجهیزات تمرینی",
+      tags: ["تجهیزات", "طراحی"],
       slug: "/blog/ergonomic-design",
     },
     {
       id: "post-2",
-      title: "Smarter Recovery: Mobility That Sticks",
-      excerpt: "A 10-minute recovery flow that fits between sessions—and why consistency beats intensity.",
-      author: "Dr. Lee",
+      title: "ریکاوری هوشمندتر؛ حرکاتی ماندگار",
+      excerpt: "یک برنامه ۱۰ دقیقه‌ای ریکاوری بین جلسه‌های تمرین؛ و اینکه چرا استمرار از شدت مهم‌تر است.",
+      author: "دکتر لی",
       date: "2024-11-18",
       image: "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
-      alt: "Athlete stretching",
-      tags: ["Recovery", "Mobility"],
+      alt: "ورزشکار در حال کشش",
+      tags: ["ریکاوری", "تحرک"],
       slug: "/blog/smarter-recovery",
     },
     {
       id: "post-3",
-      title: "Coach-Built Plans for Busy Weeks",
-      excerpt: "How to stack short sessions for real progress when your calendar is packed.",
-      author: "Coach Nina",
+      title: "برنامه‌های مربی‌ساخته برای هفته‌های شلوغ",
+      excerpt: "چطور در تقویم شلوغ، جلسه‌های کوتاه را برای پیشرفت واقعی کنار هم بچینیم.",
+      author: "مربی نینا",
       date: "2024-11-05",
       image: "https://images.unsplash.com/photo-1541537103745-ea3429c65dc1?auto=format&fit=crop&w=800&q=80",
-      alt: "Training program notes",
-      tags: ["Programming", "Coaching"],
+      alt: "یادداشت‌های برنامه تمرینی",
+      tags: ["برنامه‌ریزی", "مربی‌گری"],
       slug: "/blog/coach-built-plans",
     },
   ],
@@ -88,7 +88,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
     await ensureFile();
     const content = sanitizeBlogContent(body.content);
@@ -96,6 +96,6 @@ export async function POST(req) {
     return NextResponse.json({ ok: true, content });
   } catch (err) {
     console.error("blog content write error", err);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

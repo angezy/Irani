@@ -10,14 +10,14 @@ import defaultJourney from "../../../../../data/customer-email-journey.json";
 const dataPath = path.join(process.cwd(), "data", "customer-email-journey.json");
 
 const triggerDefinitions = {
-  account_created: { label: "Account created", aliases: ["account created", "new customer", "new account"] },
-  email_opt_in: { label: "Email marketing opt-in", aliases: ["email opt", "email opt-in", "marketing opt"] },
-  signed_up_no_purchase: { label: "Signed up without a purchase", aliases: ["signed-up customer has not purchased", "has not purchased", "no purchase"] },
-  cart_inactive: { label: "Cart inactive", aliases: ["cart has items", "cart inactivity", "checkout is not completed", "cart inactive"] },
-  payment_confirmed: { label: "Payment confirmed", aliases: ["payment confirmed", "order created", "order received"] },
-  order_packed: { label: "Order packed or tracking created", aliases: ["order is packed", "tracking number is created", "dispatch", "shipped"] },
-  out_for_delivery: { label: "Out for delivery", aliases: ["out for delivery", "carrier reports the parcel is out"] },
-  order_delivered: { label: "Order delivered", aliases: ["carrier reports delivery", "delivered", "order has arrived"] },
+  account_created: { label: "ایجاد حساب", aliases: ["account created", "new customer", "new account", "ایجاد حساب"] },
+  email_opt_in: { label: "موافقت با ایمیل بازاریابی", aliases: ["email opt", "email opt-in", "marketing opt", "موافقت با ایمیل"] },
+  signed_up_no_purchase: { label: "ثبت‌نام بدون خرید", aliases: ["signed-up customer has not purchased", "has not purchased", "no purchase", "بدون خرید"] },
+  cart_inactive: { label: "بی‌فعالیتی سبد خرید", aliases: ["cart has items", "cart inactivity", "checkout is not completed", "cart inactive", "بی‌فعالیتی سبد"] },
+  payment_confirmed: { label: "تأیید پرداخت", aliases: ["payment confirmed", "order created", "order received", "تأیید پرداخت"] },
+  order_packed: { label: "بسته‌بندی سفارش یا ایجاد کد رهگیری", aliases: ["order is packed", "tracking number is created", "dispatch", "shipped", "بسته‌بندی سفارش"] },
+  out_for_delivery: { label: "خروج برای تحویل", aliases: ["out for delivery", "carrier reports the parcel is out", "خروج برای تحویل"] },
+  order_delivered: { label: "تحویل سفارش", aliases: ["carrier reports delivery", "delivered", "order has arrived", "تحویل سفارش"] },
 };
 
 const validScheduleTypes = new Set(["immediate", "delay", "event"]);
@@ -61,8 +61,8 @@ function triggerKeys(step, index) {
 function scheduleType(step) {
   if (validScheduleTypes.has(step?.scheduleType)) return step.scheduleType;
   const timing = String(step?.timing || "").toLowerCase();
-  if (/immediate|right away|now/.test(timing)) return "immediate";
-  if (/carrier milestone|status changes|when the event|when .* occurs/.test(timing)) return "event";
+  if (/immediate|right away|now|بلافاصله|همین حالا/.test(timing)) return "immediate";
+  if (/carrier milestone|status changes|when the event|when .* occurs|رخداد رویداد|هنگام تغییر وضعیت/.test(timing)) return "event";
   return "delay";
 }
 
@@ -78,15 +78,15 @@ function delayMinutes(step) {
 }
 
 function triggerLabel(keys) {
-  return keys.map((key) => triggerDefinitions[key]?.label).filter(Boolean).join(" or ") || triggerDefinitions.account_created.label;
+  return keys.map((key) => triggerDefinitions[key]?.label).filter(Boolean).join(" یا ") || triggerDefinitions.account_created.label;
 }
 
 function timingLabel(type, minutes) {
-  if (type === "immediate") return "Immediately";
-  if (type === "event") return "When the event occurs";
-  if (minutes && minutes % 1_440 === 0) return `${minutes / 1_440} day${minutes === 1_440 ? "" : "s"} after the trigger`;
-  if (minutes && minutes % 60 === 0) return `${minutes / 60} hour${minutes === 60 ? "" : "s"} after the trigger`;
-  return `${minutes || 15} minute${minutes === 1 ? "" : "s"} after the trigger`;
+  if (type === "immediate") return "بلافاصله";
+  if (type === "event") return "هنگام رخداد رویداد";
+  if (minutes && minutes % 1_440 === 0) return `${minutes / 1_440} روز پس از رویداد`;
+  if (minutes && minutes % 60 === 0) return `${minutes / 60} ساعت پس از رویداد`;
+  return `${minutes || 15} دقیقه پس از رویداد`;
 }
 
 function sanitizeContent(value) {
@@ -100,7 +100,7 @@ function sanitizeContent(value) {
     description: text(input.description, defaultJourney.description, 360) || defaultJourney.description,
     status: validStatuses.has(input.status) ? input.status : (validStatuses.has(defaultJourney.status) ? defaultJourney.status : "Draft"),
     steps: sourceSteps.slice(0, 24).map((step, index) => {
-      const stage = text(step?.stage, `Touchpoint ${index + 1}`, 80) || `Touchpoint ${index + 1}`;
+      const stage = text(step?.stage, `نقطه تماس ${index + 1}`, 80) || `نقطه تماس ${index + 1}`;
       const keys = triggerKeys(step, index);
       const selectedSchedule = scheduleType(step);
       const minutes = selectedSchedule === "delay" ? delayMinutes(step) : 0;
@@ -120,10 +120,10 @@ function sanitizeContent(value) {
         delayMinutes: minutes,
         timing: timingLabel(selectedSchedule, minutes),
         type: step?.type === "Transactional" ? "Transactional" : "Marketing",
-        subject: text(step?.subject, "A helpful update from Weluxo", 180),
-        body: sanitizeCmsHtml(text(step?.body, "Hi there,\n\nAdd the email copy for this touchpoint.", 5000)),
-        purpose: text(step?.purpose, "Keep the customer informed with a clear next step.", 300),
-        cta: text(step?.cta, "Learn more", 80),
+        subject: text(step?.subject, "یک به‌روزرسانی کاربردی از فروشگاه ایرانی", 180),
+        body: sanitizeCmsHtml(text(step?.body, "سلام،\n\nمتن ایمیل این نقطه تماس را وارد کنید.", 5000)),
+        purpose: text(step?.purpose, "مشتری را با یک گام بعدی روشن در جریان نگه دارید.", 300),
+        cta: text(step?.cta, "اطلاعات بیشتر", 80),
         href: link(step?.href),
       };
     }),
@@ -164,7 +164,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
     if (!body || typeof body !== "object" || !body.content) {
-      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+      return NextResponse.json({ error: "محتوا وارد نشده است" }, { status: 400 });
     }
 
     const content = sanitizeContent(body.content);
@@ -173,6 +173,6 @@ export async function POST(request) {
     return NextResponse.json({ ok: true, content });
   } catch (error) {
     console.error("marketing content write error", error);
-    return NextResponse.json({ error: "Save failed" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره‌سازی ناموفق بود" }, { status: 500 });
   }
 }

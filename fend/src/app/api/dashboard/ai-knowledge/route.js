@@ -15,11 +15,11 @@ export async function PUT(request) {
   try {
     const body = await request.json();
     if (!body || typeof body !== "object") {
-      return NextResponse.json({ error: "Knowledge content is required" }, { status: 400 });
+      return NextResponse.json({ error: "محتوای دانش الزامی است" }, { status: 400 });
     }
     return NextResponse.json({ ok: true, knowledge: await writeAIKnowledge(body) });
   } catch (error) {
     console.error("AI knowledge save error", error);
-    return NextResponse.json({ error: "Unable to save AI knowledge" }, { status: 500 });
+    return NextResponse.json({ error: "ذخیره دانش دستیار ممکن نیست" }, { status: 500 });
   }
 }

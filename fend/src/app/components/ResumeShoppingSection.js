@@ -27,7 +27,7 @@ function ProductTile({ product, label }) {
     <Card component={Link} href={href} className="resume-product-card" sx={{ display: "block", minWidth: { xs: 190, sm: 220 }, maxWidth: 250, flex: "1 0 0", borderRadius: 2.5, overflow: "hidden", textDecoration: "none", color: "inherit", bgcolor: "#fff", border: "1px solid #e6e9ef", boxShadow: "0 5px 18px rgba(15,23,42,0.08)", transition: "transform .18s ease, box-shadow .18s ease", "&:hover": { transform: "translateY(-3px)", boxShadow: "0 12px 28px rgba(15,23,42,0.14)" } }}>
       <Box sx={{ position: "relative" }}>
         <CardMedia component="img" image={product.image} alt={titleFor(product)} sx={{ height: { xs: 170, sm: 190 }, objectFit: "contain", bgcolor: "#fff", p: 1.5 }} />
-        {label && <Chip label={label} size="small" sx={{ position: "absolute", top: 10, left: 10, height: 22, fontSize: 10, fontWeight: 800, bgcolor: "#111827", color: "#fff" }} />}
+        {label && <Chip label={label} size="small" sx={{ position: "absolute", top: 10, insetInlineStart: 10, height: 22, fontSize: 10, fontWeight: 800, bgcolor: "#111827", color: "#fff" }} />}
       </Box>
       <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
         <Typography sx={{ color: "#111827", fontSize: 14, fontWeight: 800, lineHeight: 1.25, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{titleFor(product)}</Typography>

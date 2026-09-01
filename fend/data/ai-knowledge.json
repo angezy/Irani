@@ -1,108 +1,108 @@
 {
-  "greeting": "Hi — I’m the Weluxo assistant. I can help with products, stock, shipping, returns, payments, policies, and general store questions.",
+  "greeting": "سلام؛ من دستیار فروشگاه ایرانی هستم. درباره محصولات، موجودی، ارسال، مرجوعی، پرداخت، قوانین و پرسش‌های عمومی فروشگاه کمک می‌کنم.",
   "entries": [
     {
       "id": "product-guidance-storefront",
       "category": "product_guidance",
-      "title": "Product guidance",
-      "content": "For product-specific guidance, the assistant uses the current product title, description, price, and stock shown in Weluxo's approved store catalog. If those details do not answer the question, the assistant connects the customer with support.",
-      "keywords": ["products", "product", "stock", "availability"],
+      "title": "راهنمای محصول",
+      "content": "برای راهنمایی هر محصول، دستیار از عنوان، توضیحات، قیمت و موجودی فعلی نمایش‌داده‌شده در کاتالوگ تأییدشده فروشگاه استفاده می‌کند. اگر این اطلاعات پاسخ‌گو نباشند، مشتری را به پشتیبانی وصل می‌کند.",
+      "keywords": ["محصولات", "محصول", "موجودی", "موجود بودن"],
       "enabled": true
     },
     {
       "id": "shipping-estimates",
       "category": "policy",
-      "title": "Shipping times and delivery estimates",
-      "content": "Delivery timing varies by product, destination, fulfillment partner, carrier, and customs processing. The delivery estimate shown at checkout and in the customer's order information is the applicable estimate; Weluxo does not promise one universal delivery time.",
-      "keywords": ["shipping time", "delivery time", "how long", "when arrive", "delivery estimate", "shipping estimate"],
+      "title": "زمان ارسال و برآورد تحویل",
+      "content": "زمان تحویل به محصول، مقصد، شریک ارسال، حمل‌کننده و فرایند گمرکی بستگی دارد. برآورد نمایش‌داده‌شده در پرداخت و اطلاعات سفارش مشتری، برآورد معتبر است؛ فروشگاه یک زمان تحویل یکسان برای همه سفارش‌ها تضمین نمی‌کند.",
+      "keywords": ["زمان ارسال", "زمان تحویل", "چقدر طول می‌کشد", "چه زمانی می‌رسد", "برآورد تحویل", "برآورد ارسال"],
       "enabled": true
     },
     {
       "id": "international-shipping",
       "category": "policy",
-      "title": "International shipping availability",
-      "content": "Weluxo serves customers in multiple markets. Shipping availability, available methods, cost, and timing depend on the product and destination and are confirmed at checkout.",
-      "keywords": ["international", "worldwide", "countries", "ship to", "outside usa", "overseas"],
+      "title": "امکان ارسال بین‌المللی",
+      "content": "فروشگاه ایرانی به مشتریان بازارهای مختلف خدمت‌رسانی می‌کند. امکان ارسال، روش‌های موجود، هزینه و زمان‌بندی به محصول و مقصد بستگی دارد و هنگام پرداخت تأیید می‌شود.",
+      "keywords": ["بین‌المللی", "سراسر جهان", "کشورها", "ارسال به", "خارج از ایران", "خارج از کشور"],
       "enabled": true
     },
     {
       "id": "tracking-orders",
       "category": "faq",
-      "title": "Tracking an order",
-      "content": "When a tracking number is created, available updates can be viewed through the customer's account and the tracking page. Carrier scans can take time to appear. For a specific order, Weluxo must verify the order number and checkout email before sharing details.",
-      "keywords": ["track order", "tracking", "track package", "where is my order", "tracking number", "package update"],
+      "title": "پیگیری سفارش",
+      "content": "پس از ایجاد شماره پیگیری، به‌روزرسانی‌ها از حساب کاربری و صفحه پیگیری قابل مشاهده هستند. ثبت اسکن‌های حمل‌کننده ممکن است زمان ببرد. برای یک سفارش مشخص، فروشگاه پیش از نمایش جزئیات باید شماره سفارش و ایمیل پرداخت را تأیید کند.",
+      "keywords": ["پیگیری سفارش", "رهگیری", "پیگیری بسته", "سفارشم کجاست", "شماره پیگیری", "به‌روزرسانی بسته"],
       "enabled": true
     },
     {
       "id": "shipping-costs",
       "category": "policy",
-      "title": "Shipping costs",
-      "content": "Available shipping methods and costs are shown at checkout. Rates can vary by destination, product, package characteristics, carrier option, and the offer displayed at the time of purchase.",
-      "keywords": ["shipping cost", "delivery cost", "shipping fee", "free shipping", "postage", "shipping price"],
+      "title": "هزینه ارسال",
+      "content": "روش‌ها و هزینه‌های ارسال هنگام پرداخت نمایش داده می‌شوند. نرخ‌ها ممکن است بر اساس مقصد، محصول، ویژگی‌های بسته، گزینه حمل‌کننده و پیشنهاد زمان خرید متفاوت باشند.",
+      "keywords": ["هزینه ارسال", "هزینه تحویل", "هزینه حمل", "ارسال رایگان", "پست", "قیمت ارسال"],
       "enabled": true
     },
     {
       "id": "return-eligibility",
       "category": "policy",
-      "title": "Return eligibility",
-      "content": "Customers should contact Weluxo support within 30 days of delivery to ask whether an order is eligible for return. Items should generally be unused, complete, and in their original condition and packaging where possible. Eligibility can vary by product and fulfillment partner.",
-      "keywords": ["return", "return policy", "return window", "30 days", "eligible return", "send back"],
+      "title": "شرایط مرجوعی",
+      "content": "مشتریان باید حداکثر تا ۳۰ روز پس از تحویل با پشتیبانی تماس بگیرند تا شرایط مرجوعی سفارش بررسی شود. کالا تا حد امکان باید استفاده‌نشده، کامل و در وضعیت و بسته‌بندی اصلی باشد. شرایط ممکن است بر اساس محصول و شریک ارسال متفاوت باشد.",
+      "keywords": ["مرجوعی", "سیاست مرجوعی", "مهلت مرجوعی", "۳۰ روز", "شرایط بازگشت", "پس فرستادن"],
       "enabled": true
     },
     {
       "id": "return-request",
       "category": "faq",
-      "title": "How to request a return",
-      "content": "To request a return, contact support with the order number, product details, and reason for the request. Support will confirm eligibility and provide any applicable instructions before the item is sent back.",
-      "keywords": ["start return", "return request", "return item", "return instructions", "exchange"],
+      "title": "روش ثبت درخواست مرجوعی",
+      "content": "برای ثبت درخواست مرجوعی، شماره سفارش، جزئیات محصول و دلیل درخواست را برای پشتیبانی ارسال کنید. پشتیبانی پیش از بازگرداندن کالا شرایط و دستورالعمل لازم را تأیید می‌کند.",
+      "keywords": ["شروع مرجوعی", "درخواست مرجوعی", "مرجوع کردن کالا", "دستورالعمل مرجوعی", "تعویض"],
       "enabled": true
     },
     {
       "id": "refund-process",
       "category": "policy",
-      "title": "Refund process",
-      "content": "After a returned item is received and reviewed, Weluxo or the applicable fulfillment partner determines whether the return is approved. An approved refund is sent to the original payment method. The time for funds to appear depends on the payment provider and banking process.",
-      "keywords": ["refund", "refund time", "money back", "refund status", "original payment method"],
+      "title": "روند بازپرداخت",
+      "content": "پس از دریافت و بررسی کالای مرجوعی، فروشگاه شرایط تأیید مرجوعی را مشخص می‌کند. بازپرداخت تأییدشده به روش پرداخت اولیه انجام می‌شود و زمان نمایش وجه به درگاه و فرایند بانکی بستگی دارد.",
+      "keywords": ["بازپرداخت", "زمان بازپرداخت", "پس گرفتن پول", "وضعیت بازپرداخت", "روش پرداخت اولیه"],
       "enabled": true
     },
     {
       "id": "damaged-or-wrong-item",
       "category": "faq",
-      "title": "Damaged, defective, or wrong item",
-      "content": "If an item arrives damaged, defective, or different from what was ordered, contact support promptly with the order number, a description of the issue, and clear photos or video when useful. Keep the item and packaging until support provides instructions.",
-      "keywords": ["damaged", "defective", "broken", "wrong item", "incorrect item", "missing item"],
+      "title": "کالای آسیب‌دیده، معیوب یا اشتباه",
+      "content": "اگر کالا آسیب‌دیده، معیوب یا متفاوت از سفارش رسید، سریعاً شماره سفارش، توضیح مشکل و در صورت امکان عکس یا ویدئوی واضح را برای پشتیبانی ارسال کنید. کالا و بسته‌بندی را تا دریافت دستورالعمل نگه دارید.",
+      "keywords": ["آسیب‌دیده", "معیوب", "خراب", "کالای اشتباه", "کالای نادرست", "کالای ناقص"],
       "enabled": true
     },
     {
       "id": "order-change-cancellation",
       "category": "policy",
-      "title": "Changing or cancelling an order",
-      "content": "Contact support as soon as possible with the order number and requested change or cancellation. Weluxo cannot guarantee changes or cancellation after an order has entered fulfillment or shipped.",
-      "keywords": ["cancel order", "change order", "edit order", "change address", "wrong address", "stop order"],
+      "title": "تغییر یا لغو سفارش",
+      "content": "در اسرع وقت شماره سفارش و تغییر یا لغو موردنظر را برای پشتیبانی ارسال کنید. پس از ورود سفارش به آماده‌سازی یا ارسال، تغییر یا لغو تضمین نمی‌شود.",
+      "keywords": ["لغو سفارش", "تغییر سفارش", "ویرایش سفارش", "تغییر نشانی", "نشانی اشتباه", "توقف سفارش"],
       "enabled": true
     },
     {
       "id": "payments",
       "category": "faq",
-      "title": "Payments and checkout",
-      "content": "Available payment methods are displayed securely during checkout and can vary by destination. If a payment fails, confirm the payment details, try another available method, or contact the payment provider or Weluxo support if the issue continues.",
-      "keywords": ["payment", "pay", "card", "payment failed", "checkout", "accepted payment methods"],
+      "title": "پرداخت و تسویه‌حساب",
+      "content": "روش‌های پرداخت موجود هنگام تسویه‌حساب به‌صورت امن نمایش داده می‌شوند و ممکن است بر اساس مقصد متفاوت باشند. اگر پرداخت ناموفق بود، اطلاعات پرداخت را بررسی کنید، روش دیگری را امتحان کنید یا در صورت ادامه مشکل با پشتیبانی تماس بگیرید.",
+      "keywords": ["پرداخت", "پرداخت کردن", "کارت", "پرداخت ناموفق", "تسویه‌حساب", "روش‌های پرداخت"],
       "enabled": true
     },
     {
       "id": "order-confirmation",
       "category": "faq",
-      "title": "Order confirmation email",
-      "content": "If a customer cannot find an order confirmation email, they should check spam or promotions first. If it is still missing, support can help when the customer provides the email and order details used at checkout.",
-      "keywords": ["confirmation email", "order email", "receipt", "no confirmation", "email missing"],
+      "title": "ایمیل تأیید سفارش",
+      "content": "اگر مشتری ایمیل تأیید سفارش را پیدا نمی‌کند، ابتدا پوشه هرزنامه یا تبلیغات را بررسی کند. اگر ایمیل همچنان پیدا نشد، با ارائه ایمیل و جزئیات استفاده‌شده هنگام پرداخت، از پشتیبانی کمک بگیرد.",
+      "keywords": ["ایمیل تأیید", "ایمیل سفارش", "رسید", "تأیید نیامده", "ایمیل پیدا نمی‌شود"],
       "enabled": true
     },
     {
       "id": "account-help",
       "category": "faq",
-      "title": "Account help",
-      "content": "Customers can create an account from the Account area, use the password reset option on the sign-in page, and update account information after signing in to profile settings.",
-      "keywords": ["account", "sign in", "login", "password", "reset password", "create account", "profile"],
+      "title": "راهنمای حساب کاربری",
+      "content": "مشتریان می‌توانند از بخش حساب کاربری حساب بسازند، در صفحه ورود از گزینه بازیابی رمز استفاده کنند و پس از ورود، اطلاعات حساب را در تنظیمات پروفایل به‌روزرسانی کنند.",
+      "keywords": ["حساب", "ورود", "لاگین", "رمز عبور", "بازیابی رمز", "ساخت حساب", "پروفایل"],
       "enabled": true
     }
   ]

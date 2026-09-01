@@ -328,7 +328,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1.55;
-  text-align: left;
+  text-align: right;
   cursor: pointer;
   transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }

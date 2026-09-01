@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alert, Box, Button, Container, Grid, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Link from "next/link";
 import RichTextEditor from "./RichTextEditor";
 
@@ -12,6 +12,10 @@ const priorities = [["Low", "کم"], ["Normal", "عادی"], ["High", "زیاد"
 
 function textFromHtml(value) {
   return String(value || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").trim();
+}
+
+function localizedError(message, fallback) {
+  return /[\u0600-\u06ff]/.test(String(message || "")) ? message : fallback;
 }
 
 export default function SupportTicketForm() {
@@ -43,11 +47,11 @@ export default function SupportTicketForm() {
       files.forEach((file) => body.append("attachments", file));
       const response = await fetch("/api/support/tickets", { method: "POST", body, credentials: "include" });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "ایجاد درخواست پشتیبانی ممکن نیست");
+      if (!response.ok) throw new Error(localizedError(data.error, "ایجاد درخواست پشتیبانی ممکن نیست"));
       if (data.ticket?.userId) router.push(`/support/tickets/${data.ticket.id}`);
       else setSuccess(`درخواست ${data.ticket?.ticketNumber || "جدید"} دریافت شد. پاسخ را به ${form.email} ارسال می‌کنیم.`);
     } catch (submitError) {
-      setError(submitError.message || "ایجاد درخواست پشتیبانی ممکن نیست");
+      setError(localizedError(submitError.message, "ایجاد درخواست پشتیبانی ممکن نیست"));
     } finally {
       setSaving(false);
     }
@@ -86,11 +90,11 @@ export default function SupportTicketForm() {
               }}><TextField select fullWidth label="اولویت" value={form.priority} onChange={(event) => update("priority", event.target.value)}>{priorities.map(([value, label]) => <MenuItem key={value} value={value}>{label}</MenuItem>)}</TextField></Grid>
             <Grid size={12}><TextField required fullWidth label="موضوع" value={form.subject} onChange={(event) => update("subject", event.target.value)} /></Grid>
             <Grid size={12}><RichTextEditor label="پیام" value={form.contentHtml} onChange={(value) => update("contentHtml", value)} minHeight={280} /></Grid>
-            <Grid size={12}><Button component="label" variant="outlined" sx={{ borderRadius: 999, textTransform: "none", color: "var(--color-primary)", borderColor: "var(--color-primary)" }}>افزودن پیوست<input hidden multiple type="file" accept="image/*,.pdf,.txt,.docx" onChange={(event) => setFiles(Array.from(event.target.files || []))} /></Button>{files.length > 0 && <Typography component="span" sx={{ ml: 2, color: "var(--color-text-secondary)", fontSize: 13 }}>{files.map((file) => file.name).join(", ")}</Typography>}</Grid>
+            <Grid size={12}><Button component="label" variant="outlined" sx={{ borderRadius: 999, textTransform: "none", color: "var(--color-primary)", borderColor: "var(--color-primary)" }}>افزودن پیوست<input hidden multiple type="file" accept="image/*,.pdf,.txt,.docx" onChange={(event) => setFiles(Array.from(event.target.files || []))} /></Button>{files.length > 0 && <Typography component="span" sx={{ marginInlineStart: "16px", color: "var(--color-text-secondary)", fontSize: 13 }}>{files.map((file) => file.name).join(", ")}</Typography>}</Grid>
           </Grid>
           {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
-          <Button type="submit" disabled={saving} variant="contained" endIcon={<ArrowForwardIcon />} sx={{ mt: 3, borderRadius: 999, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>{saving ? "در حال ارسال…" : "ارسال درخواست"}</Button>
+          <Button type="submit" disabled={saving} variant="contained" endIcon={<ArrowBackIcon />} sx={{ mt: 3, borderRadius: 999, bgcolor: "var(--color-primary)", textTransform: "none", fontWeight: 800 }}>{saving ? "در حال ارسال…" : "ارسال درخواست"}</Button>
         </Paper>
       </Container>
     </Box>

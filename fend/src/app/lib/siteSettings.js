@@ -178,6 +178,6 @@ export function normalizeSiteSettings(value) {
 
 export async function fetchSiteSettings() {
   const response = await fetch("/api/site-settings", { cache: "no-store" });
-  if (!response.ok) throw new Error(`Site settings request failed (${response.status})`);
+  if (!response.ok) throw new Error(`دریافت تنظیمات سایت با وضعیت ${response.status} ناموفق بود`);
   return normalizeSiteSettings(await response.json());
 }

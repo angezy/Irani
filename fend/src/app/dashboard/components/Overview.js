@@ -3,5 +3,5 @@ import styles from './link.module.css'
 import Link from 'next/link'
 
 export default function LinkOne(){
-  return <Link className={styles.link} href="/dashboard/Overview">Overview</Link>
+  return <Link className={styles.link} href="/dashboard/Overview">گزارش کلی</Link>
 }

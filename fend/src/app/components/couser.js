@@ -83,7 +83,7 @@ export default function MostChosenCarousel() {
         </Typography>
       </Box>
 
-      <Slider {...settings} style={{ marginLeft: "-12px", marginRight: "-12px" }}>
+      <Slider {...settings} style={{ marginInline: "-12px" }}>
         {loading
           ? renderSkeletons()
           : items.map((item) => {

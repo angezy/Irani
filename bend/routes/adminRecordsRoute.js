@@ -27,9 +27,9 @@ function dateRange(query) {
 
 const definitions = {
   orders: {
-    title: 'Orders',
+    title: 'سفارش‌ها',
     requiredObjects: ['Commerce.Orders', 'Commerce.StorefrontOrders'],
-    columns: ['Order number', 'Customer', 'Order status', 'Payment', 'Fulfillment', 'Total', 'Refunded', 'Currency', 'Created'],
+    columns: ['شماره سفارش', 'مشتری', 'وضعیت سفارش', 'پرداخت', 'تکمیل ارسال', 'مبلغ کل', 'بازپرداخت‌شده', 'واحد پول', 'ایجادشده'],
     query: `SELECT TOP (@Limit) o.[Id], o.[OrderNumber], o.[CustomerEmail],
         COALESCE(NULLIF(storefront.[Status], N''), o.[OrderStatus]) AS [OrderStatus],
         o.[PaymentStatus],
@@ -50,36 +50,36 @@ const definitions = {
       ORDER BY o.[CreatedAt] DESC`
   },
   finance: {
-    title: 'Finance transactions',
+    title: 'تراکنش‌های مالی',
     requiredObjects: ['ERP.Payments'],
-    columns: ['Reference', 'Direction', 'Method', 'Status', 'Amount', 'Currency', 'Processed', 'Created'],
+    columns: ['مرجع', 'جهت', 'روش', 'وضعیت', 'مبلغ', 'واحد پول', 'پردازش‌شده', 'ایجادشده'],
     query: `SELECT TOP (@Limit) p.[Id], COALESCE(p.[ExternalTransactionId], CONVERT(NVARCHAR(36), p.[Id])) AS [Reference], p.[Direction], p.[PaymentMethod], p.[Status], p.[Amount], p.[Currency], p.[ProcessedAt], p.[CreatedAt]
       FROM [ERP].[Payments] p WHERE p.[CreatedAt] >= @StartAt AND p.[CreatedAt] < @EndAt
       AND (@Currency IS NULL OR p.[Currency] = @Currency) AND (@Status IS NULL OR p.[Status] = @Status)
       ORDER BY p.[CreatedAt] DESC`
   },
   suppliers: {
-    title: 'Supplier orders',
+    title: 'سفارش‌های تأمین‌کننده',
     requiredObjects: ['Commerce.SupplierOrders', 'Commerce.Suppliers'],
-    columns: ['Supplier', 'External order', 'Status', 'Product cost', 'Shipping cost', 'Total cost', 'Currency', 'Created'],
+    columns: ['تأمین‌کننده', 'سفارش خارجی', 'وضعیت', 'هزینه محصول', 'هزینه ارسال', 'هزینه کل', 'واحد پول', 'ایجادشده'],
     query: `SELECT TOP (@Limit) so.[Id], s.[Name] AS [Supplier], so.[ExternalOrderId], so.[Status], so.[ProductCost], so.[ShippingCost], so.[TotalCost], so.[Currency], so.[CreatedAt]
       FROM [Commerce].[SupplierOrders] so JOIN [Commerce].[Suppliers] s ON s.[Id] = so.[SupplierId]
       WHERE so.[CreatedAt] >= @StartAt AND so.[CreatedAt] < @EndAt AND (@Currency IS NULL OR so.[Currency] = @Currency)
       AND (@Status IS NULL OR so.[Status] = @Status) ORDER BY so.[CreatedAt] DESC`
   },
   marketing: {
-    title: 'Campaigns',
+    title: 'کارزارها',
     requiredObjects: ['CRM.Campaigns'],
-    columns: ['Campaign', 'Channel', 'Status', 'Start', 'End', 'Budget', 'Currency', 'Updated'],
+    columns: ['کارزار', 'کانال', 'وضعیت', 'شروع', 'پایان', 'بودجه', 'واحد پول', 'به‌روزرسانی‌شده'],
     query: `SELECT TOP (@Limit) c.[Id], c.[Name] AS [Campaign], c.[Channel], c.[Status], c.[StartAt], c.[EndAt], c.[BudgetAmount], c.[Currency], c.[UpdatedAt]
       FROM [CRM].[Campaigns] c WHERE (@Currency IS NULL OR c.[Currency] = @Currency) AND (@Status IS NULL OR c.[Status] = @Status)
       ORDER BY c.[UpdatedAt] DESC`
   },
   loyalty: {
-    title: 'Loyalty transactions',
+    title: 'تراکنش‌های وفاداری',
     requiredObjects: ['CRM.LoyaltyTransactions', 'CRM.LoyaltyAccounts', 'CRM.Customers'],
-    columns: ['Customer', 'Tier', 'Type', 'Points', 'Description', 'Created'],
-    query: `SELECT TOP (@Limit) lt.[Id], c.[CustomerNumber] AS [Customer], COALESCE(t.[Name], N'Unassigned') AS [Tier], lt.[Type], lt.[Points], lt.[Description], lt.[CreatedAt]
+    columns: ['مشتری', 'سطح', 'نوع', 'امتیاز', 'توضیحات', 'ایجادشده'],
+    query: `SELECT TOP (@Limit) lt.[Id], c.[CustomerNumber] AS [Customer], COALESCE(t.[Name], N'تخصیص‌نیافته') AS [Tier], lt.[Type], lt.[Points], lt.[Description], lt.[CreatedAt]
       FROM [CRM].[LoyaltyTransactions] lt JOIN [CRM].[LoyaltyAccounts] la ON la.[Id] = lt.[LoyaltyAccountId]
       JOIN [CRM].[Customers] c ON c.[Id] = la.[CustomerId] LEFT JOIN [CRM].[LoyaltyTiers] t ON t.[Id] = la.[TierId]
       WHERE lt.[CreatedAt] >= @StartAt AND lt.[CreatedAt] < @EndAt

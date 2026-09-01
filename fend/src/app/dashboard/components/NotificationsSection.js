@@ -12,7 +12,7 @@ export default function NotificationsSection({ loading: parentLoading }) {
     let mounted = true;
     fetch("/api/dashboard/notifications", { credentials: "include" })
       .then((r) => {
-        if (!r.ok) throw new Error(`Notifications request failed (${r.status})`);
+        if (!r.ok) throw new Error(`دریافت اعلان‌ها ناموفق بود (${r.status})`);
         return r.json();
       })
       .then((data) => {
@@ -20,7 +20,7 @@ export default function NotificationsSection({ loading: parentLoading }) {
         if (Array.isArray(data)) {
           setNotes(data.map((n, i) => ({
             id: n.id ?? i,
-            title: n.title ?? "Notification",
+            title: n.title ?? "اعلان",
             text: n.text ?? n.message ?? String(n),
             time: n.time ?? n.createdAt,
             isRead: Boolean(n.isRead),
@@ -31,7 +31,7 @@ export default function NotificationsSection({ loading: parentLoading }) {
       })
       .catch((err) => {
         console.error("Notifications fetch error:", err);
-        mounted && setError(err.message || "Unable to load notifications");
+        mounted && setError(err.message || "بارگذاری اعلان‌ها ممکن نیست");
       })
       .finally(() => mounted && setLoading(false));
     return () => (mounted = false);
@@ -51,11 +51,11 @@ export default function NotificationsSection({ loading: parentLoading }) {
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload.error || "Unable to update notification");
+        throw new Error(payload.error || "به‌روزرسانی اعلان ممکن نیست");
       }
       setNotes((current) => current.map((note) => note.id === id ? { ...note, isRead: true } : note));
     } catch (err) {
-      setError(err.message || "Unable to update notification");
+      setError(err.message || "به‌روزرسانی اعلان ممکن نیست");
     } finally {
       setUpdatingId(null);
     }
@@ -66,7 +66,7 @@ export default function NotificationsSection({ loading: parentLoading }) {
       <Card sx={{ borderRadius: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Notifications
+            اعلان‌ها
           </Typography>
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
           {isLoading ? (
@@ -85,7 +85,7 @@ export default function NotificationsSection({ loading: parentLoading }) {
                   divider
                   secondaryAction={!n.isRead ? (
                     <Button size="small" disabled={updatingId === n.id} onClick={() => markAsRead(n.id)}>
-                      Mark read
+                      علامت‌گذاری به‌عنوان خوانده‌شده
                     </Button>
                   ) : null}
                 >

@@ -3,8 +3,8 @@ import { getSiteSettingsServer, siteUrlFor } from "../lib/siteSettingsServer";
 export default async function LegalStructuredData({ content, slug }) {
   const site = await getSiteSettingsServer();
   const siteUrl = siteUrlFor(site);
-  const title = content?.hero?.title || `${site.siteName} Policy`;
-  const description = content?.seo?.description || content?.hero?.intro || `${site.siteName} customer information.`;
+  const title = content?.hero?.title || `سیاست‌های ${site.siteName}`;
+  const description = content?.seo?.description || content?.hero?.intro || `اطلاعات مشتری و قوانین استفاده از ${site.siteName}.`;
   const faqItems = Array.isArray(content?.faq?.items) ? content.faq.items : [];
   const pageUrl = siteUrlFor(site, `/${slug}`);
   const organizationId = `${siteUrl}/#organization`;

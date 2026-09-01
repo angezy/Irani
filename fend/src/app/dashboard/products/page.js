@@ -35,9 +35,9 @@ const THUMB_SIZE = 44
 const formatPrice = (value) => {
   const num = Number(value)
   if (Number.isFinite(num)) {
-    return num.toFixed(2)
+    return new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 2 }).format(num)
   }
-  return typeof value === "string" && value.trim().length > 0 ? value : "0.00"
+  return typeof value === "string" && value.trim().length > 0 ? value : "۰"
 }
 
 const normalizeProduct = (product, index = 0) => {
@@ -53,7 +53,7 @@ const normalizeProduct = (product, index = 0) => {
 
   return {
     id: String(fallbackId),
-    title: product.title ?? product.name ?? product.Name ?? "Untitled Product",
+    title: product.title ?? product.name ?? product.Name ?? "محصول بدون عنوان",
     description: product.description ?? product.Description ?? "",
     image:
       (Array.isArray(product.images) && product.images.length ? product.images[0] : null) ??
@@ -69,10 +69,10 @@ const normalizeProduct = (product, index = 0) => {
     marginPercent: salePrice > 0 ? (unitProfit / salePrice) * 100 : 0,
     inventoryProfit: unitProfit * stock,
     stock,
-    currency: product.currency ?? product.Currency ?? "USD",
+    currency: product.currency ?? product.Currency ?? "IRR",
     isTrending: Boolean(product.isTrending ?? product.IsTrending ?? product.trending ?? product.Trending),
-    category: product.category ?? product.Category ?? "General",
-    brand: product.brand ?? product.Brand ?? "Generic",
+    category: product.category ?? product.Category ?? "عمومی",
+    brand: product.brand ?? product.Brand ?? "بدون برند",
     address: product.address ?? product.Address ?? "",
     images: Array.isArray(product.images)
       ? product.images
@@ -102,7 +102,7 @@ export default function Products() {
         setLoading(true)
         const response = await fetch(`${API_BASE_URL}/api/products`)
         if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
+          throw new Error(`دریافت محصولات با وضعیت ${response.status} ناموفق بود`)
         }
         const data = await response.json()
         const normalized = Array.isArray(data) ? data.map((item, index) => normalizeProduct(item, index)).filter(Boolean) : []
@@ -114,8 +114,8 @@ export default function Products() {
         console.error("Failed to load products:", err)
         if (isMounted) {
           setProducts([])
-          setError("Unable to load live products. Try again after the backend is available.")
-          setSnack({ open: true, message: "Unable to load products" })
+          setError("بارگذاری محصولات زنده ممکن نیست؛ پس از در دسترس بودن سرور دوباره تلاش کنید.")
+          setSnack({ open: true, message: "بارگذاری محصولات ممکن نیست" })
         }
       } finally {
         if (isMounted) {
@@ -145,8 +145,8 @@ export default function Products() {
       marginPercent: 0,
       isTrending: false,
       stock: 0,
-      category: "General",
-      brand: "Generic",
+      category: "عمومی",
+      brand: "بدون برند",
       address: "",
       images: [],
     })
@@ -176,21 +176,21 @@ export default function Products() {
   }
 
   async function handleDelete(id) {
-    if (!confirm("Delete this product? This cannot be undone.")) return
+    if (!confirm("این محصول حذف شود؟ این عملیات قابل بازگشت نیست.")) return
     const numericId = Number(id)
     try {
       if (Number.isFinite(numericId)) {
         const response = await fetch(`${API_BASE_URL}/api/products/${numericId}`, { method: "DELETE" })
         if (!response.ok) {
           const payload = await response.json().catch(() => ({}))
-          throw new Error(payload.error || `Unable to delete product (status ${response.status})`)
+          throw new Error(payload.error || `حذف محصول ممکن نیست (وضعیت ${response.status})`)
         }
       }
       setProducts((prev) => prev.filter((p) => p.id !== id))
-      setSnack({ open: true, message: "Product deleted" })
+      setSnack({ open: true, message: "محصول حذف شد" })
     } catch (err) {
       console.error("Failed to delete product:", err)
-      const message = err instanceof Error ? err.message : "Failed to delete product"
+      const message = err instanceof Error ? err.message : "حذف محصول ناموفق بود"
       setSnack({ open: true, message })
     }
   }
@@ -202,8 +202,8 @@ export default function Products() {
       salePrice: typeof current.salePrice === "number" ? current.salePrice : parseFloat(current.salePrice ?? current.price) || 0,
       buyPrice: typeof current.buyPrice === "number" ? current.buyPrice : parseFloat(current.buyPrice) || 0,
       stock: typeof current.stock === "number" ? current.stock : parseInt(current.stock, 10) || 0,
-      category: current.category && current.category.trim().length > 0 ? current.category : "General",
-      brand: current.brand && current.brand.trim().length > 0 ? current.brand : "Generic",
+      category: current.category && current.category.trim().length > 0 ? current.category : "عمومی",
+      brand: current.brand && current.brand.trim().length > 0 ? current.brand : "بدون برند",
       address: current.address && current.address.trim().length > 0 ? current.address.trim() : "",
     }
     sanitized.price = sanitized.salePrice
@@ -224,7 +224,7 @@ export default function Products() {
       formData.append("price", String(sanitized.salePrice))
       formData.append("salePrice", String(sanitized.salePrice))
       formData.append("buyPrice", String(sanitized.buyPrice))
-      formData.append("currency", String(sanitized.currency || "USD"))
+      formData.append("currency", String(sanitized.currency || "IRR"))
       formData.append("isTrending", String(Boolean(sanitized.isTrending)))
       formData.append("image", sanitized.image || "")
       formData.append("stock", String(sanitized.stock))
@@ -244,14 +244,14 @@ export default function Products() {
       const payload = await response.json().catch(() => null)
 
       if (!response.ok) {
-        const errMessage = (payload && payload.error) || `Unable to save product (status ${response.status})`
+        const errMessage = (payload && payload.error) || `ذخیره محصول ممکن نیست (وضعیت ${response.status})`
         throw new Error(errMessage)
       }
 
       const serverProduct = payload && (payload.product || payload)
       const normalized = normalizeProduct(serverProduct)
       if (!normalized) {
-        throw new Error("Server returned an invalid product payload")
+        throw new Error("پاسخ نامعتبر از سرور برای محصول دریافت شد")
       }
 
       setProducts((prev) => {
@@ -261,10 +261,10 @@ export default function Products() {
         return [normalized, ...prev]
       })
       handleDialogClose()
-      setSnack({ open: true, message: "Product saved" })
+      setSnack({ open: true, message: "محصول ذخیره شد" })
     } catch (err) {
       console.error("Failed to save product:", err)
-      const message = err instanceof Error ? err.message : "Failed to save product"
+      const message = err instanceof Error ? err.message : "ذخیره محصول ناموفق بود"
       setSnack({ open: true, message })
     } finally {
       setSaving(false)
@@ -276,15 +276,15 @@ export default function Products() {
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
         <Box>
           <Typography variant="h5" component="h1" sx={{ fontWeight: 700 }}>
-            Product Manager
+            مدیریت محصولات
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Manage your products and edit details, update images, or delete items.
+            محصولات را مدیریت کنید، جزئیات و تصاویر را ویرایش یا محصولات را حذف کنید.
           </Typography>
         </Box>
         <Box>
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenNew}>
-            Add Product
+            افزودن محصول
           </Button>
         </Box>
       </Stack>
@@ -332,7 +332,7 @@ export default function Products() {
         <Grid container spacing={3}>
           {products.length === 0 ? (
             <Grid size={12}>
-              <Typography color="text.secondary">No products found.</Typography>
+              <Typography color="text.secondary">محصولی پیدا نشد.</Typography>
             </Grid>
           ) : (
             products.map((p) => (
@@ -381,11 +381,11 @@ export default function Products() {
                           </Typography>
                           {p.isTrending && (
                             <Typography variant="caption" sx={{ px: 1, py: 0.25, borderRadius: 999, backgroundColor: "var(--color-primary)", color: "#fff" }}>
-                              Trending
+                            محبوب
                             </Typography>
                           )}
                           <Typography variant="caption" sx={{ px: 1, py: 0.25, border: "1px solid rgba(15,23,42,0.16)", borderRadius: 999 }}>
-                            {p.brand || "Generic"}
+                            {p.brand || "عمومی"}
                           </Typography>
                         </Stack>
                       </Box>
@@ -400,27 +400,27 @@ export default function Products() {
                         overflow: "hidden",
                       }}
                     >
-                      {p.description || "No description available."}
+                      {p.description || "توضیحی برای این محصول ثبت نشده است."}
                     </Typography>
                     <Stack spacing={0.5}>
                       <Stack direction="row" spacing={2} alignItems="baseline">
                         <Typography variant="body1" fontWeight={700}>
-                          Sale: ${formatPrice(p.salePrice)}
+                          فروش: {formatPrice(p.salePrice)} ریال
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Buy: ${formatPrice(p.buyPrice)}
+                          خرید: {formatPrice(p.buyPrice)} ریال
                         </Typography>
                       </Stack>
                       <Stack direction="row" spacing={2}>
                         <Typography variant="body2" color={p.unitProfit >= 0 ? "success.main" : "error.main"} fontWeight={600}>
-                          Profit: ${formatPrice(p.unitProfit)} ({formatPrice(p.marginPercent)}%)
+                          سود: {formatPrice(p.unitProfit)} ریال ({formatPrice(p.marginPercent)}٪)
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Stock: {Number.isFinite(p.stock) ? p.stock : 0}
+                          موجودی: {Number.isFinite(p.stock) ? p.stock : 0}
                         </Typography>
                       </Stack>
                       <Typography variant="caption" color="text.secondary">
-                        Inventory profit potential: ${formatPrice(p.inventoryProfit)}
+                        ظرفیت سود موجودی: {formatPrice(p.inventoryProfit)} ریال
                       </Typography>
                     </Stack>
                     {Array.isArray(p.images) && p.images.length > 0 && (
@@ -431,12 +431,12 @@ export default function Products() {
                   </CardContent>
                   <CardActions sx={{ justifyContent: "flex-end", mt: "auto", height: CARD_ACTIONS_HEIGHT }}>
                     <Tooltip title="Edit">
-                      <IconButton color="primary" aria-label={`Edit ${p.title}`} onClick={() => handleEdit(p)}>
+                      <IconButton color="primary" aria-label={`ویرایش ${p.title}`} onClick={() => handleEdit(p)}>
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton color="error" aria-label={`Delete ${p.title}`} onClick={() => handleDelete(p.id)}>
+                      <IconButton color="error" aria-label={`حذف ${p.title}`} onClick={() => handleDelete(p.id)}>
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -455,52 +455,52 @@ export default function Products() {
       )}
 
       <Dialog open={editOpen} onClose={handleDialogClose} fullWidth maxWidth="sm">
-        <DialogTitle>{current && products.find((x) => x.id === current.id) ? "Edit Product" : "Add Product"}</DialogTitle>
+        <DialogTitle>{current && products.find((x) => x.id === current.id) ? "ویرایش محصول" : "افزودن محصول"}</DialogTitle>
         <DialogContent>
           {current && (
             <Box sx={{ mt: 1, display: "grid", gap: 2 }}>
-              <TextField label="Product ID" value={current.id} fullWidth onChange={(e) => setCurrent({ ...current, id: e.target.value })} />
-              <TextField label="Title" value={current.title} fullWidth onChange={(e) => setCurrent({ ...current, title: e.target.value })} />
-              <TextField label="SKU" value={current.sku ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, sku: e.target.value })} helperText="Unique product identifier for inventory and accounting" />
-              <TextField label="Category" value={current.category ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, category: e.target.value })} />
-              <TextField label="Brand" value={current.brand ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, brand: e.target.value })} />
-              <TextField label="Description" value={current.description} fullWidth multiline minRows={3} onChange={(e) => setCurrent({ ...current, description: e.target.value })} />
-              <TextField label="Image URL" value={current.image} fullWidth onChange={(e) => setCurrent({ ...current, image: e.target.value })} />
-              <TextField label="Address" value={current.address ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, address: e.target.value })} />
+              <TextField label="شناسه محصول" value={current.id} fullWidth onChange={(e) => setCurrent({ ...current, id: e.target.value })} />
+              <TextField label="عنوان" value={current.title} fullWidth onChange={(e) => setCurrent({ ...current, title: e.target.value })} />
+              <TextField label="شناسه محصول (SKU)" value={current.sku ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, sku: e.target.value })} helperText="شناسه یکتای محصول برای موجودی و حسابداری" />
+              <TextField label="دسته‌بندی" value={current.category ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, category: e.target.value })} />
+              <TextField label="برند" value={current.brand ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, brand: e.target.value })} />
+              <TextField label="توضیحات" value={current.description} fullWidth multiline minRows={3} onChange={(e) => setCurrent({ ...current, description: e.target.value })} />
+              <TextField label="نشانی تصویر" value={current.image} fullWidth onChange={(e) => setCurrent({ ...current, image: e.target.value })} />
+              <TextField label="نشانی ارسال" value={current.address ?? ""} fullWidth onChange={(e) => setCurrent({ ...current, address: e.target.value })} />
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                 <TextField
-                  label="Sales price"
+                  label="قیمت فروش"
                   type="number"
                   value={current.salePrice ?? current.price ?? 0}
                   fullWidth
                   required
                   onChange={(e) => setCurrent({ ...current, salePrice: e.target.value, price: e.target.value })}
                   inputProps={{ min: 0, step: "0.01" }}
-                  helperText="Customer-facing price"
+                  helperText="قیمتی که مشتری می‌پردازد"
                 />
                 <TextField
-                  label="Buy price / cost"
+                  label="قیمت خرید / هزینه"
                   type="number"
                   value={current.buyPrice ?? 0}
                   fullWidth
                   required
                   onChange={(e) => setCurrent({ ...current, buyPrice: e.target.value })}
                   inputProps={{ min: 0, step: "0.01" }}
-                  helperText="Supplier or landed unit cost"
+                  helperText="هزینه واحد از تأمین‌کننده یا هزینه تمام‌شده"
                 />
               </Stack>
               <TextField
-                label="Currency"
+                label="واحد پول"
                 value={current.currency ?? "USD"}
                 inputProps={{ maxLength: 3 }}
                 onChange={(e) => setCurrent({ ...current, currency: e.target.value.toUpperCase().slice(0, 3) })}
               />
               <FormControlLabel
                 control={<Checkbox checked={Boolean(current.isTrending)} onChange={(e) => setCurrent({ ...current, isTrending: e.target.checked })} />}
-                label="Show in Trending collection"
+                label="نمایش در مجموعه محبوب"
               />
               <TextField
-                label="Stock"
+                label="موجودی"
                 type="number"
                 value={current.stock ?? 0}
                 fullWidth
@@ -512,7 +512,7 @@ export default function Products() {
               />
               <Stack spacing={1}>
                 <Button component="label" variant="outlined">
-                  Upload Gallery Photos
+                  بارگذاری تصاویر گالری
                   <input key={fileInputKey} hidden type="file" accept="image/*" multiple onChange={handleGalleryChange} />
                 </Button>
                 {galleryFiles.length > 0 && (
@@ -540,10 +540,10 @@ export default function Products() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} disabled={saving}>
-            Cancel
+            انصراف
           </Button>
           <Button variant="contained" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
+            {saving ? "در حال ذخیره…" : "ذخیره"}
           </Button>
         </DialogActions>
       </Dialog>

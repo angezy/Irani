@@ -18,8 +18,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import DevicesOtherOutlinedIcon from "@mui/icons-material/DevicesOtherOutlined";
 import EditIcon from "@mui/icons-material/Edit";
@@ -44,7 +44,7 @@ function EditButton({ onClick, editable }) {
       size="small"
       aria-label="ویرایش بخش"
       onClick={onClick}
-      sx={{ position: "absolute", top: 12, right: 12, zIndex: 3, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
+      sx={{ position: "absolute", top: 12, insetInlineStart: 12, zIndex: 3, color: "var(--color-primary)", bgcolor: "#ffffff", "&:hover": { bgcolor: "var(--color-surface-muted)" } }}
     >
       <EditIcon fontSize="small" />
     </IconButton>
@@ -61,7 +61,7 @@ function ActionButton({ href, children, variant = "contained" }) {
       component={Link}
       href={href || "/shop"}
       variant={variant}
-      endIcon={<ArrowForwardIcon />}
+      endIcon={<ArrowBackIcon />}
       sx={{ borderRadius: 999, px: 2.25, py: 1.1, textTransform: "none", fontWeight: 800, ...(variant === "contained" ? { bgcolor: "var(--color-primary)", "&:hover": { bgcolor: "var(--color-primary-dark)" } } : { color: "var(--color-primary)", borderColor: "var(--color-primary)" }) }}
     >
       {children}
@@ -181,7 +181,7 @@ export default function HelpCenterSection({ initialContent = null, onEdit = {}, 
           <Box>
             {visibleCategories.map((category, index) => (
               <Accordion key={`${category.title}-${index}`} expanded={expandedCategory === index} onChange={() => setExpandedCategory(expandedCategory === index ? -1 : index)} disableGutters elevation={0} sx={{ bgcolor: "transparent", borderTop: "1px solid var(--color-border)", "&:last-child": { borderBottom: "1px solid var(--color-border)" }, "&::before": { display: "none" } }}>
-                <AccordionSummary expandIcon={<ChevronRightIcon />} aria-controls={`category-panel-${index}`} id={`category-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68 }}>
+                <AccordionSummary expandIcon={<ChevronLeftIcon />} aria-controls={`category-panel-${index}`} id={`category-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68 }}>
                   <Typography component="h3" sx={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.04em" }}>{category.title}</Typography>
                 </AccordionSummary>
                 <AccordionDetails id={`category-panel-${index}`} sx={{ px: 0, pt: 0, pb: 3 }}>
@@ -194,7 +194,7 @@ export default function HelpCenterSection({ initialContent = null, onEdit = {}, 
                             xs: 12,
                             sm: 6
                           }}>
-                          <Box component="a" href={faqItems.some((item) => String(item.question || "").trim().toLowerCase() === String(article || "").trim().toLowerCase()) ? `#${faqAnchorId(article)}` : "#help-faq-title"} onClick={(event) => openFaqAnswer(event, article)} sx={{ display: "block", width: "100%", textAlign: "left", border: "1px solid var(--color-border)", bgcolor: "#ffffff", color: "var(--color-text-primary)", borderRadius: 2, p: 1.75, cursor: "pointer", font: "inherit", textDecoration: "none", transition: "border-color 160ms ease, color 160ms ease", "&:hover": { borderColor: "var(--color-primary)", color: "var(--color-primary)" } }}>
+                          <Box component="a" href={faqItems.some((item) => String(item.question || "").trim().toLowerCase() === String(article || "").trim().toLowerCase()) ? `#${faqAnchorId(article)}` : "#help-faq-title"} onClick={(event) => openFaqAnswer(event, article)} sx={{ display: "block", width: "100%", textAlign: "right", border: "1px solid var(--color-border)", bgcolor: "#ffffff", color: "var(--color-text-primary)", borderRadius: 2, p: 1.75, cursor: "pointer", font: "inherit", textDecoration: "none", transition: "border-color 160ms ease, color 160ms ease", "&:hover": { borderColor: "var(--color-primary)", color: "var(--color-primary)" } }}>
                             {article}
                           </Box>
                         </Grid>
@@ -214,7 +214,7 @@ export default function HelpCenterSection({ initialContent = null, onEdit = {}, 
           <Typography id="help-faq-title" component="h2" sx={{ fontWeight: 820, letterSpacing: "-0.045em", fontSize: { xs: "2.25rem", md: "3.6rem" }, lineHeight: 1.02, mb: 4 }}>{faq.title}</Typography>
           {(normalizedQuery ? visibleFaq : faqItems).map((item, index) => (
             <Accordion key={`${item.question}-${index}`} id={faqAnchorId(item.question)} expanded={expandedFaq === index} onChange={() => setExpandedFaq(expandedFaq === index ? -1 : index)} disableGutters elevation={0} sx={{ bgcolor: "transparent", borderTop: "1px solid var(--color-border)", scrollMarginTop: 24, "&:last-child": { borderBottom: "1px solid var(--color-border)" }, "&::before": { display: "none" } }}>
-              <AccordionSummary expandIcon={<ChevronRightIcon />} aria-controls={`help-faq-panel-${index}`} id={`help-faq-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68 }}><Typography component="h3" sx={{ fontWeight: 750 }}>{item.question}</Typography></AccordionSummary>
+              <AccordionSummary expandIcon={<ChevronLeftIcon />} aria-controls={`help-faq-panel-${index}`} id={`help-faq-header-${index}`} sx={{ px: 0, py: 1.2, minHeight: 68 }}><Typography component="h3" sx={{ fontWeight: 750 }}>{item.question}</Typography></AccordionSummary>
               <AccordionDetails id={`help-faq-panel-${index}`} sx={{ px: 0, pt: 0, pb: 2.5 }}><Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.8, maxWidth: 780 }}>{item.answer}</Typography></AccordionDetails>
             </Accordion>
           ))}

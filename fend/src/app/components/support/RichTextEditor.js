@@ -21,7 +21,7 @@ export default function RichTextEditor({ label = "پیام", value = "", onChang
           toolbar: "undo redo | blocks | bold italic removeformat | bullist numlist | link image table | fullscreen code",
           branding: false,
           promotion: false,
-          content_style: "body { font-family: Inter, Arial, sans-serif; font-size: 14px; padding: 10px; color: #242321; }",
+          content_style: "body { direction: rtl; text-align: right; font-family: Vazirmatn, Tahoma, Arial, sans-serif; font-size: 14px; padding: 10px; color: #242321; }",
         }}
         onEditorChange={onChange}
       />

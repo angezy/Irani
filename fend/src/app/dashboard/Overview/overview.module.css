@@ -116,7 +116,7 @@
   font-size: 13px;
 }
 
-.error button { margin-left: auto; background: #a3273b; padding: 8px 12px; }
+.error button { margin-inline-start: auto; background: #a3273b; padding: 8px 12px; }
 .loading { background: #fff; border: 1px solid #e4e9f2; color: #526074; font-size: 13px; }
 
 .timestamp {
@@ -422,8 +422,8 @@
   display: grid;
   gap: 4px;
   min-width: 0;
-  padding-left: 10px;
-  border-left: 2px solid var(--color-primary);
+  padding-inline-start: 10px;
+  border-inline-start: 2px solid var(--color-primary);
 }
 
 .inlineInsight span { overflow: hidden; color: #7a8799; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }

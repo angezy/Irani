@@ -3,7 +3,7 @@ import { getSitePageMetadata } from "../../../lib/siteSettingsServer";
 export async function generateMetadata({ params }) {
   const { orderId } = await params;
   return {
-    ...(await getSitePageMetadata({ title: "Order Confirmed", description: "Your order has been successfully confirmed. Track your shipment and receive updates.", path: `/checkout/success/${encodeURIComponent(orderId)}` })),
+    ...(await getSitePageMetadata({ title: "سفارش تأیید شد", description: "سفارش شما با موفقیت تأیید شد. مرسوله را رهگیری کنید و به‌روزرسانی‌ها را ببینید.", path: `/checkout/success/${encodeURIComponent(orderId)}` })),
   };
 }
 

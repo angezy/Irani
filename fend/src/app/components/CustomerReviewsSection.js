@@ -66,7 +66,7 @@ export default function CustomerReviewsSection() {
           تجربه خود را با ما در میان بگذارید
         </Typography>
         <Typography sx={{ color: "var(--color-text-secondary)", mb: 3 }}>
-          درباره تجربه خود از Weluxo بنویسید. نظرها پیش از انتشار بررسی می‌شوند.
+          درباره تجربه خود از فروشگاه ایرانی بنویسید. نظرها پیش از انتشار بررسی می‌شوند.
         </Typography>
 
         {error && <Alert severity="warning" sx={{ mb: 3 }}>{error}</Alert>}

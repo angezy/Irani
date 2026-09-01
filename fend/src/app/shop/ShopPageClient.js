@@ -71,7 +71,7 @@ function ShopProductCard({ product, title, description, price, image, trending =
             {description}
           </Typography>
           <Typography variant="h6" color="primary.main" sx={{ mt: "auto", fontWeight: 800 }}>
-            {formatMoney(price)}
+            {formatMoney(price, product.currency)}
           </Typography>
         </CardContent>
       </Box>
@@ -172,6 +172,7 @@ export default function ShopPageClient({ initialContent = null, editable = false
         productId,
         title,
         price: Number(price) || 0,
+        currency: product.currency || product.Currency || "IRR",
         image,
         quantity: 1,
       });
@@ -195,13 +196,13 @@ export default function ShopPageClient({ initialContent = null, editable = false
   const editButton = (section, label) =>
     editable && typeof onEdit[section] === "function" ? (
       <IconButton
-        aria-label={`Edit ${label}`}
+        aria-label={`ویرایش ${label}`}
         onClick={() => onEdit[section]()}
         size="small"
         sx={{
           position: "absolute",
           top: 16,
-          right: 16,
+          insetInlineStart: 16,
           color: "#fff",
           backgroundColor: "rgba(15,23,42,0.72)",
           zIndex: 2,

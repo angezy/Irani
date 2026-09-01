@@ -53,12 +53,12 @@ import { readCheckoutState, updateCheckoutState } from "../checkout/components/c
 import PageSkeleton from "../components/LoadingSkeletons";
 import { formatMoney } from "../lib/locale";
 
-const FALLBACK_IMAGE = "https://placehold.co/240x240?text=Product";
+const FALLBACK_IMAGE = "https://placehold.co/240x240?text=%D9%85%D8%AD%D8%B5%D9%88%D9%84";
 
 const initialEstimates = [];
 
-function money(value) {
-  return formatMoney(value);
+function money(value, currency) {
+  return formatMoney(value, currency);
 }
 
 function itemPrice(item) {
@@ -88,6 +88,7 @@ function productDetails(product = {}) {
     slug: String(explicitSlug || slugify(title)).replace(/^\/product\//, "").replace(/^\//, "").replace(/\/$/, ""),
     title,
     price: Number.isFinite(rawPrice) ? rawPrice : 0,
+    currency: product.currency || product.Currency || "IRR",
     image: product.img || product.Img || product.IMG || product.image || product.imageUrl || FALLBACK_IMAGE,
   };
 }
@@ -99,7 +100,7 @@ function RecommendedProductCard({ product, details, onAdd, adding = false }) {
         <CardMedia component="img" image={details.image} alt={details.title} sx={{ height: 180, objectFit: "cover" }} />
         <CardContent sx={{ pb: 1.25 }}>
           <Typography sx={{ fontWeight: 800 }} noWrap>{details.title}</Typography>
-          <Typography color="primary.main" sx={{ mt: 0.75, fontWeight: 800 }}>{money(details.price)}</Typography>
+          <Typography color="primary.main" sx={{ mt: 0.75, fontWeight: 800 }}>{money(details.price, details.currency)}</Typography>
         </CardContent>
       </Box>
       <Box sx={{ px: 2, pb: 2 }}>
@@ -166,16 +167,16 @@ function CartItem({ item, pending, onQuantity, onRemove, onSave }) {
 
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.5} sx={{ mt: 1.5 }}>
               <Box>
-                {originalPrice > price && <Typography component="span" variant="body2" sx={{ mr: 1, color: "#7a7d82", textDecoration: "line-through" }}>{money(originalPrice)}</Typography>}
-                <Typography component="span" sx={{ color: "var(--color-text-primary)", fontWeight: 900, fontSize: "1.1rem" }}>{money(price)}</Typography>
+                {originalPrice > price && <Typography component="span" variant="body2" sx={{ marginInlineStart: "8px", color: "#7a7d82", textDecoration: "line-through" }}>{money(originalPrice, item.currency)}</Typography>}
+                <Typography component="span" sx={{ color: "var(--color-text-primary)", fontWeight: 900, fontSize: "1.1rem" }}>{money(price, item.currency)}</Typography>
               </Box>
 
               <Stack direction="row" spacing={1.5} alignItems="center">
                 <Typography variant="body2" sx={{ color: "var(--color-text-secondary)" }}>تعداد</Typography>
                 <Stack direction="row" alignItems="center" sx={{ border: "1px solid var(--color-border)", borderRadius: 2 }}>
-                  <IconButton aria-label="Decrease quantity" size="small" onClick={() => onQuantity(item, -1)} disabled={pending || quantity <= 1} sx={{ color: "var(--color-text-primary)" }}><Remove fontSize="small" /></IconButton>
+                  <IconButton aria-label="کاهش تعداد" size="small" onClick={() => onQuantity(item, -1)} disabled={pending || quantity <= 1} sx={{ color: "var(--color-text-primary)" }}><Remove fontSize="small" /></IconButton>
                   <Typography sx={{ minWidth: 28, textAlign: "center", fontWeight: 800 }}>{quantity}</Typography>
-                  <IconButton aria-label="Increase quantity" size="small" onClick={() => onQuantity(item, 1)} disabled={pending || quantity >= maxQuantity} sx={{ color: "var(--color-text-primary)" }}><Add fontSize="small" /></IconButton>
+                  <IconButton aria-label="افزایش تعداد" size="small" onClick={() => onQuantity(item, 1)} disabled={pending || quantity >= maxQuantity} sx={{ color: "var(--color-text-primary)" }}><Add fontSize="small" /></IconButton>
                 </Stack>
               </Stack>
             </Stack>
@@ -412,7 +413,7 @@ export default function CartPage() {
     const pendingId = String(details.id || details.slug || details.title);
     setRecommendedPendingId(pendingId);
     try {
-      const result = await addToCart({ productId: details.id, title: details.title, price: details.price, image: details.image, quantity: 1 });
+      const result = await addToCart({ productId: details.id, title: details.title, price: details.price, currency: details.currency, image: details.image, quantity: 1 });
       syncCart(result);
       setNotice(`${details.title} به سبد خرید اضافه شد.`);
     } catch (err) {
@@ -466,7 +467,7 @@ export default function CartPage() {
             <Card sx={{ p: { xs: 4, md: 7 }, textAlign: "center", bgcolor: "#ffffff", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", borderRadius: 4 }}>
               <ShoppingCartOutlined sx={{ fontSize: 72, color: "var(--color-primary)", mb: 1 }} />
               <Typography variant="h4" sx={{ fontWeight: 900, mb: 1 }}>سبد خرید شما خالی است</Typography>
-              <Typography sx={{ color: "var(--color-text-secondary)", maxWidth: 430, mx: "auto", mb: 3 }}>Looks like you haven’t added anything yet. Discover something made for your next goal.</Typography>
+              <Typography sx={{ color: "var(--color-text-secondary)", maxWidth: 430, mx: "auto", mb: 3 }}>هنوز محصولی به سبد خرید اضافه نکرده‌اید. برای هدف بعدی‌تان محصولی پیدا کنید.</Typography>
               <Button component={Link} href="/shop" variant="contained" size="large" sx={{ borderRadius: 999, px: 4 }}>ادامه خرید</Button>
             </Card>
             {!!recommended.length && <Box sx={{ mt: 5 }}><Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>پیشنهادهای مناسب شما</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: 2 }}>{recommended.map((product) => { const details = productDetails(product); const productId = String(details.id || details.slug || details.title); return <RecommendedProductCard key={productId} product={product} details={details} onAdd={handleRecommendedAdd} adding={recommendedPendingId === productId} />; })}</Box></Box>}

@@ -63,11 +63,11 @@ function normalizeProduct(product = {}) {
 
 async function getCatalog() {
   const backendUrl = process.env.BACKEND_URL?.replace(/\/$/, "");
-  if (!backendUrl) throw new Error("Backend is not configured.");
+  if (!backendUrl) throw new Error("سرویس فروشگاه در سمت سرور تنظیم نشده است.");
 
   const response = await fetch(`${backendUrl}/api/shop`, { cache: "no-store" });
   const data = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(data?.error || "بارگذاری محصولات ممکن نیست.");
+  if (!response.ok) throw new Error(/[\u0600-\u06ff]/.test(String(data?.error || "")) ? data.error : "بارگذاری محصولات ممکن نیست.");
   return Array.isArray(data) ? data.map(normalizeProduct) : [];
 }
 
@@ -79,14 +79,14 @@ export async function generateMetadata({ params }) {
   const url = siteUrlFor(site, `/category/${slug}`);
 
   return {
-    title: `${category} | ${site.siteName} Shop`,
-    description: `Explore the ${category} collection at ${site.siteName}. Browse products, compare details, and find your next favorite.`,
+    title: `${category} | ${site.siteName}`,
+    description: `مجموعه ${category} را در ${site.siteName} ببینید، جزئیات محصولات را مقایسه کنید و انتخاب بعدی خود را پیدا کنید.`,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${category} | ${site.siteName} Shop`,
-      description: `Shop the ${category} collection at ${site.siteName}.`,
+      title: `${category} | ${site.siteName}`,
+      description: `خرید از مجموعه ${category} در ${site.siteName}.`,
       url,
       siteName: site.siteName,
       type: "website",

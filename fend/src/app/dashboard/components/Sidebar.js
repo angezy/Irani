@@ -71,19 +71,19 @@ export default function Sidebar({ open = true, onClose = () => {}, siteName = 'Ù
     width: open ? sidebarWidth : 0,
     minWidth: open ? sidebarWidth : 0,
     transition: 'transform 200ms ease-in-out, opacity 200ms ease-in-out, width 200ms ease-in-out',
-    transform: open ? 'translateX(0)' : 'translateX(-110%)',
+    transform: open ? 'translateX(0)' : 'translateX(110%)',
     opacity: open ? 1 : 0,
     pointerEvents: open ? 'auto' : 'none'
   }
 
   const mobileStyle = {
     position: 'fixed',
-    left: 0,
+    right: 0,
     top: 0,
     bottom: 0,
     zIndex: 50,
     width: sidebarWidth,
-    transform: open ? 'translateX(0)' : 'translateX(-100%)',
+    transform: open ? 'translateX(0)' : 'translateX(100%)',
     transition: 'transform 200ms ease-in-out'
   }
 

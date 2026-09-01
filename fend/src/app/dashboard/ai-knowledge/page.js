@@ -23,8 +23,10 @@ import {
 const EMPTY_ENTRY = { id: "", category: "faq", title: "", content: "", keywords: [], enabled: true };
 
 function entryLabel(category) {
-  return category === "product_guidance" ? "Product guidance" : category === "policy" ? "Policy" : "FAQ";
+  return category === "product_guidance" ? "راهنمای محصول" : category === "policy" ? "سیاست‌ها" : "پرسش‌های متداول";
 }
+
+const localizedError = (value, fallback) => /[\u0600-\u06ff]/.test(String(value || "")) ? value : fallback;
 
 export default function AIKnowledgePage() {
   const [knowledge, setKnowledge] = useState(null);
@@ -38,7 +40,7 @@ export default function AIKnowledgePage() {
     fetch("/api/dashboard/ai-knowledge", { credentials: "include", cache: "no-store" })
       .then(async (response) => {
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "Unable to load AI knowledge");
+        if (!response.ok) throw new Error(localizedError(data.error, "بارگذاری دانش دستیار ممکن نیست."));
         return data;
       })
       .then((data) => { if (active) setKnowledge(data); })
@@ -66,65 +68,65 @@ export default function AIKnowledgePage() {
         body: JSON.stringify(knowledge),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "Unable to save AI knowledge");
+      if (!response.ok) throw new Error(localizedError(data.error, "ذخیره دانش دستیار ممکن نیست."));
       setKnowledge(data.knowledge);
-      setNotice("AI knowledge saved");
+      setNotice("دانش دستیار ذخیره شد.");
     } catch (saveError) {
-      setError(saveError.message || "Unable to save AI knowledge");
+      setError(localizedError(saveError.message, "ذخیره دانش دستیار ممکن نیست."));
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <Box sx={{ p: 3 }}><Typography>Loading AI knowledge…</Typography></Box>;
-  if (!knowledge) return <Box sx={{ p: 3 }}><Alert severity="error">{error || "AI knowledge is unavailable."}</Alert></Box>;
+  if (loading) return <Box sx={{ p: 3 }}><Typography>در حال بارگذاری دانش دستیار…</Typography></Box>;
+  if (!knowledge) return <Box sx={{ p: 3 }}><Alert severity="error">{error || "دانش دستیار در دسترس نیست."}</Alert></Box>;
 
   return (
     <Box sx={{ py: { xs: 2, md: 4 } }}>
       <Container maxWidth="lg">
         <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" gap={2} sx={{ mb: 3 }}>
           <Box>
-            <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 800, letterSpacing: "0.14em" }}>GROUNDED CUSTOMER SUPPORT</Typography>
-            <Typography component="h1" sx={{ fontWeight: 850, fontSize: { xs: "2.2rem", md: "3.25rem" }, letterSpacing: "-0.05em", lineHeight: 1 }}>AI knowledge</Typography>
-            <Typography sx={{ color: "text.secondary", mt: 1, maxWidth: 760 }}>Only enabled entries are available to the customer assistant. It will use live product and inventory data, plus these approved FAQs, policies, and product guides. Questions without a clear source are sent to support.</Typography>
+            <Typography variant="overline" sx={{ color: "var(--color-primary)", fontWeight: 800, letterSpacing: "0.14em" }}>پشتیبانی مبتنی بر راهنمای تأییدشده</Typography>
+            <Typography component="h1" sx={{ fontWeight: 850, fontSize: { xs: "2.2rem", md: "3.25rem" }, letterSpacing: "-0.05em", lineHeight: 1 }}>دانش دستیار هوشمند</Typography>
+            <Typography sx={{ color: "text.secondary", mt: 1, maxWidth: 760 }}>فقط مطالب فعال در اختیار دستیار مشتری قرار می‌گیرد. دستیار از اطلاعات زنده محصول و موجودی، به‌همراه پرسش‌های متداول، سیاست‌ها و راهنماهای تأییدشده استفاده می‌کند و پرسش‌های بدون منبع روشن را به پشتیبانی ارجاع می‌دهد.</Typography>
           </Box>
           <Button variant="contained" startIcon={<SaveRoundedIcon />} onClick={save} disabled={saving} sx={{ alignSelf: "flex-start", borderRadius: 999, textTransform: "none", fontWeight: 800 }}>
-            {saving ? "Saving…" : "Save changes"}
+            {saving ? "در حال ذخیره…" : "ذخیره تغییرات"}
           </Button>
         </Stack>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
         <Paper elevation={0} sx={{ p: { xs: 2, md: 3 }, border: "1px solid", borderColor: "divider", borderRadius: 3, mb: 3 }}>
-          <Typography sx={{ fontWeight: 800, mb: 1 }}>First greeting</Typography>
-          <TextField fullWidth multiline minRows={2} value={knowledge.greeting || ""} onChange={(event) => setKnowledge((current) => ({ ...current, greeting: event.target.value }))} helperText="Shown when a customer opens the support popup." />
+          <Typography sx={{ fontWeight: 800, mb: 1 }}>پیام خوشامدگویی</Typography>
+          <TextField fullWidth multiline minRows={2} value={knowledge.greeting || ""} onChange={(event) => setKnowledge((current) => ({ ...current, greeting: event.target.value }))} helperText="هنگام باز کردن پنجره پشتیبانی به مشتری نمایش داده می‌شود." />
         </Paper>
 
         <Stack spacing={2}>
           {knowledge.entries.map((entry, index) => (
             <Paper key={entry.id || index} elevation={0} sx={{ p: { xs: 2, md: 3 }, border: "1px solid", borderColor: "divider", borderRadius: 3 }}>
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1} sx={{ mb: 2 }}>
-                <Typography sx={{ fontWeight: 800 }}>{entryLabel(entry.category)} entry {index + 1}</Typography>
+                <Typography sx={{ fontWeight: 800 }}>{entryLabel(entry.category)} شماره {index + 1}</Typography>
                 <Stack direction="row" alignItems="center" gap={1}>
-                  <FormControlLabel control={<Checkbox checked={entry.enabled !== false} onChange={(event) => updateEntry(index, { enabled: event.target.checked })} />} label="Enabled" />
-                  <Button color="error" size="small" startIcon={<DeleteOutlineRoundedIcon />} onClick={() => setKnowledge((current) => ({ ...current, entries: current.entries.filter((_, entryIndex) => entryIndex !== index) }))} sx={{ textTransform: "none" }}>Remove</Button>
+                  <FormControlLabel control={<Checkbox checked={entry.enabled !== false} onChange={(event) => updateEntry(index, { enabled: event.target.checked })} />} label="فعال" />
+                  <Button color="error" size="small" startIcon={<DeleteOutlineRoundedIcon />} onClick={() => setKnowledge((current) => ({ ...current, entries: current.entries.filter((_, entryIndex) => entryIndex !== index) }))} sx={{ textTransform: "none" }}>حذف</Button>
                 </Stack>
               </Stack>
               <Stack spacing={1.5}>
                 <Select value={entry.category} onChange={(event) => updateEntry(index, { category: event.target.value })} size="small" sx={{ maxWidth: 220 }}>
-                  <MenuItem value="faq">FAQ</MenuItem>
-                  <MenuItem value="policy">Policy</MenuItem>
-                  <MenuItem value="product_guidance">Product guidance</MenuItem>
+                  <MenuItem value="faq">پرسش‌های متداول</MenuItem>
+                  <MenuItem value="policy">سیاست‌ها</MenuItem>
+                  <MenuItem value="product_guidance">راهنمای محصول</MenuItem>
                 </Select>
-                <TextField label="Title or customer question" value={entry.title} onChange={(event) => updateEntry(index, { title: event.target.value })} fullWidth />
-                <TextField label="Approved answer" value={entry.content} onChange={(event) => updateEntry(index, { content: event.target.value })} multiline minRows={4} fullWidth helperText="The assistant returns this approved text. Do not include estimates or claims you cannot support." />
-                <TextField label="Search keywords" value={(entry.keywords || []).join(", ")} onChange={(event) => updateEntry(index, { keywords: event.target.value.split(",").map((item) => item.trim()).filter(Boolean) })} fullWidth helperText="Optional, comma-separated terms that help match a question." />
+                <TextField label="عنوان یا پرسش مشتری" value={entry.title} onChange={(event) => updateEntry(index, { title: event.target.value })} fullWidth />
+                <TextField label="پاسخ تأییدشده" value={entry.content} onChange={(event) => updateEntry(index, { content: event.target.value })} multiline minRows={4} fullWidth helperText="دستیار همین متن تأییدشده را برمی‌گرداند؛ برآورد یا ادعای بدون پشتوانه وارد نکنید." />
+                <TextField label="کلیدواژه‌های جست‌وجو" value={(entry.keywords || []).join(", ")} onChange={(event) => updateEntry(index, { keywords: event.target.value.split(",").map((item) => item.trim()).filter(Boolean) })} fullWidth helperText="اختیاری؛ عبارت‌ها را با ویرگول جدا کنید تا تطبیق پرسش بهتر شود." />
               </Stack>
             </Paper>
           ))}
         </Stack>
 
-        <Button variant="outlined" startIcon={<AddRoundedIcon />} onClick={() => setKnowledge((current) => ({ ...current, entries: [...current.entries, { ...EMPTY_ENTRY }] }))} sx={{ mt: 2, borderRadius: 999, textTransform: "none", fontWeight: 800 }}>Add approved entry</Button>
+        <Button variant="outlined" startIcon={<AddRoundedIcon />} onClick={() => setKnowledge((current) => ({ ...current, entries: [...current.entries, { ...EMPTY_ENTRY }] }))} sx={{ mt: 2, borderRadius: 999, textTransform: "none", fontWeight: 800 }}>افزودن مطلب تأییدشده</Button>
         <Snackbar open={Boolean(notice)} autoHideDuration={2600} message={notice} onClose={() => setNotice("")} />
       </Container>
     </Box>

@@ -37,9 +37,9 @@ export default function RegisterPage() {
 
   function validate() {
     const e = {}
-    if (!form.username || form.username.length < 3) e.username = 'Username must be at least 3 characters'
-    if (!form.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Invalid email address'
-    if (!form.password || form.password.length < 8 || form.password.length > 128) e.password = 'Password must be between 8 and 128 characters'
+    if (!form.username || form.username.length < 3) e.username = 'نام کاربری باید حداقل ۳ نویسه باشد'
+    if (!form.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'نشانی ایمیل معتبر نیست'
+    if (!form.password || form.password.length < 8 || form.password.length > 128) e.password = 'رمز عبور باید بین ۸ تا ۱۲۸ نویسه باشد'
     return e
   }
 
@@ -70,22 +70,22 @@ export default function RegisterPage() {
 
       if (res.status === 201) {
         localStorage.removeItem('registerForm')
-        toast.success('Registered', { description: 'Your account was created. Redirecting to sign in...', duration: 1500 })
+        toast.success('ثبت‌نام انجام شد', { description: 'حساب شما ساخته شد؛ در حال انتقال به صفحه ورود…', duration: 1500 })
         router.push('/signin')
         return
       }
       // Robust parsing: only call res.json() when content-type is JSON
       const contentType = res.headers.get('content-type') || ''
-      let message = 'An error occurred'
+      let message = 'خطایی رخ داد'
 
       if (res.redirected) {
-        message = 'Server redirected to ' + res.url
+        message = 'سرور درخواست را به نشانی دیگری هدایت کرد: ' + res.url
       } else if (contentType.includes('application/json')) {
         try {
           const body = await res.json()
           message = body.error || body.message || message
         } catch (parseErr) {
-          message = 'Received malformed JSON from server'
+          message = 'پاسخ نامعتبر از سرور دریافت شد'
         }
       } else {
         // attempt to read plain text (HTML or plain error message)
@@ -98,11 +98,11 @@ export default function RegisterPage() {
       }
 
       setServerError(message)
-      toast.error('Registration failed', { description: message })
+      toast.error('ثبت‌نام ناموفق بود', { description: message })
     } catch (err) {
-      const message = 'Network error - please try again'
+      const message = 'ارتباط با سرور برقرار نشد؛ دوباره تلاش کنید'
       setServerError(message)
-      toast.error('Network error', { description: message })
+      toast.error('خطای ارتباطی', { description: message })
     } finally {
       setLoading(false)
     }
@@ -115,14 +115,14 @@ export default function RegisterPage() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5" className={styles.title}>
-          Register
+          ثبت‌نام
         </Typography>
 
         {serverError && <Alert severity="error" sx={{ width: '100%', mb: 2 }}>{serverError}</Alert>}
 
         <Box component="form" onSubmit={onSubmit} className={styles.form}>
           <TextField
-            label="Username"
+            label="نام کاربری"
             value={form.username}
             onChange={onChange('username')}
             fullWidth
@@ -131,7 +131,7 @@ export default function RegisterPage() {
             helperText={errors.username}
           />
           <TextField
-            label="Email"
+            label="ایمیل"
             value={form.email}
             onChange={onChange('email')}
             fullWidth
@@ -141,10 +141,10 @@ export default function RegisterPage() {
           />
           <FormControlLabel
             control={<Checkbox checked={Boolean(form.emailMarketing)} onChange={(event) => setForm(prev => ({ ...prev, emailMarketing: event.target.checked }))} />}
-            label="Send me Weluxo product news and offers"
+            label="خبرها و پیشنهادهای محصولات Weluxo را برایم ارسال کنید"
           />
           <TextField
-            label="Password"
+            label="رمز عبور"
             type="password"
             value={form.password}
             onChange={onChange('password')}
@@ -162,7 +162,7 @@ export default function RegisterPage() {
             sx={{ mt: 2 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} color="inherit" /> : 'Register'}
+            {loading ? <CircularProgress size={20} color="inherit" /> : 'ثبت‌نام'}
           </Button>
 
           <Button
@@ -171,7 +171,7 @@ export default function RegisterPage() {
             sx={{ mt: 1 }}
             onClick={() => router.push('/signin')}
           >
-            Already have an account? Sign in
+            حساب دارید؟ وارد شوید
           </Button>
         </Box>
       </Box>

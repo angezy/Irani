@@ -34,12 +34,12 @@ function EditButton({ onClick, editable }) {
   return (
     <IconButton
       size="small"
-      aria-label="Edit section"
+      aria-label="ویرایش بخش"
       onClick={onClick}
       sx={{
         position: "absolute",
         top: 12,
-        right: 12,
+        insetInlineStart: 12,
         color: "var(--color-text-primary)",
         bgcolor: "#ffffff",
         zIndex: 2,
@@ -130,7 +130,7 @@ export default function WhyWeluxoSection({ initialContent = null, onEdit = {}, e
         >
           <EditButton onClick={onEdit.hero} editable={editable} />
           <Box sx={{ p: { xs: 3, md: 7 }, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <SectionLabel>{hero.eyebrow || "Why Weluxo"}</SectionLabel>
+            <SectionLabel>{hero.eyebrow || "چرا ولکسو؟"}</SectionLabel>
             <Typography variant="h1" sx={{ fontSize: { xs: "2.8rem", md: "5rem" }, lineHeight: 0.98, letterSpacing: "-0.05em", fontWeight: 800, maxWidth: 620 }}>
               {hero.title}
             </Typography>
@@ -231,7 +231,7 @@ export default function WhyWeluxoSection({ initialContent = null, onEdit = {}, e
               <Divider sx={{ borderColor: "var(--color-border)", mb: 2 }} />
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1} flexWrap="wrap">
                 {supportLinks.map((link, index) => (
-                  <Button key={`${link.label}-${index}`} component={Link} href={link.url || "#"} endIcon={<ArrowOutwardIcon />} sx={{ color: "var(--color-primary)", justifyContent: "flex-start", textTransform: "none", px: 0, mr: 2 }}>
+                  <Button key={`${link.label}-${index}`} component={Link} href={link.url || "#"} endIcon={<ArrowOutwardIcon />} sx={{ color: "var(--color-primary)", justifyContent: "flex-start", textTransform: "none", px: 0, marginInlineEnd: "16px" }}>
                     {link.label}
                   </Button>
                 ))}

@@ -96,6 +96,67 @@ FRONTEND_URL=http://localhost:3000
 
 Use `https://your-domain/api/auth/google/callback` and the matching frontend origin in production. The Google client secret must remain in the backend environment only.
 
+### Telegram customer-support chatbot bridge
+
+Telegram is used for human support handoff from the website chat. When a customer asks for a specialist, or the AI cannot answer from approved store data, the conversation transcript is sent to the configured Telegram admin chat. The specialist can reply to the Telegram notification and the reply is delivered back to the website chat.
+
+1. Create a bot with [@BotFather](https://t.me/BotFather) using `/newbot` and copy the bot token.
+2. Send `/start` to the new bot. Before the webhook is registered, open `https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/getUpdates` and copy `result[].message.chat.id` into `TELEGRAM_ADMIN_CHAT_ID`. This must be the ID of the private chat or group where support agents will reply.
+3. Add the following server-only values to `bend/.env`:
+
+```env
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_ADMIN_CHAT_ID=your-admin-chat-id
+TELEGRAM_WEBHOOK_SECRET=use-a-long-random-secret
+APP_BASE_URL=https://your-store-domain.com
+# Optional: by default production uses APP_BASE_URL/api/telegram/webhook.
+# TELEGRAM_WEBHOOK_URL=https://your-store-domain.com/api/telegram/webhook
+```
+
+The webhook URL must be a public HTTPS URL. In production, the backend registers `APP_BASE_URL/api/telegram/webhook` automatically when it starts; set `TELEGRAM_WEBHOOK_URL` only when the callback path is different. For local development, use an HTTPS tunnel and set the full tunnel URL in `TELEGRAM_WEBHOOK_URL`, then restart the backend. Keep the bot token and webhook secret server-only. The Telegram bridge requires the chat tables from migration `009_security_and_checkout_hardening.sql`.
+
+To answer a customer, reply directly to the Telegram transcript notification. You can also send `/reply <conversationId> <your answer>` in the configured admin chat. Messages from other Telegram chats are ignored.
+
+### AI chatbot configuration and training
+
+The customer chatbot runs in the Next.js frontend server and uses Groq for grounded response generation. Configure the AI values in `fend/.env.local` (or the frontend hosting panel):
+
+```env
+BACKEND_URL=http://localhost:5000
+GROQ_API_KEY=your-groq-api-key
+GROQ_MODEL=openai/gpt-oss-20b
+CHAT_ENABLED=true
+CHAT_TITLE=Store support assistant
+CHAT_SUBTITLE=Answers from the approved store guide
+CHAT_GREETING=How can I help you find a product or track an order?
+CHAT_PLACEHOLDER=Ask about products, orders, shipping, or returns...
+CHAT_TRIGGER_LABEL=Open chat
+CHAT_THINKING=Checking...
+CHAT_FALLBACK=I could not find a verified answer in the store guide.
+CHAT_ERROR=Support is temporarily unavailable. Please try again.
+CHAT_INTERNAL_SECRET=the-same-long-random-value-as-bend
+```
+
+Add the matching backend security values to `bend/.env`:
+
+```env
+CHAT_SESSION_SECRET=a-different-long-random-value
+CHAT_INTERNAL_SECRET=the-same-long-random-value-as-fend
+```
+
+In production, `JWT_SECRET`, `CHAT_SESSION_SECRET`, and `CHAT_INTERNAL_SECRET` must be at least 32 characters. Never expose `GROQ_API_KEY` or either chat secret with a `NEXT_PUBLIC_` prefix. Restart the frontend after changing frontend variables; restart the backend after changing backend variables. The Dashboard → Integrations → **AI chatbot** panel can also save these integration values, but frontend changes still require a frontend restart.
+
+#### Train the chatbot with approved knowledge
+
+This project does not fine-tune the Groq model. Training means maintaining the approved knowledge that the chatbot is allowed to use:
+
+1. Sign in as an administrator with the `content.manage` permission and open `/dashboard/ai-knowledge`.
+2. Edit the greeting or add a verified entry in one of these categories: FAQ, policy, or product guidance.
+3. Provide a customer-facing title/question, the exact approved answer, and optional comma-separated search keywords. Disable entries that should not be used, then select **Save changes**.
+4. Test the same questions in the website chat. The assistant uses enabled dashboard entries, the approved files in `fend/data/` (`faq.json`, `help-center.json`, shipping/return policies, terms, and privacy), and live product/inventory data.
+
+Only grounded answers are returned. Questions without a clear approved source, requests for a human, and unverified order-detail requests are handed off to Telegram when the bridge is configured. Do not add guesses, estimated delivery dates, unsupported policies, or unverified product claims to the knowledge entries.
+
 ## Database Design
 
 ### Overview
@@ -118,6 +179,8 @@ For the ordered migration runner:
 $env:ALLOW_SCHEMA_MIGRATIONS="true"
 $env:MIGRATION_IDENTITY_CONFIRMED="true"
 npm run db:bootstrap
+$env:INITIAL_OWNER_EMAIL="owner@test.com"
+$env:INITIAL_OWNER_PASSWORD="Strong-Test-Password-123!"
 npm run owner:bootstrap
 ```
 

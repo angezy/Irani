@@ -46,6 +46,8 @@ test("CSP protects executable script without unsafe-inline", () => {
   assert.match(scriptDirective, /nonce-/);
   assert.match(scriptDirective, /strict-dynamic/);
   assert.doesNotMatch(scriptDirective, /unsafe-inline/);
+  assert.match(proxy, /frame-ancestors 'self' https:\/\/nickswebprojects\.site/);
+  assert.doesNotMatch(read("fend/next.config.mjs"), /X-Frame-Options/);
   assert.match(proxy, /Content-Security-Policy-Report-Only/);
 });
 

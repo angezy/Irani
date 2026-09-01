@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   AccessTimeOutlined,
-  ArrowForwardRounded,
+  ArrowBackRounded,
   CheckCircleOutlineRounded,
   MailOutlineRounded,
   NorthEastRounded,
@@ -204,7 +204,7 @@ function ContactPage() {
               چه در حال بررسی سفارش باشید، چه انتخاب محصول مناسب یا برنامه‌ریزی برای مرحله بعد، تیم ما آماده است تجربه‌ای ساده و روان برای شما بسازد.
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 4 }}>
-              <Button component={Link} href="#contact-form" variant="contained" endIcon={<ArrowForwardRounded />} sx={{ alignSelf: "flex-start", borderRadius: 999, px: 2.5, py: 1.2, textTransform: "none", fontWeight: 800, color: "#ffffff", bgcolor: "var(--color-primary)", "&:hover": { bgcolor: "var(--color-primary-dark)" } }}>
+              <Button component={Link} href="#contact-form" variant="contained" endIcon={<ArrowBackRounded />} sx={{ alignSelf: "flex-start", borderRadius: 999, px: 2.5, py: 1.2, textTransform: "none", fontWeight: 800, color: "#ffffff", bgcolor: "var(--color-primary)", "&:hover": { bgcolor: "var(--color-primary-dark)" } }}>
                 شروع گفتگو
               </Button>
               <Button component={Link} href="/help-center" variant="text" endIcon={<NorthEastRounded />} sx={{ alignSelf: "flex-start", color: "var(--color-primary)", textTransform: "none", fontWeight: 750, py: 1.2 }}>
@@ -299,7 +299,7 @@ function ContactPage() {
             {success && <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>{success}</Alert>}
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} gap={2} sx={{ mt: 3 }}>
               <Typography sx={{ color: "#718078", fontSize: 12, lineHeight: 1.5 }}>با ارسال این فرم، اجازه می‌دهید ولکسو از اطلاعات شما برای پاسخ به درخواستتان استفاده کند.</Typography>
-              <Button type="submit" disabled={saving} variant="contained" endIcon={<ArrowForwardRounded />} sx={{ flexShrink: 0, borderRadius: 999, px: 2.5, py: 1.2, bgcolor: "var(--color-primary)", color: "#ffffff", textTransform: "none", fontWeight: 800, "&:hover": { bgcolor: "var(--color-primary-dark)" } }}>
+              <Button type="submit" disabled={saving} variant="contained" endIcon={<ArrowBackRounded />} sx={{ flexShrink: 0, borderRadius: 999, px: 2.5, py: 1.2, bgcolor: "var(--color-primary)", color: "#ffffff", textTransform: "none", fontWeight: 800, "&:hover": { bgcolor: "var(--color-primary-dark)" } }}>
                 {saving ? "در حال ارسال…" : "ارسال پیام"}
               </Button>
             </Stack>
@@ -310,7 +310,7 @@ function ContactPage() {
 
         <Box sx={{ mt: { xs: 6, md: 9 }, mb: { xs: 2, md: 4 }, p: { xs: 2.5, md: 3 }, display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 2, borderTop: "1px solid var(--color-border)" }}>
           <Box><Typography sx={{ fontWeight: 820 }}>می‌خواهید خودتان پاسخ را پیدا کنید؟</Typography><Typography sx={{ color: "#718078", fontSize: 13, mt: 0.5 }}>راهنمای ارسال، مرجوعی، محصولات و حساب کاربری را ببینید.</Typography></Box>
-          <Button component={Link} href="/help-center" endIcon={<ArrowForwardRounded />} sx={{ color: "var(--color-primary)", textTransform: "none", fontWeight: 800, px: 0 }}>باز کردن راهنما</Button>
+          <Button component={Link} href="/help-center" endIcon={<ArrowBackRounded />} sx={{ color: "var(--color-primary)", textTransform: "none", fontWeight: 800, px: 0 }}>باز کردن راهنما</Button>
         </Box>
       </Container>
     </Box>

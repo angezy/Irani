@@ -22,8 +22,8 @@ export async function getLegalContent(slug, fallback) {
 export async function getLegalMetadata(content, slug) {
   const site = await getSiteSettingsServer();
   const seo = content?.seo || {};
-  const title = seo.title || content?.hero?.title || `${site.siteName} Policy`;
-  const description = seo.description || content?.hero?.intro || `${site.siteName} customer information.`;
+  const title = seo.title || content?.hero?.title || `سیاست‌های ${site.siteName}`;
+  const description = seo.description || content?.hero?.intro || `اطلاعات مشتری و قوانین استفاده از ${site.siteName}.`;
   const url = siteUrlFor(site, `/${slug}`);
   return {
     title,

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowForwardRounded,
+  ArrowBackRounded,
   Facebook,
   FavoriteRounded,
   Instagram,
@@ -49,7 +49,7 @@ function FooterLink({ href, children }) {
         fontSize: 13,
         lineHeight: 1.45,
         transition: "color 160ms ease, transform 160ms ease",
-        "&:hover": { color: "var(--color-link-hover)", transform: "translateX(2px)" },
+        "&:hover": { color: "var(--color-link-hover)", transform: "translateX(-2px)" },
       }}
     >
       {children}
@@ -195,14 +195,14 @@ export default function Footer({ initialChrome = null }) {
             <Typography sx={{ color: "var(--color-accent)", fontSize: 11, fontWeight: 850, letterSpacing: "0.14em", textTransform: "uppercase" }}>{contactCopy.eyebrow}</Typography>
             <Typography sx={{ mt: 1, color: "white", fontSize: 19, fontWeight: 850, letterSpacing: "-0.02em" }}>{contactCopy.title}</Typography>
             <Typography sx={{ mt: 1, color: "var(--color-text-secondary)", fontSize: 13, lineHeight: 1.6 }}>{contactCopy.copy}</Typography>
-             <Button component={Link} href={contactCopy.buttonHref || "/contact"} endIcon={<ArrowForwardRounded />} sx={{ mt: 2, px: 0, color: "var(--color-primary)", textTransform: "none", fontWeight: 850, "&:hover": { bgcolor: "transparent", color: "var(--color-link-hover)" } }}>{contactCopy.buttonLabel}</Button>
+             <Button component={Link} href={contactCopy.buttonHref || "/contact"} endIcon={<ArrowBackRounded />} sx={{ mt: 2, px: 0, color: "var(--color-primary)", textTransform: "none", fontWeight: 850, "&:hover": { bgcolor: "transparent", color: "var(--color-link-hover)" } }}>{contactCopy.buttonLabel}</Button>
           </Box>
         </Box>
 
         <Divider sx={{ borderColor: "var(--color-border)" }} />
 
         <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: { md: "center" }, justifyContent: "space-between", gap: 2, py: 3 }}>
-          <Typography sx={{ flex: { md: 1 }, color: "#7a7d82", fontSize: 12, textAlign: { md: "left" } }}>
+          <Typography sx={{ flex: { md: 1 }, color: "#7a7d82", fontSize: 12, textAlign: { md: "right" } }}>
             © {new Date().getFullYear()} {displayFooter.logoText}. {footerCopy.copyrightSuffix}
           </Typography>
            <Stack direction="row" spacing={0.65} alignItems="center" justifyContent={{ md: "center" }} sx={{ flex: { md: 1 }, color: "#7a7d82", fontSize: 12 }}>

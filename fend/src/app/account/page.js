@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { fetchOrders, fetchProfile, fetchSavedProducts, fetchSession, logoutRequest } from "../lib/apiClient";
 import { AccountPageSkeleton } from "../components/LoadingSkeletons";
 import { formatMoney } from "../lib/locale";
+import { translateStatus } from "../lib/statusLabels";
 import styles from "./account.module.css";
 
 function displayName(profile, user) {
@@ -130,17 +131,17 @@ export default function AccountPage() {
         <Link className={styles.quickLink} href="/account/orders">
           <span className={styles.quickIcon} aria-hidden="true">01</span>
           <span><strong>سفارش‌ها</strong><small>{orders.length ? `${orders.length} مورد` : "هنوز سفارشی ندارید"}</small></span>
-          <span className={styles.quickArrow} aria-hidden="true">→</span>
+          <span className={styles.quickArrow} aria-hidden="true">←</span>
         </Link>
         <Link className={styles.quickLink} href="/account/saved">
           <span className={styles.quickIcon} aria-hidden="true">02</span>
           <span><strong>محصولات ذخیره‌شده</strong><small>{savedProducts.length ? `${savedProducts.length} مورد` : "ذخیره برای بعد"}</small></span>
-          <span className={styles.quickArrow} aria-hidden="true">→</span>
+          <span className={styles.quickArrow} aria-hidden="true">←</span>
         </Link>
         <Link className={styles.quickLink} href="/account/profile">
           <span className={styles.quickIcon} aria-hidden="true">03</span>
           <span><strong>جزئیات پروفایل</strong><small>مشاهده اطلاعات شما</small></span>
-          <span className={styles.quickArrow} aria-hidden="true">→</span>
+          <span className={styles.quickArrow} aria-hidden="true">←</span>
         </Link>
       </section>
 
@@ -150,7 +151,7 @@ export default function AccountPage() {
             <p className={styles.eyebrow}>تاریخچه سفارش</p>
             <h2 id="recent-orders-title">سفارش‌های اخیر</h2>
           </div>
-          <Link className={styles.textLink} href="/account/orders">مشاهده همه سفارش‌ها <span aria-hidden="true">→</span></Link>
+        <Link className={styles.textLink} href="/account/orders">مشاهده همه سفارش‌ها <span aria-hidden="true">←</span></Link>
         </div>
 
         {recentOrders.length === 0 ? (
@@ -179,14 +180,14 @@ export default function AccountPage() {
                 </div>
                 <div className={styles.orderCell}>
                   <span className={styles.mobileCellLabel}>وضعیت</span>
-                  <span className={`${styles.statusPill} ${statusClass(order.status)}`}>{order.status || "در حال پردازش"}</span>
+                  <span className={`${styles.statusPill} ${statusClass(order.status)}`}>{translateStatus(order.status, "در حال پردازش")}</span>
                 </div>
                 <div className={styles.orderCell}>
                   <span className={styles.mobileCellLabel}>مبلغ</span>
                   <strong>{formatMoney(order.total)}</strong>
                 </div>
                 <div className={styles.orderAction}>
-                  <Link className={styles.textLink} href={`/invoice/${encodeURIComponent(order.id)}`}>مشاهده سفارش <span aria-hidden="true">→</span></Link>
+                  <Link className={styles.textLink} href={`/invoice/${encodeURIComponent(order.id)}`}>مشاهده سفارش <span aria-hidden="true">←</span></Link>
                 </div>
               </div>
             ))}
@@ -214,8 +215,8 @@ export default function AccountPage() {
           <h2>ما برای کمک اینجا هستیم.</h2>
           <p>پاسخ پرسش‌ها را پیدا کنید، با پشتیبانی تماس بگیرید یا وضعیت سفارش را ببینید.</p>
           <div className={styles.helpLinks}>
-            <Link className={styles.textLink} href="/account/support">ارتباط با پشتیبانی <span aria-hidden="true">→</span></Link>
-            <Link className={styles.textLink} href="/account/tracking">رهگیری سفارش <span aria-hidden="true">→</span></Link>
+            <Link className={styles.textLink} href="/account/support">ارتباط با پشتیبانی <span aria-hidden="true">←</span></Link>
+            <Link className={styles.textLink} href="/account/tracking">رهگیری سفارش <span aria-hidden="true">←</span></Link>
           </div>
         </article>
       </section>

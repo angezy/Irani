@@ -27,7 +27,7 @@ export default async function BlogDetail({ params }) {
 
   if (!match) return notFound();
 
-  const safeBody = sanitizeCmsHtml(match.body || "<p>No content yet.</p>");
+  const safeBody = sanitizeCmsHtml(match.body || "<p>هنوز محتوایی ثبت نشده است.</p>");
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px 48px" }}>

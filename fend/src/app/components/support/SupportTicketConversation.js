@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Alert, Box, Button, Chip, Container, Paper, Stack, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SendIcon from "@mui/icons-material/Send";
 import RichTextEditor from "./RichTextEditor";
 import { DetailPageSkeleton } from "../LoadingSkeletons";
@@ -80,7 +80,7 @@ export default function SupportTicketConversation({ ticketId }) {
   return (
     <Box component="main" sx={{ bgcolor: "var(--color-background)", minHeight: "100vh", py: { xs: 3, md: 6 }, color: "var(--color-text-primary)", "& .MuiPaper-root": { borderColor: "var(--color-border)" }, "& .MuiPaper-root > .MuiBox-root:first-of-type": { bgcolor: "#ffffff", color: "var(--color-text-primary)" }, "& .MuiPaper-root > .MuiBox-root:first-of-type .MuiTypography-root": { color: "var(--color-text-primary)" }, "& .MuiPaper-root > .MuiBox-root:first-of-type .MuiTypography-overline": { color: "var(--color-accent)" }, "& .MuiPaper-root .MuiButton-root": { color: "var(--color-primary)" }, "& .MuiPaper-root .MuiButton-contained": { bgcolor: "var(--color-primary)", color: "#ffffff" } }}>
       <Container maxWidth="md">
-        <Button component={Link} href="/account/support" startIcon={<ArrowBackIcon />} sx={{ mb: 2, color: "var(--color-primary-dark)", textTransform: "none", fontWeight: 800 }}>درخواست‌های پشتیبانی من</Button>
+        <Button component={Link} href="/account/support" startIcon={<ArrowForwardIcon />} sx={{ mb: 2, color: "var(--color-primary-dark)", textTransform: "none", fontWeight: 800 }}>درخواست‌های پشتیبانی من</Button>
         <Paper elevation={0} sx={{ border: "1px solid var(--color-border)", borderRadius: 3, overflow: "hidden" }}>
           <Box sx={{ bgcolor: "var(--color-primary-dark)", color: "white", p: { xs: 2.5, md: 4 } }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2}>
@@ -93,7 +93,7 @@ export default function SupportTicketConversation({ ticketId }) {
             </Stack>
           </Box>
           <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "var(--color-surface-muted)" }}>
-            {ticket.messages?.map((item) => <Box key={item.id} sx={{ mb: 2, display: "flex", justifyContent: item.senderType === "customer" ? "flex-end" : "flex-start" }}><Box sx={{ maxWidth: "85%", bgcolor: item.senderType === "customer" ? "var(--color-primary-soft)" : "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: 2.5, p: 2 }}><Typography sx={{ color: "var(--color-primary)", fontWeight: 800, fontSize: 12, textTransform: "uppercase", mb: 1 }}>{item.senderType === "customer" ? "شما" : item.senderType} · {new Date(item.createdAt).toLocaleString("fa-IR")}</Typography><Box sx={{ color: "var(--color-text-secondary)", lineHeight: 1.7, "& p": { mt: 0, mb: 1 }, "& ul": { pl: 3 } }} dangerouslySetInnerHTML={{ __html: safeMessageHtml(item) }} />{item.attachments?.length > 0 && <Stack sx={{ mt: 1 }} spacing={0.5}>{item.attachments.map((file, index) => <a key={`${file.url || "attachment"}-${index}`} href={file.url} target="_blank" rel="noreferrer" style={{ color: "var(--color-primary)", fontSize: 13 }}>{file.name || "دانلود پیوست"}</a>)}</Stack>}</Box></Box>)}
+            {ticket.messages?.map((item) => <Box key={item.id} sx={{ mb: 2, display: "flex", justifyContent: item.senderType === "customer" ? "flex-end" : "flex-start" }}><Box sx={{ maxWidth: "85%", bgcolor: item.senderType === "customer" ? "var(--color-primary-soft)" : "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: 2.5, p: 2 }}><Typography sx={{ color: "var(--color-primary)", fontWeight: 800, fontSize: 12, textTransform: "uppercase", mb: 1 }}>{item.senderType === "customer" ? "شما" : item.senderType} · {new Date(item.createdAt).toLocaleString("fa-IR")}</Typography><Box sx={{ color: "var(--color-text-secondary)", lineHeight: 1.7, "& p": { mt: 0, mb: 1 }, "& ul": { paddingInlineStart: "24px" } }} dangerouslySetInnerHTML={{ __html: safeMessageHtml(item) }} />{item.attachments?.length > 0 && <Stack sx={{ mt: 1 }} spacing={0.5}>{item.attachments.map((file, index) => <a key={`${file.url || "attachment"}-${index}`} href={file.url} target="_blank" rel="noreferrer" style={{ color: "var(--color-primary)", fontSize: 13 }}>{file.name || "دانلود پیوست"}</a>)}</Stack>}</Box></Box>)}
           </Box>
           <Box component="form" onSubmit={send} sx={{ p: { xs: 2, md: 4 }, borderTop: "1px solid var(--color-border)" }}>
             <RichTextEditor label="پاسخ" value={message} onChange={setMessage} minHeight={220} />

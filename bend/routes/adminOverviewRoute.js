@@ -283,7 +283,7 @@ async function buildOptimizedOverview(pool, req, range) {
     runQuery(pool, req, range, 'topProducts', topProductsQuery),
     runQuery(pool, req, range, 'topCustomers', topCustomersQuery),
     pool.request().query(`SELECT TOP (5) [Id], [TicketNumber], [Subject], [Priority], [Status], [UpdatedAt] FROM [CRM].[Tickets] ORDER BY [UpdatedAt] DESC;`),
-    pool.request().query(`SELECT COALESCE(t.[Name], N'Unassigned') AS [Tier], COUNT_BIG(*) AS [Customers] FROM [CRM].[LoyaltyAccounts] a LEFT JOIN [CRM].[LoyaltyTiers] t ON t.[Id] = a.[TierId] GROUP BY t.[Name] ORDER BY COUNT_BIG(*) DESC;`)
+    pool.request().query(`SELECT COALESCE(t.[Name], N'تخصیص‌نیافته') AS [Tier], COUNT_BIG(*) AS [Customers] FROM [CRM].[LoyaltyAccounts] a LEFT JOIN [CRM].[LoyaltyTiers] t ON t.[Id] = a.[TierId] GROUP BY t.[Name] ORDER BY COUNT_BIG(*) DESC;`)
   ]);
 
   const [orders, items, finance, products, fulfillment, suppliers, customers, support, marketing, loyalty, dailySales, topProducts, topCustomers, ticketResult, tierResult] = results;

@@ -67,17 +67,17 @@ export default function MostChosenScroll() {
                   component="img"
                   height="140"
                   image={item.image}
-                  alt={item.title || "Most chosen"}
+                  alt={item.title || "محصول منتخب"}
                 />
               ) : (
                 <Skeleton variant="rectangular" height={140} sx={{ bgcolor: "#eee8df" }} />
               )}
               <CardContent>
                 <Typography variant="h6" noWrap>
-                  {item.title || "Untitled"}
+                  {item.title || "محصول بدون عنوان"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" noWrap>
-                  {item.description || "No description"}
+                  {item.description || "توضیحی ثبت نشده است"}
                 </Typography>
               </CardContent>
             </Card>

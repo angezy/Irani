@@ -3520,6 +3520,10 @@ router.post("/api/payment/create", requireCheckoutIdentity, async (req, res) => 
   const sessionCoupon = cartState.coupon;
   const requestedCouponCode = normalizeCouponCode(req.body?.couponCode || sessionCoupon?.code);
   const currency = checkoutCurrency();
+  const mismatchedCurrencyItem = cart.find((item) => item?.currency && String(item.currency).trim().toUpperCase() !== currency);
+  if (mismatchedCurrencyItem) {
+    return res.status(409).json({ error: `قیمت محصول «${String(mismatchedCurrencyItem.title || mismatchedCurrencyItem.productId || "انتخاب‌شده").slice(0, 80)}» با واحد پول ${currency} سازگار نیست؛ واحد قیمت‌گذاری را در تنظیمات فروشگاه مشخص کنید.` });
+  }
   if (req.body?.currency && String(req.body.currency).trim().toUpperCase() !== currency) {
     return res.status(400).json({ error: `Checkout currency must be ${currency}` });
   }
@@ -4085,6 +4089,7 @@ async function hydrateCart(pool, cart) {
       buyPrice: product?.buyPrice ?? item.buyPrice ?? null,
       unitProfit: product?.unitProfit ?? null,
       originalPrice: product?.originalPrice ?? item.originalPrice ?? null,
+      currency: product?.currency ?? item.currency ?? checkoutCurrency(),
       image: product?.img ?? item.image ?? "",
       stock: product?.stock ?? null,
     };
@@ -4151,6 +4156,7 @@ router.post(["/api/cart", "/api/cart/items"], requireCheckoutIdentity, async (re
         salePrice: product.salePrice,
         buyPrice: product.buyPrice,
         originalPrice: product.originalPrice,
+        currency: product.currency,
         image: product.img || existing.image,
       });
       else cart.push({
@@ -4163,6 +4169,7 @@ router.post(["/api/cart", "/api/cart/items"], requireCheckoutIdentity, async (re
         salePrice: product.salePrice,
         buyPrice: product.buyPrice,
         originalPrice: product.originalPrice,
+        currency: product.currency,
         quantity: qty,
         image: product.img || "",
       });

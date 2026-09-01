@@ -40,7 +40,7 @@ export default function ContactSupportPanel({ support }) {
               <Box sx={{ p: 2, border: "1px solid var(--color-border)", bgcolor: "var(--color-surface-muted)", borderRadius: 2.5, height: "100%" }}>
                 <Typography sx={{ fontWeight: 800, mb: 0.5 }}>{content.liveChatTitle || "گفت‌وگوی زنده"}</Typography>
                 <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 14, lineHeight: 1.6, mb: 1.5 }}>{content.liveChatCopy}</Typography>
-                <HelpChatWidget floating={false} triggerLabel={content.liveChatButton || `Chat with ${siteSettings.siteName} AI`} />
+                <HelpChatWidget floating={false} triggerLabel={content.liveChatButton || `گفت‌وگو با دستیار هوشمند ${siteSettings.siteName}`} />
               </Box>
               <Box sx={{ p: 2, border: "1px solid var(--color-border)", bgcolor: "var(--color-surface-muted)", borderRadius: 2.5, height: "100%" }}>
                 <Typography sx={{ fontWeight: 800, mb: 0.5 }}>{content.telegramTitle || "پشتیبانی تلگرام"}</Typography>

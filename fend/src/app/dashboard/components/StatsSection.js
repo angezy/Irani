@@ -2,6 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography, Grid, LinearProgress, Skeleton } from "@mui/material";
 
+const metricLabels = {
+  conversion: "نرخ تبدیل",
+  "return rate": "نرخ مرجوعی",
+  "customer satisfaction": "رضایت مشتری",
+  fulfillment: "تکمیل ارسال",
+};
+
+function metricLabel(value) {
+  const raw = String(value || "").trim();
+  return metricLabels[raw.toLowerCase()] || raw || "شاخص عملکرد";
+}
+
 export default function StatsSection({ loading: parentLoading }) {
   const [loading, setLoading] = useState(parentLoading ?? true);
   const [metrics, setMetrics] = useState([]);
@@ -14,10 +26,10 @@ export default function StatsSection({ loading: parentLoading }) {
       .then((data) => {
         if (!mounted) return;
         setMetrics(Array.isArray(data?.metrics) ? data.metrics : [
-          { name: "Conversion", value: 72 },
-          { name: "Return Rate", value: 6 },
-          { name: "Customer Satisfaction", value: 88 },
-          { name: "Fulfillment", value: 93 },
+          { name: "نرخ تبدیل", value: 72 },
+          { name: "نرخ مرجوعی", value: 6 },
+          { name: "رضایت مشتری", value: 88 },
+          { name: "تکمیل ارسال", value: 93 },
         ]);
       })
       .catch((err) => console.error("Stats fetch error:", err))
@@ -33,7 +45,7 @@ export default function StatsSection({ loading: parentLoading }) {
       <Card sx={{ borderRadius: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Performance Metrics
+            شاخص‌های عملکرد
           </Typography>
           {isLoading ? (
             <Grid container spacing={2}>
@@ -64,7 +76,7 @@ export default function StatsSection({ loading: parentLoading }) {
                     md: 3
                   }}>
                   <Typography variant="subtitle2" color="text.secondary">
-                    {m.name}
+                    {metricLabel(m.name)}
                   </Typography>
                   <Typography variant="h6">{`${m.value}%`}</Typography>
                   <LinearProgress variant="determinate" value={m.value} sx={{ mt: 1, height: 8, borderRadius: 2 }} />

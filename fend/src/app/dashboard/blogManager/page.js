@@ -93,7 +93,7 @@ export default function BlogManager() {
         setContent(data);
         if (data.posts?.length) setCurrent({ ...data.posts[0] });
       })
-      .catch(() => setError("Failed to load blog content"))
+      .catch(() => setError("بارگذاری محتوای وبلاگ ممکن نیست"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -109,7 +109,7 @@ export default function BlogManager() {
 
   const upsertPost = () => {
     if (!current.title || !current.slug) {
-      setError("Title and slug are required.");
+      setError("وارد کردن عنوان و نامک الزامی است.");
       return;
     }
     setError("");
@@ -123,7 +123,7 @@ export default function BlogManager() {
     }
     setContent((prev) => ({ ...(prev || {}), posts }));
     setHasLocalChanges(true);
-    setToast({ open: true, severity: "success", message: "Saved locally. Click Save All to persist." });
+    setToast({ open: true, severity: "success", message: "تغییرات محلی ذخیره شد. برای ثبت نهایی، «ذخیره همه» را بزنید." });
     setEditorOpen(false);
   };
 
@@ -133,7 +133,7 @@ export default function BlogManager() {
     setContent((prev) => ({ ...(prev || {}), posts }));
     setCurrent(EMPTY_POST);
     setHasLocalChanges(true);
-    setToast({ open: true, severity: "info", message: "Removed locally. Click Save All to persist." });
+    setToast({ open: true, severity: "info", message: "پست به‌صورت محلی حذف شد. برای ثبت نهایی، «ذخیره همه» را بزنید." });
   };
 
   const handleSaveAll = async () => {
@@ -149,9 +149,9 @@ export default function BlogManager() {
       });
       if (!res.ok) throw new Error("save");
       setHasLocalChanges(false);
-      setToast({ open: true, severity: "success", message: "Saved to blog.json." });
+      setToast({ open: true, severity: "success", message: "در فایل وبلاگ ذخیره شد." });
     } catch (err) {
-      setError("Save failed. Try again.");
+      setError("ذخیره‌سازی ناموفق بود. دوباره تلاش کنید.");
     } finally {
       setSaving(false);
     }
@@ -225,7 +225,7 @@ export default function BlogManager() {
       </Box>
     );
   }
-  if (!content) return <div style={{ padding: 16, color: "#b00" }}>{error || "No content loaded."}</div>;
+  if (!content) return <div style={{ padding: 16, color: "#b00" }}>{error || "محتوایی بارگذاری نشده است."}</div>;
 
   const posts = content.posts || [];
   const filtered = posts
@@ -249,17 +249,17 @@ export default function BlogManager() {
         >
           <Box>
             <Typography variant="h5" fontWeight={800}>
-              Blog Manager
+              مدیریت وبلاگ
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Create, edit, and publish posts. Changes are local until you click Save All.
+              پست‌ها را ایجاد، ویرایش و منتشر کنید. تغییرات تا زمان انتخاب «ذخیره همه» محلی هستند.
             </Typography>
           </Box>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "stretch", sm: "center" }}>
             <TextField
               size="small"
-              placeholder="Search posts…"
+              placeholder="جست‌وجوی پست‌ها…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               sx={{ width: { xs: "100%", sm: 320 } }}
@@ -277,7 +277,7 @@ export default function BlogManager() {
               onClick={() => openEditor(EMPTY_POST)}
               sx={{ whiteSpace: "nowrap" }}
             >
-              New Post
+              پست جدید
             </Button>
             <Button
               variant="contained"
@@ -286,15 +286,15 @@ export default function BlogManager() {
               disabled={saving || !hasLocalChanges}
               sx={{ whiteSpace: "nowrap" }}
             >
-              {saving ? "Saving..." : "Save All"}
+              {saving ? "در حال ذخیره…" : "ذخیره همه"}
             </Button>
           </Stack>
         </Stack>
 
         <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap" }}>
-          <Chip label={`${posts.length} post(s)`} />
+          <Chip label={`${posts.length} پست`} />
           <Chip
-            label={hasLocalChanges ? "Unsaved changes" : "All changes saved"}
+            label={hasLocalChanges ? "تغییرات ذخیره‌نشده" : "همه تغییرات ذخیره شده‌اند"}
             color={hasLocalChanges ? "warning" : "success"}
             variant="outlined"
           />
@@ -305,13 +305,13 @@ export default function BlogManager() {
           <Card sx={{ borderRadius: 4, border: "1px dashed rgba(15,23,42,0.2)" }}>
             <CardContent>
               <Typography variant="h6" fontWeight={800}>
-                No posts found
+                پستی پیدا نشد
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Try a different search, or create a new post.
+                جست‌وجوی دیگری را امتحان کنید یا پست جدیدی بسازید.
               </Typography>
               <Button sx={{ mt: 2 }} variant="contained" startIcon={<AddRoundedIcon />} onClick={() => openEditor(EMPTY_POST)}>
-                Create Post
+                ایجاد پست
               </Button>
             </CardContent>
           </Card>
@@ -357,7 +357,7 @@ export default function BlogManager() {
                             background: `url(${post.image || FALLBACK_THUMB}) center/cover`,
                             flexShrink: 0,
                           }}
-                          aria-label={post.alt || post.title || "Post image"}
+                          aria-label={post.alt || post.title || "تصویر پست"}
                         />
                         <Box sx={{ minWidth: 0, flex: 1 }}>
                           <Typography
@@ -372,7 +372,7 @@ export default function BlogManager() {
                               maxHeight: 44,
                             }}
                           >
-                            {post.title || "Untitled"}
+                            {post.title || "بدون عنوان"}
                           </Typography>
                           <Typography
                             variant="caption"
@@ -384,7 +384,7 @@ export default function BlogManager() {
                               overflow: "hidden",
                             }}
                           >
-                            {post.author ? `By ${post.author}` : "Author not set"} {post.date ? `• ${post.date}` : ""}
+                            {post.author ? `نویسنده: ${post.author}` : "نویسنده مشخص نشده است"} {post.date ? `• ${post.date}` : ""}
                           </Typography>
                           <Stack direction="row" spacing={0.75} sx={{ mt: 1, flexWrap: "wrap" }}>
                             {visibleTags.map((tag) => (
@@ -409,7 +409,7 @@ export default function BlogManager() {
                           minHeight: 60,
                         }}
                       >
-                        {post.excerpt || "No excerpt yet. Add a short summary to improve SEO and previews."}
+                        {post.excerpt || "هنوز خلاصه‌ای ثبت نشده است. برای بهبود سئو و پیش‌نمایش، خلاصه‌ای کوتاه اضافه کنید."}
                       </Typography>
                     </CardContent>
                     <CardActions
@@ -423,12 +423,12 @@ export default function BlogManager() {
                       }}
                     >
                       <Stack direction="row" spacing={1}>
-                        <Tooltip title="Edit post">
+                        <Tooltip title="ویرایش پست">
                           <Button size="small" variant="contained" startIcon={<EditRoundedIcon />} onClick={() => openEditor(post)}>
-                            Edit
+                            ویرایش
                           </Button>
                         </Tooltip>
-                        <Tooltip title="Delete post">
+                        <Tooltip title="حذف پست">
                           <Button
                             size="small"
                             color="error"
@@ -436,7 +436,7 @@ export default function BlogManager() {
                             startIcon={<DeleteOutlineRoundedIcon />}
                             onClick={() => deletePost(post.id)}
                           >
-                            Delete
+                            حذف
                           </Button>
                         </Tooltip>
                       </Stack>
@@ -448,7 +448,7 @@ export default function BlogManager() {
                             href={href}
                             target="_blank"
                             rel="noreferrer"
-                            aria-label="Open post"
+                            aria-label="باز کردن پست"
                           >
                             <LinkRoundedIcon fontSize="small" />
                           </IconButton>
@@ -468,13 +468,13 @@ export default function BlogManager() {
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
               <Typography variant="h6" fontWeight={900}>
-                {current.id ? "Edit Post" : "New Post"}
+                {current.id ? "ویرایش پست" : "پست جدید"}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Thumbnail is locked to {THUMB_SIZE}x{THUMB_SIZE}.
+                اندازه تصویر بندانگشتی روی {THUMB_SIZE}×{THUMB_SIZE} ثابت است.
               </Typography>
             </Box>
-            <IconButton onClick={closeEditor} size="small" aria-label="Close editor">
+            <IconButton onClick={closeEditor} size="small" aria-label="بستن ویرایشگر">
               <CloseIcon />
             </IconButton>
           </Stack>
@@ -488,20 +488,20 @@ export default function BlogManager() {
               }}>
               <Stack spacing={2}>
                 <TextField
-                  label="Title"
+                  label="عنوان"
                   value={current.title}
                   onChange={(e) => updatePostField("title", e.target.value)}
                   fullWidth
                   required
                 />
                 <TextField
-                  label="Slug/URL"
+                  label="نامک / نشانی"
                   value={current.slug}
                   onChange={(e) => {
                     setAutoSlug(false);
                     updatePostField("slug", toSlug(e.target.value));
                   }}
-                  helperText={current.slug ? `/blog/${current.slug}` : "Used in the URL. Example: my-first-post"}
+                  helperText={current.slug ? `/blog/${current.slug}` : "در نشانی استفاده می‌شود؛ نمونه: my-first-post"}
                   fullWidth
                   required
                 />
@@ -512,7 +512,7 @@ export default function BlogManager() {
                       xs: 12,
                       md: 6
                     }}>
-                    <TextField label="Author" value={current.author} onChange={(e) => updatePostField("author", e.target.value)} fullWidth />
+                    <TextField label="نویسنده" value={current.author} onChange={(e) => updatePostField("author", e.target.value)} fullWidth />
                   </Grid>
                   <Grid
                     size={{
@@ -520,7 +520,7 @@ export default function BlogManager() {
                       md: 6
                     }}>
                     <TextField
-                      label="Date"
+                      label="تاریخ"
                       value={current.date}
                       onChange={(e) => updatePostField("date", e.target.value)}
                       fullWidth
@@ -530,7 +530,7 @@ export default function BlogManager() {
                 </Grid>
 
                 <TextField
-                  label="Excerpt"
+                  label="خلاصه"
                   value={current.excerpt}
                   onChange={(e) => updatePostField("excerpt", e.target.value)}
                   fullWidth
@@ -538,7 +538,7 @@ export default function BlogManager() {
                   minRows={3}
                 />
                 <TextField
-                  label="Tags (comma separated)"
+                  label="برچسب‌ها (با ویرگول جدا کنید)"
                   value={(current.tags || []).join(",")}
                   onChange={(e) =>
                     updatePostField(
@@ -562,13 +562,13 @@ export default function BlogManager() {
               <Card sx={{ borderRadius: 4, border: "1px solid rgba(15,23,42,0.12)" }}>
                 <CardContent>
                   <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 1 }}>
-                    Media
+                    رسانه
                   </Typography>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Avatar
                       variant="rounded"
                       src={current.image || FALLBACK_THUMB}
-                      alt={current.alt || current.title || "Post image"}
+                      alt={current.alt || current.title || "تصویر پست"}
                       sx={{ width: THUMB_SIZE, height: THUMB_SIZE, borderRadius: 3 }}
                     />
                     <Box sx={{ minWidth: 0 }}>
@@ -582,7 +582,7 @@ export default function BlogManager() {
                           overflow: "hidden",
                         }}
                       >
-                        {current.title || "Untitled"}
+                        {current.title || "بدون عنوان"}
                       </Typography>
                       <Typography
                         variant="caption"
@@ -594,14 +594,14 @@ export default function BlogManager() {
                           overflow: "hidden",
                         }}
                       >
-                        {current.slug ? `/blog/${current.slug}` : "Slug not set"}
+                        {current.slug ? `/blog/${current.slug}` : "نامک ثبت نشده است"}
                       </Typography>
                     </Box>
                   </Stack>
 
                   <Stack spacing={2} sx={{ mt: 2 }}>
-                    <TextField label="Image URL" value={current.image} onChange={(e) => updatePostField("image", e.target.value)} fullWidth />
-                    <TextField label="Alt text" value={current.alt} onChange={(e) => updatePostField("alt", e.target.value)} fullWidth />
+                    <TextField label="نشانی تصویر" value={current.image} onChange={(e) => updatePostField("image", e.target.value)} fullWidth />
+                    <TextField label="متن جایگزین تصویر" value={current.alt} onChange={(e) => updatePostField("alt", e.target.value)} fullWidth />
                   </Stack>
                 </CardContent>
               </Card>
@@ -610,7 +610,7 @@ export default function BlogManager() {
             <Grid size={12}>
               <Divider sx={{ my: 1 }} />
               <Typography variant="subtitle2" fontWeight={900} sx={{ mb: 1 }}>
-                Body
+                متن پست
               </Typography>
               <Editor
                 apiKey={tinymceKey}
@@ -618,10 +618,10 @@ export default function BlogManager() {
                 init={{
                   height: 360,
                   menubar: false,
-                  plugins: ["link", "lists", "code", "image", "table", "media"],
+                  plugins: ["link", "lists", "code", "image", "table", "media", "directionality"],
                   toolbar:
-                    "undo redo | formatselect | bold italic underline | bullist numlist | link image media | alignleft aligncenter alignright | code",
-                  content_style: "body { font-family: Inter, sans-serif; font-size: 14px; }",
+                    "undo redo | formatselect | bold italic underline | bullist numlist | link image media | alignright aligncenter alignleft | rtl ltr | code",
+                  content_style: "body { direction: rtl; text-align: right; font-family: Vazirmatn, Tahoma, sans-serif; font-size: 14px; }",
                 }}
                 onEditorChange={(val) => updatePostField("body", val)}
               />
@@ -635,23 +635,23 @@ export default function BlogManager() {
               variant="outlined"
               startIcon={<DeleteOutlineRoundedIcon />}
               onClick={() => {
-                if (confirm("Delete this post?")) {
+                if (confirm("این پست حذف شود؟")) {
                   deletePost(current.id);
                   closeEditor();
                 }
               }}
             >
-              Delete
+              حذف
             </Button>
           ) : (
             <Box />
           )}
           <Box sx={{ flex: 1 }} />
           <Button variant="outlined" onClick={closeEditor}>
-            Cancel
+            انصراف
           </Button>
           <Button variant="contained" startIcon={<SaveRoundedIcon />} onClick={upsertPost}>
-            Save Post
+            ذخیره پست
           </Button>
         </DialogActions>
       </Dialog>

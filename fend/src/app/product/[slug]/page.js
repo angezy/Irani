@@ -26,11 +26,11 @@ import {
 import { Country } from "country-state-city";
 import {
   AddRounded,
-  ArrowForwardRounded,
+  ArrowBackRounded,
   CheckCircleRounded,
   FavoriteBorderRounded,
   FavoriteRounded,
-  KeyboardArrowRightRounded,
+  KeyboardArrowLeftRounded,
   LocalShippingOutlined,
   LockOutlined,
   RemoveRounded,
@@ -83,8 +83,8 @@ function getImageValue(value) {
   return "";
 }
 
-function formatMoney(value) {
-  return formatStoreMoney(value);
+function formatMoney(value, currency) {
+  return formatStoreMoney(value, currency);
 }
 
 function deliveryWindow(value) {
@@ -142,7 +142,7 @@ function ProductReviewList({ reviews, emptyMessage, heading }) {
                 <Typography sx={{ fontWeight: 850 }}>{review.author}</Typography>
               </Stack>
               {review.rating !== null && (
-                <Stack direction="row" spacing={0.1} aria-label={`${review.rating} out of 5 stars`}>
+                <Stack direction="row" spacing={0.1} aria-label={`${review.rating} از ۵ ستاره`}>
                   {[1, 2, 3, 4, 5].map((star) => star <= Math.round(review.rating)
                     ? <StarRounded key={star} sx={{ color: "var(--color-accent)", fontSize: 18 }} />
                     : <StarBorderRounded key={star} sx={{ color: "var(--color-text-secondary)", fontSize: 18 }} />)}
@@ -153,7 +153,7 @@ function ProductReviewList({ reviews, emptyMessage, heading }) {
             {review.text && <Typography sx={{ mt: 1.15, color: "var(--color-text-secondary)", lineHeight: 1.75, whiteSpace: "pre-line" }}>{review.text}</Typography>}
             {review.images.length > 0 && (
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1.5 }}>
-                {review.images.map((image, index) => <Box key={`${review.id}-${image}`} component="img" src={image} alt={`Review photo ${index + 1}`} sx={{ width: 76, height: 76, borderRadius: 1.5, border: "1px solid var(--color-border)", objectFit: "cover" }} />)}
+                {review.images.map((image, index) => <Box key={`${review.id}-${image}`} component="img" src={image} alt={`تصویر دیدگاه ${index + 1}`} sx={{ width: 76, height: 76, borderRadius: 1.5, border: "1px solid var(--color-border)", objectFit: "cover" }} />)}
               </Stack>
             )}
           </Box>
@@ -222,7 +222,7 @@ function ProductLoading() {
     <Box
       component="main"
       aria-busy="true"
-      aria-label="Loading product details"
+      aria-label="در حال بارگذاری جزئیات محصول"
       sx={{ backgroundColor: "var(--color-background)", minHeight: "100vh", color: "var(--color-text-primary)", py: { xs: 3, md: 6 } }}
     >
       <Container maxWidth="lg">
@@ -318,7 +318,7 @@ function ProductNotFound({ error }) {
           محصول پیدا نشد
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          {error || "This product may have been removed or the link may be out of date."}
+          {error || "ممکن است این محصول حذف شده باشد یا پیوند آن قدیمی باشد."}
         </Typography>
         <Button component={Link} href="/shop" variant="contained" sx={{ borderRadius: 999 }}>
           بازگشت به فروشگاه
@@ -360,7 +360,7 @@ export default function ProductPage() {
       try {
         const response = await fetch("/api/shop", { cache: "no-store" });
         const data = await response.json().catch(() => []);
-        if (!response.ok) throw new Error(data?.error || "بارگذاری جزئیات محصول ممکن نیست.");
+        if (!response.ok) throw new Error(/[\u0600-\u06ff]/.test(String(data?.error || "")) ? data.error : "بارگذاری جزئیات محصول ممکن نیست.");
         if (active) setCatalog(Array.isArray(data) ? data : []);
       } catch (error) {
         if (active) setLoadError(error.message || "بارگذاری جزئیات محصول ممکن نیست.");
@@ -431,18 +431,19 @@ export default function ProductPage() {
         productId: product.id,
         title: product.title,
         price: product.price,
+        currency: product.currency,
         image: product.images[0],
         quantity,
       });
-      toast.success("Added to cart", {
-        description: `${product.title} is now in your cart.`,
-        action: { label: "View cart", onClick: () => router.push("/cart") },
-        cancel: { label: "Continue shopping" },
+      toast.success("به سبد خرید اضافه شد", {
+        description: `${product.title} اکنون در سبد خرید شماست.`,
+        action: { label: "مشاهده سبد خرید", onClick: () => router.push("/cart") },
+        cancel: { label: "ادامه خرید" },
       });
     } catch (error) {
       const isUnauthorized = error.message === "unauthorized";
-      (isUnauthorized ? toast.info : toast.error)(isUnauthorized ? "Cart session expired" : "Could not add item", {
-        description: isUnauthorized ? "Please try adding the item again." : error.message || "Please try again.",
+      (isUnauthorized ? toast.info : toast.error)(isUnauthorized ? "نشست سبد خرید منقضی شد" : "افزودن محصول ممکن نیست", {
+        description: isUnauthorized ? "لطفاً دوباره محصول را اضافه کنید." : error.message || "لطفاً دوباره تلاش کنید.",
       });
     } finally {
       setAdding(false);
@@ -495,7 +496,7 @@ export default function ProductPage() {
   async function handleShippingEstimate(event) {
     event.preventDefault();
     if (!shippingCountry || !shippingPostalCode.trim()) {
-      setShippingError("Choose a country and enter a ZIP / postal code.");
+      setShippingError("کشور را انتخاب و کد پستی را وارد کنید.");
       return;
     }
     setShippingLoading(true);
@@ -508,7 +509,7 @@ export default function ProductPage() {
         postalCode: shippingPostalCode,
       });
       const options = Array.isArray(result.estimates) ? result.estimates : [];
-      if (!options.length) throw new Error("No delivery service is available for this destination.");
+      if (!options.length) throw new Error("سرویس تحویلی برای این مقصد در دسترس نیست.");
       setShippingOptions(options);
       chooseShippingOption(result.selected || options[0]);
     } catch (error) {
@@ -527,23 +528,23 @@ export default function ProductPage() {
       if (saved) {
         await removeSavedProduct(product.id);
         setSaved(false);
-        toast.success("Removed from saved products", { description: `${product.title} is no longer saved.` });
+        toast.success("از محصولات ذخیره‌شده حذف شد", { description: `${product.title} دیگر در فهرست ذخیره‌شده شما نیست.` });
       } else {
         await saveProduct(product.id);
         setSaved(true);
-        toast.success("Saved for later", {
-          description: `${product.title} is available from your account dashboard.`,
-          action: { label: "View saved", onClick: () => router.push("/account/saved") },
+        toast.success("برای بعد ذخیره شد", {
+          description: `${product.title} از بخش حساب شما در دسترس است.`,
+          action: { label: "مشاهده ذخیره‌شده‌ها", onClick: () => router.push("/account/saved") },
         });
       }
     } catch (error) {
       if (error.message === "unauthorized") {
-        toast.info("Sign in to save products", {
-          description: "Your saved products are kept with your customer account.",
-          action: { label: "Sign in", onClick: () => router.push("/signin") },
+        toast.info("برای ذخیره محصول وارد شوید", {
+          description: "محصولات ذخیره‌شده در حساب مشتری شما نگهداری می‌شوند.",
+          action: { label: "ورود", onClick: () => router.push("/signin") },
         });
       } else {
-        toast.error("Could not update saved products", { description: error.message || "Please try again." });
+        toast.error("به‌روزرسانی محصولات ذخیره‌شده ممکن نیست", { description: error.message || "دوباره تلاش کنید." });
       }
     } finally {
       setSaving(false);
@@ -583,7 +584,7 @@ export default function ProductPage() {
     <Box component="main" sx={{ backgroundColor: "var(--color-background)", minHeight: "100vh", color: "var(--color-text-primary)", py: { xs: 3, md: 5 } }}>
       <Container maxWidth="xl" sx={{ px: { xs: 2.5, sm: 4, lg: 6 } }}>
         <Breadcrumbs
-          separator={<KeyboardArrowRightRounded sx={{ fontSize: 18, color: "var(--color-text-secondary)" }} />}
+          separator={<KeyboardArrowLeftRounded sx={{ fontSize: 18, color: "var(--color-text-secondary)" }} />}
           sx={{ mb: { xs: 3, md: 4 }, color: "var(--color-text-secondary)", fontSize: 13 }}
         >
           <Link href="/shop">فروشگاه</Link>
@@ -597,7 +598,7 @@ export default function ProductPage() {
               xs: 12,
               md: 7
             }}>
-            <Box component="section" aria-label="Product gallery">
+            <Box component="section" aria-label="گالری محصول">
               <Card
                 sx={{
                   position: "relative",
@@ -614,16 +615,16 @@ export default function ProductPage() {
                   alt={product.alt}
                   sx={{ display: "block", width: "100%", height: { xs: 390, sm: 500, md: 610 }, objectFit: "cover" }}
                 />
-                <Stack direction="row" spacing={1} sx={{ position: "absolute", top: 18, left: 18 }}>
-                  {product.isTrending && <Chip label="Trending" size="small" sx={{ bgcolor: "var(--color-accent)", color: "#fff", fontWeight: 850 }} />}
-                  {hasDiscount && <Chip label={`${discountPercent}% off`} size="small" sx={{ bgcolor: "var(--color-primary)", color: "#fff", fontWeight: 850 }} />}
+                <Stack direction="row" spacing={1} sx={{ position: "absolute", top: 18, insetInlineStart: 18 }}>
+                  {product.isTrending && <Chip label="پرفروش" size="small" sx={{ bgcolor: "var(--color-accent)", color: "#fff", fontWeight: 850 }} />}
+                  {hasDiscount && <Chip label={`${discountPercent}٪ تخفیف`} size="small" sx={{ bgcolor: "var(--color-primary)", color: "#fff", fontWeight: 850 }} />}
                 </Stack>
-                <Stack direction="row" spacing={1} sx={{ position: "absolute", top: 14, right: 14 }}>
+                <Stack direction="row" spacing={1} sx={{ position: "absolute", top: 14, insetInlineEnd: 14 }}>
                   <Button
                     type="button"
                     onClick={handleToggleSaved}
                     disabled={saving}
-                    aria-label={saved ? "Remove from saved products" : "Save product"}
+                    aria-label={saved ? "حذف از محصولات ذخیره‌شده" : "ذخیره محصول"}
                     aria-pressed={saved}
                     sx={{ minWidth: 42, width: 42, height: 42, p: 0, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: saved ? "var(--color-error)" : "var(--color-text-primary)", boxShadow: "0 8px 18px rgba(43,43,43,0.12)", "&:hover": { bgcolor: "#fff" } }}
                   >
@@ -632,7 +633,7 @@ export default function ProductPage() {
                   <Button
                     type="button"
                     onClick={handleShare}
-                    aria-label="Share product"
+                    aria-label="اشتراک‌گذاری محصول"
                     sx={{ minWidth: 42, width: 42, height: 42, p: 0, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: "var(--color-text-primary)", boxShadow: "0 8px 18px rgba(43,43,43,0.12)", "&:hover": { bgcolor: "#fff" } }}
                   >
                     <ShareRounded />
@@ -643,12 +644,12 @@ export default function ProductPage() {
                   href={currentImage}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="View full-size product image"
-                  sx={{ position: "absolute", right: 18, bottom: 18, minWidth: 42, width: 42, height: 42, p: 0, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: "var(--color-text-primary)", boxShadow: "0 8px 18px rgba(43,43,43,0.12)", "&:hover": { bgcolor: "#fff" } }}
+                  aria-label="مشاهده تصویر محصول در اندازه کامل"
+                  sx={{ position: "absolute", insetInlineStart: 18, bottom: 18, minWidth: 42, width: 42, height: 42, p: 0, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: "var(--color-text-primary)", boxShadow: "0 8px 18px rgba(43,43,43,0.12)", "&:hover": { bgcolor: "#fff" } }}
                 >
                   <ZoomInRounded />
                 </Button>
-                <Box sx={{ position: "absolute", left: 18, bottom: 18, px: 1.25, py: 0.65, borderRadius: 999, bgcolor: "rgba(43,43,43,0.72)", color: "#fff", fontSize: 12, fontWeight: 800 }}>
+                <Box sx={{ position: "absolute", insetInlineEnd: 18, bottom: 18, px: 1.25, py: 0.65, borderRadius: 999, bgcolor: "rgba(43,43,43,0.72)", color: "#fff", fontSize: 12, fontWeight: 800 }}>
                   {selectedImage + 1} / {product.images.length}
                 </Box>
               </Card>
@@ -660,7 +661,7 @@ export default function ProductPage() {
                     type="button"
                     key={`${image}-${index}`}
                     onClick={() => setSelectedImage(index)}
-                    aria-label={`View product image ${index + 1}`}
+                    aria-label={`مشاهده تصویر محصول ${index + 1}`}
                     aria-pressed={index === selectedImage}
                     sx={{
                       position: "relative",
@@ -696,7 +697,7 @@ export default function ProductPage() {
                   <Typography sx={{ color: "var(--color-primary)", fontSize: 12, fontWeight: 900, letterSpacing: "0.16em", textTransform: "uppercase" }}>
                     {product.brand || "Weluxo"}
                   </Typography>
-                  {product.sku && <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 11, letterSpacing: "0.04em" }}>SKU {product.sku}</Typography>}
+                  {product.sku && <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 11, letterSpacing: "0.04em" }}>کد محصول {product.sku}</Typography>}
                 </Stack>
                 <Typography id="product-title" component="h1" sx={{ maxWidth: 650, fontSize: { xs: "2.45rem", md: "3.65rem" }, fontWeight: 950, letterSpacing: "-0.055em", lineHeight: 0.98 }}>
                   {product.title}
@@ -705,7 +706,7 @@ export default function ProductPage() {
                   <Chip label={product.category} size="small" sx={{ bgcolor: "var(--color-accent-soft)", color: "var(--color-accent-dark)", fontWeight: 850 }} />
                   <Stack direction="row" spacing={0.6} alignItems="center" sx={{ color: "var(--color-text-secondary)", fontSize: 13 }}>
                     <CheckCircleRounded sx={{ fontSize: 17, color: "var(--color-success)" }} />
-                    <Typography component="span" sx={{ fontSize: "inherit" }}>Quality checked</Typography>
+                    <Typography component="span" sx={{ fontSize: "inherit" }}>بررسی‌شده از نظر کیفیت</Typography>
                   </Stack>
                 </Stack>
 
@@ -728,23 +729,23 @@ export default function ProductPage() {
                           <Box sx={{ width: 9, height: 9, borderRadius: "50%", bgcolor: inStock ? "var(--color-success)" : "var(--color-error)", boxShadow: inStock ? "0 0 0 5px rgba(46,139,87,0.12)" : "0 0 0 5px rgba(201,74,74,0.12)" }} />
                           <Typography sx={{ fontWeight: 850 }}>{stockLabel}</Typography>
                         </Stack>
-                        {product.stock !== null && product.stock > 0 && product.stock <= 5 && <Typography sx={{ color: "var(--color-accent-dark)", fontSize: 12, fontWeight: 850 }}>Low stock</Typography>}
+                        {product.stock !== null && product.stock > 0 && product.stock <= 5 && <Typography sx={{ color: "var(--color-accent-dark)", fontSize: 12, fontWeight: 850 }}>موجودی محدود</Typography>}
                       </Stack>
                       {product.address && (
                         <Stack direction="row" spacing={1.25} alignItems="flex-start">
                           <LocalShippingOutlined sx={{ mt: 0.15, color: "var(--color-primary)", fontSize: 19 }} />
                           <Box>
-                            <Typography sx={{ fontSize: 13, fontWeight: 800 }}>Ships from {product.address}</Typography>
-                            <Typography sx={{ mt: 0.25, color: "var(--color-text-secondary)", fontSize: 12 }}>Delivery options are shown at checkout.</Typography>
+                            <Typography sx={{ fontSize: 13, fontWeight: 800 }}>ارسال از {product.address}</Typography>
+                            <Typography sx={{ mt: 0.25, color: "var(--color-text-secondary)", fontSize: 12 }}>گزینه‌های ارسال هنگام تسویه‌حساب نمایش داده می‌شوند.</Typography>
                           </Box>
                         </Stack>
                       )}
                       <Divider sx={{ borderColor: "var(--color-border)" }} />
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ height: 48, px: 0.5, border: "1px solid var(--color-border)", borderRadius: 999, bgcolor: "var(--color-surface-muted)" }}>
-                          <Button type="button" onClick={() => changeQuantity(-1)} disabled={!inStock || quantity <= 1} aria-label="Decrease quantity" sx={{ minWidth: 40, width: 40, height: 40, p: 0, color: "var(--color-text-primary)" }}><RemoveRounded fontSize="small" /></Button>
+                          <Button type="button" onClick={() => changeQuantity(-1)} disabled={!inStock || quantity <= 1} aria-label="کاهش تعداد" sx={{ minWidth: 40, width: 40, height: 40, p: 0, color: "var(--color-text-primary)" }}><RemoveRounded fontSize="small" /></Button>
                           <Typography sx={{ minWidth: 28, textAlign: "center", fontSize: 14, fontWeight: 850 }}>{quantity}</Typography>
-                          <Button type="button" onClick={() => changeQuantity(1)} disabled={!inStock} aria-label="Increase quantity" sx={{ minWidth: 40, width: 40, height: 40, p: 0, color: "var(--color-text-primary)" }}><AddRounded fontSize="small" /></Button>
+                          <Button type="button" onClick={() => changeQuantity(1)} disabled={!inStock} aria-label="افزایش تعداد" sx={{ minWidth: 40, width: 40, height: 40, p: 0, color: "var(--color-text-primary)" }}><AddRounded fontSize="small" /></Button>
                         </Stack>
                         <Button fullWidth variant="contained" onClick={handleAddToCart} disabled={!inStock || adding} data-button-loading-managed="true" startIcon={adding ? <CircularProgress size={18} color="inherit" /> : undefined} sx={{ minHeight: 48, px: 3, fontSize: 15, borderRadius: 999 }}>
                           {adding ? "در حال افزودن..." : inStock ? "افزودن به سبد خرید" : "ناموجود"}
@@ -758,7 +759,7 @@ export default function ProductPage() {
                               <TextField select size="small" label="کشور" value={shippingCountry} onChange={(event) => { setShippingCountry(event.target.value); invalidateShippingQuote(); }}>
                                 {countryOptions.map((country) => <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>)}
                               </TextField>
-                              <TextField size="small" label="ZIP / postal code" value={shippingPostalCode} onChange={(event) => { setShippingPostalCode(event.target.value); invalidateShippingQuote(); }} />
+                              <TextField size="small" label="کد پستی" value={shippingPostalCode} onChange={(event) => { setShippingPostalCode(event.target.value); invalidateShippingQuote(); }} />
                             </Box>
                             <Button type="submit" variant="outlined" disabled={shippingLoading} startIcon={shippingLoading ? <CircularProgress size={16} color="inherit" /> : undefined} sx={{ alignSelf: "flex-start", borderRadius: 999 }}>
                               {shippingLoading ? "در حال بررسی..." : "مشاهده روش‌های ارسال"}
@@ -806,7 +807,7 @@ export default function ProductPage() {
           </Grid>
         </Grid>
 
-        <Box component="section" aria-label="Product information" sx={{ mt: { xs: 7, md: 10 }, p: { xs: 2, sm: 3, md: 4 }, borderRadius: { xs: 3, md: 4 }, bgcolor: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+        <Box component="section" aria-label="اطلاعات محصول" sx={{ mt: { xs: 7, md: 10 }, p: { xs: 2, sm: 3, md: 4 }, borderRadius: { xs: 3, md: 4 }, bgcolor: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 0.5, md: 1 }} sx={{ mb: 3, borderBottom: "1px solid var(--color-border)" }}>
             {infoTabs.map((tab) => (
               <Button key={tab.id} type="button" onClick={() => setActiveInfoTab(tab.id)} sx={{ justifyContent: "flex-start", minHeight: 46, px: { xs: 1, md: 1.5 }, borderRadius: 0, color: activeInfoTab === tab.id ? "var(--color-primary)" : "var(--color-text-secondary)", borderBottom: activeInfoTab === tab.id ? "2px solid var(--color-primary)" : "2px solid transparent", fontWeight: 850, "&:hover": { bgcolor: "var(--color-primary-soft)" } }}>
@@ -863,14 +864,14 @@ export default function ProductPage() {
               <Typography component="h2" sx={{ fontSize: 21, fontWeight: 900, letterSpacing: "-0.02em" }}>ارسال ساده و شفاف</Typography>
               <Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.85 }}>روش‌های ارسال و زمان تقریبی تحویل بر اساس مقصد شما در زمان تسویه‌حساب نمایش داده می‌شود.</Typography>
               <Stack direction="row" spacing={1.25} alignItems="flex-start"><LocalShippingOutlined sx={{ color: "var(--color-primary)", mt: 0.25 }} /><Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.7 }}>سفارش خود را از زمان تأیید تا تحویل پیگیری کنید.</Typography></Stack>
-              <Button component={Link} href="/shipping-information" endIcon={<ArrowForwardRounded />} sx={{ alignSelf: "flex-start", px: 0, color: "var(--color-primary)" }}>مطالعه اطلاعات ارسال</Button>
+              <Button component={Link} href="/shipping-information" endIcon={<ArrowBackRounded />} sx={{ alignSelf: "flex-start", px: 0, color: "var(--color-primary)" }}>مطالعه اطلاعات ارسال</Button>
             </Stack>
           )}
           {activeInfoTab === "care" && (
             <Stack spacing={1.5} sx={{ maxWidth: 760 }}>
               <Typography component="h2" sx={{ fontSize: 21, fontWeight: 900, letterSpacing: "-0.02em" }}>محصول را سالم نگه دارید</Typography>
-              <Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.85 }}>Follow the care instructions supplied with your product and store it in a clean, dry place between uses. If you need help, our support team is ready to assist.</Typography>
-              <Button component={Link} href="/contact" endIcon={<ArrowForwardRounded />} sx={{ alignSelf: "flex-start", px: 0, color: "var(--color-primary)" }}>تماس با پشتیبانی</Button>
+              <Typography sx={{ color: "var(--color-text-secondary)", lineHeight: 1.85 }}>دستورالعمل نگهداری همراه محصول را دنبال کنید و آن را بین هر بار استفاده در محیطی تمیز و خشک نگه دارید. اگر به کمک نیاز دارید، تیم پشتیبانی آماده پاسخ‌گویی است.</Typography>
+              <Button component={Link} href="/contact" endIcon={<ArrowBackRounded />} sx={{ alignSelf: "flex-start", px: 0, color: "var(--color-primary)" }}>تماس با پشتیبانی</Button>
             </Stack>
           )}
         </Box>
@@ -879,10 +880,10 @@ export default function ProductPage() {
           <Box component="section" aria-labelledby="related-products-title" sx={{ mt: { xs: 7, md: 10 } }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "flex-end" }} spacing={1} sx={{ mb: 3 }}>
               <Box>
-                <Typography sx={{ color: "var(--color-accent-dark)", fontSize: 12, fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase" }}>You may also like</Typography>
-                <Typography id="related-products-title" component="h2" sx={{ mt: 0.5, fontSize: { xs: 28, md: 34 }, fontWeight: 950, letterSpacing: "-0.045em" }}>More from {product.category}</Typography>
+                <Typography sx={{ color: "var(--color-accent-dark)", fontSize: 12, fontWeight: 900, letterSpacing: "0.15em" }}>پیشنهادهای مشابه</Typography>
+                <Typography id="related-products-title" component="h2" sx={{ mt: 0.5, fontSize: { xs: 28, md: 34 }, fontWeight: 950, letterSpacing: "-0.045em" }}>محصولات بیشتر از دسته {product.category}</Typography>
               </Box>
-              <Button component={Link} href={`/shop?category=${encodeURIComponent(product.category)}`} endIcon={<ArrowForwardRounded />} sx={{ alignSelf: { xs: "flex-start", sm: "auto" }, color: "var(--color-primary)" }}>View collection</Button>
+              <Button component={Link} href={`/shop?category=${encodeURIComponent(product.category)}`} endIcon={<ArrowBackRounded />} sx={{ alignSelf: { xs: "flex-start", sm: "auto" }, color: "var(--color-primary)" }}>مشاهده مجموعه</Button>
             </Stack>
             <Grid container spacing={2.5}>
               {relatedProducts.map((related) => (
@@ -896,7 +897,7 @@ export default function ProductPage() {
                   <Card component={Link} href={`/product/${related.slug}`} sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: "var(--color-surface)", color: "var(--color-text-primary)", border: "1px solid var(--color-border)", borderRadius: 3.5, overflow: "hidden", transition: "transform 180ms ease, box-shadow 180ms ease", "&:hover": { transform: "translateY(-5px)", boxShadow: "0 20px 38px rgba(43,43,43,0.12)" } }}>
                     <Box sx={{ position: "relative", bgcolor: "var(--color-surface-muted)" }}>
                       <Box component="img" src={related.images[0]} alt={related.alt} sx={{ display: "block", width: "100%", height: 220, objectFit: "cover" }} />
-                      <Box sx={{ position: "absolute", right: 12, bottom: 12, width: 34, height: 34, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: "var(--color-primary)" }}><ArrowForwardRounded sx={{ fontSize: 18 }} /></Box>
+                      <Box sx={{ position: "absolute", insetInlineStart: 12, bottom: 12, width: 34, height: 34, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: "rgba(255,255,255,0.92)", color: "var(--color-primary)" }}><ArrowBackRounded sx={{ fontSize: 18 }} /></Box>
                     </Box>
                     <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", p: 2.25 }}>
                       <Typography sx={{ color: "var(--color-text-secondary)", fontSize: 11, fontWeight: 850, letterSpacing: "0.08em", textTransform: "uppercase" }}>{related.brand}</Typography>

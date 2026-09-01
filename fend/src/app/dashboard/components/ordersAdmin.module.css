@@ -12,8 +12,7 @@
 .tableCard,
 .errorMessage {
   width: min(1380px, 100%);
-  margin-right: auto;
-  margin-left: auto;
+  margin-inline: auto;
 }
 
 .header {
@@ -206,7 +205,7 @@
 }
 
 .errorMessage span { color: #a25a65; }
-.errorMessage button { margin-left: auto; padding: 8px 11px; color: #fff; background: #a3273b; }
+.errorMessage button { margin-inline-start: auto; padding: 8px 11px; color: #fff; background: #a3273b; }
 
 .tableCard {
   margin-top: 18px;
@@ -231,7 +230,7 @@
 
 .tableScroll { overflow-x: auto; }
 .ordersTable { width: 100%; min-width: 980px; border-collapse: collapse; font-size: 12px; }
-.ordersTable th { padding: 11px 16px; color: #7a8799; background: #f8fafd; font-size: 10px; font-weight: 850; letter-spacing: .03em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+.ordersTable th { padding: 11px 16px; color: #7a8799; background: #f8fafd; font-size: 10px; font-weight: 850; letter-spacing: .03em; text-align: right; text-transform: uppercase; white-space: nowrap; }
 .ordersTable td { padding: 14px 16px; color: #506077; border-top: 1px solid #edf0f5; vertical-align: middle; white-space: nowrap; }
 .ordersTable tbody tr { outline: none; cursor: pointer; transition: background .15s ease; }
 .ordersTable tbody tr:hover td,
@@ -248,7 +247,7 @@
   border: 0;
   font: inherit;
   font-weight: 850;
-  text-align: left;
+  text-align: right;
   cursor: pointer;
 }
 
@@ -319,11 +318,11 @@
 .detailSection h3 { margin: 2px 0 0; color: #1f2d42; font-size: 15px; letter-spacing: -.02em; }
 .innerTableWrap { overflow-x: auto; }
 .innerTable { width: 100%; min-width: 590px; border-collapse: collapse; font-size: 11px; }
-.innerTable th { padding: 0 10px 9px; color: #8591a2; font-size: 9px; font-weight: 850; text-align: left; text-transform: uppercase; }
+.innerTable th { padding: 0 10px 9px; color: #8591a2; font-size: 9px; font-weight: 850; text-align: right; text-transform: uppercase; }
 .innerTable th:first-child,
-.innerTable td:first-child { padding-left: 0; }
+.innerTable td:first-child { padding-inline-start: 0; }
 .innerTable th:last-child,
-.innerTable td:last-child { padding-right: 0; }
+.innerTable td:last-child { padding-inline-end: 0; }
 .innerTable td { padding: 11px 10px; color: #536178; border-top: 1px solid #edf0f5; vertical-align: middle; white-space: nowrap; }
 .innerTable td:first-child { white-space: normal; }
 .innerTable td strong { display: block; color: #27364d; font-weight: 800; }
@@ -380,7 +379,7 @@
 .timeline { display: grid; gap: 0; }
 .timelineItem { position: relative; display: grid; grid-template-columns: 15px minmax(0, 1fr); gap: 11px; padding-bottom: 17px; }
 .timelineItem:last-child { padding-bottom: 0; }
-.timelineItem:not(:last-child)::before { position: absolute; top: 13px; bottom: 0; left: 5px; width: 1px; background: #dce5ef; content: ""; }
+.timelineItem:not(:last-child)::before { position: absolute; top: 13px; bottom: 0; inset-inline-start: 5px; width: 1px; background: #dce5ef; content: ""; }
 .timelineDot { z-index: 1; width: 11px; height: 11px; margin-top: 2px; background: #3159d9; border: 3px solid #dce6ff; border-radius: 50%; }
 .timelineTracking { background: #1a8b68; border-color: #d3f0e4; }
 .timelineTop { align-items: flex-start; }

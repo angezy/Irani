@@ -1,5 +1,5 @@
 [
-  { "id": 1, "type": "text", "content": "Welcome to our site (sample)" },
+  { "id": 1, "type": "text", "content": "به سایت ما خوش آمدید (نمونه)" },
   { "id": 2, "type": "image", "src": "/favicon.ico", "alt": "Logo (sample)" },
-  { "id": 3, "type": "text", "content": "Contact us at contact@example.com" }
+  { "id": 3, "type": "text", "content": "از طریق contact@example.com با ما تماس بگیرید" }
 ]

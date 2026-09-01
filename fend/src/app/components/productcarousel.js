@@ -89,7 +89,7 @@ export default function ProductCarousel() {
           انتخاب‌هایی تازه و هماهنگ با سلیقه شما، هر روز به‌روزرسانی می‌شوند.
         </Typography>
       </Box>
-      <Slider {...settings} style={{ marginLeft: "-12px", marginRight: "-12px" }}>
+      <Slider {...settings} style={{ marginInline: "-12px" }}>
         {loading
           ? renderSkeletons()
           : products.map((product) => {

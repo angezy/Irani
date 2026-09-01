@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Reset password",
+  title: "بازیابی رمز عبور",
 };
 
 export default function ForgotPasswordLayout({ children }) {

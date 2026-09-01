@@ -53,7 +53,7 @@ export function AccountPageSkeleton({ variant = "overview" }) {
   const isGrid = variant === "saved";
 
   return (
-    <Box component="main" aria-busy="true" aria-label="Account page loading" sx={{ color: "var(--color-text-primary)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری حساب کاربری" sx={{ color: "var(--color-text-primary)" }}>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} sx={{ mb: 3 }}>
         <Box>
           <Skeleton variant="text" width={210} height={38} sx={skeletonSx} />
@@ -106,7 +106,7 @@ export function AccountPageSkeleton({ variant = "overview" }) {
 
 export function CheckoutPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Checkout page loading" sx={{ minHeight: "100vh", py: 3, bgcolor: "var(--color-background)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری تسویه‌حساب" sx={{ minHeight: "100vh", py: 3, bgcolor: "var(--color-background)" }}>
       <Container maxWidth="lg">
         <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
           <Skeleton variant="text" width={110} height={38} sx={skeletonSx} />
@@ -150,7 +150,7 @@ export function CheckoutPageSkeleton() {
 
 export function CartPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Cart page loading" sx={{ minHeight: "100vh", py: { xs: 3, md: 6 }, bgcolor: "var(--color-background)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری سبد خرید" sx={{ minHeight: "100vh", py: { xs: 3, md: 6 }, bgcolor: "var(--color-background)" }}>
       <Container maxWidth="lg">
         <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} sx={{ mb: 3 }}>
           <Box>
@@ -193,7 +193,7 @@ export function CartPageSkeleton() {
 
 export function DashboardPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Dashboard page loading" sx={{ width: "100%", maxWidth: 1400, mx: "auto", p: { xs: 2, md: 3 }, bgcolor: "#f8fafc" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری داشبورد" sx={{ width: "100%", maxWidth: 1400, mx: "auto", p: { xs: 2, md: 3 }, bgcolor: "#f8fafc" }}>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} sx={{ mb: 3 }}>
         <Box>
           <Skeleton variant="text" height={38} sx={{ ...skeletonSx, width: { xs: "62%", sm: 250 } }} />
@@ -226,7 +226,7 @@ export function DashboardPageSkeleton() {
 
 export function TablePageSkeleton({ rows = 7, columns = 5 }) {
   return (
-    <Box component="main" aria-busy="true" aria-label="Table loading" sx={{ width: "100%", maxWidth: 1280, mx: "auto", p: { xs: 2, md: 3 } }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری جدول" sx={{ width: "100%", maxWidth: 1280, mx: "auto", p: { xs: 2, md: 3 } }}>
       <Skeleton variant="text" height={42} sx={{ ...skeletonSx, width: { xs: "55%", md: 240 } }} />
       <Skeleton variant="text" height={22} sx={{ ...skeletonSx, width: { xs: "78%", md: 390 } }} />
       <Card sx={{ ...surfaceSx, mt: 3, overflow: "hidden" }}>
@@ -245,7 +245,7 @@ export function TablePageSkeleton({ rows = 7, columns = 5 }) {
 
 export function DetailPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Details loading" sx={{ minHeight: "60vh", py: { xs: 5, md: 8 }, bgcolor: "var(--color-background)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری جزئیات" sx={{ minHeight: "60vh", py: { xs: 5, md: 8 }, bgcolor: "var(--color-background)" }}>
       <Container maxWidth="md">
         <Card sx={{ ...surfaceSx, overflow: "hidden" }}>
           <Box sx={{ p: { xs: 2.5, md: 4 }, borderBottom: "1px solid var(--color-border)" }}>
@@ -314,7 +314,7 @@ export function HomePageSkeleton() {
 
 export function CategoryPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Category page loading" sx={{ minHeight: "100vh", bgcolor: "var(--color-background)", py: 5 }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری دسته‌بندی" sx={{ minHeight: "100vh", bgcolor: "var(--color-background)", py: 5 }}>
       <Container maxWidth="lg">
         <Stack direction="row" spacing={1} sx={{ mb: 4 }}>
           <Skeleton variant="text" width={58} height={24} sx={skeletonSx} />
@@ -350,7 +350,7 @@ export default function PageSkeleton({ variant = "default" }) {
   if (variant === "category") return <CategoryPageSkeleton />;
 
   return (
-    <Box component="main" aria-busy="true" aria-label="Page loading" sx={{ minHeight: "100vh", py: { xs: 4, md: 7 }, bgcolor: "var(--color-background)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری صفحه" sx={{ minHeight: "100vh", py: { xs: 4, md: 7 }, bgcolor: "var(--color-background)" }}>
       <Container maxWidth="lg">
         <Stack spacing={1} sx={{ mb: 4 }}>
           <Skeleton variant="text" height={34} sx={{ ...skeletonSx, width: { xs: "42%", md: 220 } }} />
@@ -369,7 +369,7 @@ export default function PageSkeleton({ variant = "default" }) {
 
 export function ShopPageSkeleton() {
   return (
-    <Box component="main" aria-busy="true" aria-label="Shop page loading" sx={{ minHeight: "100vh", bgcolor: "var(--color-background)" }}>
+    <Box component="main" aria-busy="true" aria-label="در حال بارگذاری فروشگاه" sx={{ minHeight: "100vh", bgcolor: "var(--color-background)" }}>
       <Box sx={{ bgcolor: "#e6ebef", py: { xs: 6, md: 8 } }}>
         <Container maxWidth="md">
           <Stack spacing={1.25} alignItems="center">

@@ -69,7 +69,7 @@ export default function CategoryProductGrid({ products = [], categoryName = "م�
                     {product.description}
                   </Typography>
                   <Box sx={{ mt: "auto", pt: 3, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
-                    <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>{formatMoney(product.price)}</Typography>
+                    <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>{formatMoney(product.price, product.currency)}</Typography>
                     <Button href={`/product/${product.slug}`} variant="contained" sx={{ borderRadius: 999, textTransform: "none" }}>مشاهده محصول</Button>
                   </Box>
                 </CardContent>
